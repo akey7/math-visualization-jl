@@ -1,0 +1,71 @@
+---
+title: "Multivariate Normal Distribution"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+---
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+
+using Printf
+using Plots
+using CairoMakie
+using Random
+using Distributions
+
+Random.seed!(1234)
+```
+
+## Simple Multivariate Normal Distribution
+
+### Define the distribution
+
+```{julia}
+#| label: obtain-2d-samples
+#| eval: true
+#| include: true
+
+μ = [0.0, 0.0]  # Means
+Σ = [1.0 0.0; 0.0 1.0]  # Covariance matrix--off diagonal 0.0, directions uncorrelated.
+mv_gaussian = MvNormal(μ, Σ);  # ; To suppress output from cell
+```
+
+### Plot the PDF as a countour plot
+
+```{julia}
+#| label: plot-contour
+#| eval: true
+#| include: true
+
+# Create a grid of points for the x and y axes
+xs = range(start=-3, stop=3, length=100)
+ys = range(start=-3, stop=3, length=100)
+
+# Compute the PDF values over the grid
+zs = [pdf(mv_gaussian, [x, y]) for x in xs, y in ys]
+
+fig = Figure(resolution = (775, 700))
+ax = Axis(fig[1, 1])
+contour_plot = CairoMakie.contour!(ax, xs, ys, zs, levels=20, colormap=:viridis, linewidth = 3)
+Colorbar(fig[1, 2], limits=(0, maximum(zs)), colormap=:viridis, flipaxis=false, size=50)
+fig
+```
+
+### Plot 10,000 random samples as a histogram
+
+```{julia}
+#| label: plot-2d-histogram
+#| eval: true
+#| include: true
+
+samples = rand(mv_gaussian, 100000)
+x_samples = samples[1, :]
+y_samples = samples[2, :]
+
+histogram2d(x_samples, y_samples, nbins=(100, 100), colormap=:viridis, normalize=true, size=(700, 600))
+```
