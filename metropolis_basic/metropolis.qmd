@@ -12,6 +12,10 @@ format:
 #| eval: true
 #| include: false
 
+# Activate the proper Julia Project.toml
+using Pkg
+Pkg.activate("..", io=devnull)
+
 using Printf
 using Plots
 using Random
