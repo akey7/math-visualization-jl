@@ -50,5 +50,5 @@ num_blocks = ceil(Int32, N/max_threads)
 println("Calculating result...")
 result = mean(Array(fxy_d))
 
-println("Calculating result...")
+println("Final result (analytical result is 2/3):")
 println(result)
