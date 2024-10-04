@@ -1,0 +1,137 @@
+---
+title: "Metropolis Algorithm"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+---
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+
+# Activate the proper Julia Project.toml
+using Pkg
+Pkg.activate("..", io=devnull)
+
+using Printf
+using Plots
+using Random
+using Distributions
+
+plotlyjs()
+Random.seed!(1234)
+```
+
+## Define p(x) and f(x)
+
+Assuming:
+
+$$ p(x) = {f(x) \over NC} $$
+
+Where NC is a normalizing constant that is unknown.
+
+### Define the function
+
+```{julia}
+#| label: f-pdf
+#| eval: true
+#| include: true
+
+function f(xs)
+    μ1 = 1
+    σ1 = 1
+    dist1 = Normal(μ1, σ1)
+
+    μ2 = -2.0
+    σ2 = 0.5
+    dist2 = Normal(μ2, σ2)
+
+    μ3 = -5.0
+    σ3 = 1.5
+    dist3 = Normal(μ3, σ3)
+
+    pdf.(dist1, xs) + pdf.(dist2, xs).*0.25 + pdf.(dist3, xs)
+end;  # ; suppresses output in the Quarto document.
+```
+
+### Set domain of p(x) for subsequent code 
+
+```{julia}
+#| label: p-domain
+#| eval: true
+#| include: true
+
+domain_min = -11
+domain_max = 5
+```
+
+### Plot f(x)
+
+```{julia}
+#| label: plot-f-pdf
+#| eval: true
+#| include: true
+
+xs = range(start=domain_min, stop=domain_max, length=200)
+xticks = range(start=domain_min, stop=domain_max, length=5)
+x_tick_labels = [@sprintf("%.2f", x) for x in xticks]
+ys = f(xs)
+
+plot(
+    xs, 
+    ys, 
+    xticks=(xticks, x_tick_labels), 
+    xlims=(domain_min, domain_max*1.1), 
+    linewidth=3, 
+    xlabel="x", 
+    ylabel="f(x)", 
+    title="f(x)", 
+    legend=false,
+    titlefont=font(18)
+)
+```
+
+## Sample f(x)
+
+### Draw samples with Metropolis algorithm
+
+```{julia}
+#| label: metropolis
+#| eval: true
+#| include: true
+
+num_steps = 1000000
+σ_step = 1.0
+
+samples = zeros(Float64, num_steps)
+samples[1] = rand(Uniform(domain_min, domain_max))
+
+for i ∈ 2:num_steps
+    next_proposal = rand(Normal(samples[i-1], σ_step))
+    samples[i] = min(1, f(next_proposal) / f(samples[i-1])) > rand() ? next_proposal : samples[i-1]
+end
+```
+
+### Plot histogram of the samples
+
+```{julia}
+#| label: metropolis-histogram
+#| eval: true
+#| include: true
+
+histogram(
+    samples,
+    bins=200,
+    normalize=true,
+    xlabel="x", 
+    ylabel="Probability Density", 
+    title="Samples From f(x)", 
+    legend=false,
+    titlefont=font(18),
+    linecolor=:white,
+    fillcolor="#EFCB68"
+)
+```
