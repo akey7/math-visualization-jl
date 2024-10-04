@@ -27,6 +27,8 @@ N = 65_536
 # AT THOSE VALUES                                           #
 #############################################################
 
+println("Initializing arrays...")
+
 x_d = CUDA.rand(N)
 y_d = CUDA.rand(N)
 fxy_d = CUDA.zeros(N)
@@ -34,6 +36,8 @@ fxy_d = CUDA.zeros(N)
 #############################################################
 # RUN KERNEL ON THE GPU                                     #
 #############################################################
+
+println("Compiling and launching kernel...")
 
 max_threads = CUDA.attribute(device(), CUDA.DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK)
 num_blocks = ceil(Int32, N/max_threads)
@@ -43,5 +47,8 @@ num_blocks = ceil(Int32, N/max_threads)
 # RUN KERNEL ON THE GPU                                     #
 #############################################################
 
+println("Calculating result...")
 result = mean(Array(fxy_d))
+
+println("Calculating result...")
 println(result)
