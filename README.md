@@ -111,7 +111,7 @@ This script performs Monte Carlo integration of:
 
 ![Image of equations](images/eqn_1_x2_plus_y2.png "Eq. 1: A simple expression to integrate")
 
-The analytical solution is 2/3. The script produces ~0.66...
+The analytical solution is 2/3. The script produces 0.6662.
 ### Running the demo
 Use the following commands to execute the demo:
 ```
