@@ -10,6 +10,14 @@ Julia dependencies for this repo need to be installed. From the root of this rep
 (potential-enigma-jl) pkg> instantiate
 ```
 
+Julia dependencies are the following:
+
+- CUDA
+- CairoMakie
+- Distributions
+- PlotlyJS
+- Plots
+
 After the latter command finishes, type backspace, then:
 
 ```
