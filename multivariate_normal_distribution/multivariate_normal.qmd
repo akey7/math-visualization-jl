@@ -5,8 +5,6 @@ format:
     toc: true
     html-math-method: mathjax
     code-fold: false
-julia:
-  project: "E:\\Projects\\potential-enigma-jl"
 ---
 
 ```{julia}
