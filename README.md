@@ -52,7 +52,7 @@ installkernel("Julia", "--project=@.")
 
 ### Quarto installation
 
-[This only needs to be done once per machine for each upgrade of Quarto.](https://quarto.org/docs/get-started/)
+[This only needs to be done once per machine for each upgrade of Quarto or Julia.](https://quarto.org/docs/get-started/)
 
 ### FINALLY! Check the Quarto installation
 
