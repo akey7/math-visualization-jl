@@ -7,4 +7,16 @@ format:
     code-fold: false
 ---
 
+# Black body radiation
 
+## Equation
+
+$$ g(\epsilon) = {8\pi V \over h^3c_0^3} \epsilon^2 {1 \over \exp \left({\epsilon \over k_BT}\right)-1} $$
+
+## Calculation
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+```
