@@ -1,5 +1,5 @@
 # math-visualization-jl
-Doing math things, especially numerical methods, in Julia
+Doing math and physics things with an emphasis on visualization.
 
 ### Install the Julia environment
 
