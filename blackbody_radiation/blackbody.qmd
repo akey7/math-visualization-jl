@@ -1,0 +1,10 @@
+---
+title: "Bloackbody Radiation"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+---
+
+
