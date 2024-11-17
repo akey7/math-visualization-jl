@@ -1,4 +1,4 @@
-# potential-enigma-jl
+# math-visualization-jl
 Doing math things, especially numerical methods, in Julia
 
 ### Install the Julia environment
