@@ -13,10 +13,35 @@ format:
 
 $$ g(\epsilon) = {8\pi V \over h^3c_0^3} \epsilon^2 {1 \over \exp \left({\epsilon \over k_BT}\right)-1} $$
 
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+
+using Plots
+```
+
 ## Calculation
 
 ```{julia}
 #| label: using-things
 #| eval: true
-#| include: false
+#| include: true
+
+c = 3.0e8
+h = 6.626e-34
+kb = 1.381e-23
+
+blackbody(λ::Float64, t::Float64) = (2*h*c^2/λ^5) * (1/(exp(h*c/λ/kb/t)-1))
+```
+
+## Plot it
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: true
+
+ts = range(start = 0.0, stop = 1000.0, length = 100)
+plot(ts, )
 ```
