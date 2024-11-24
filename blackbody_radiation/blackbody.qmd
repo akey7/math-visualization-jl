@@ -32,7 +32,13 @@ c = 3.0e8
 h = 6.626e-34
 kb = 1.381e-23
 
-blackbody(λ::Float64, t::Float64) = (2*h*c^2/λ^5) * (1/(exp(h*c/λ/kb/t)-1))
+function blackbody(λs::Float64, t::Float64)
+    first_term = 2 * h * c^2 / λs^5
+    @. inside_exp = h * c / λs / kb / t
+    @. outside_exp = exp(inside_exp) - 1
+    @. second_term = 1 / outside_exp
+    first_term .* second_term
+end
 ```
 
 ## Plot it
@@ -42,6 +48,7 @@ blackbody(λ::Float64, t::Float64) = (2*h*c^2/λ^5) * (1/(exp(h*c/λ/kb/t)-1))
 #| eval: true
 #| include: true
 
-ts = range(start = 0.0, stop = 1000.0, length = 100)
+λs = range(start = 0.0, stop = 1000.0, length = 100)
+ys = blackbody()
 plot(ts, )
 ```
