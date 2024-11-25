@@ -19,24 +19,25 @@ $$ g(\epsilon) = {8\pi V \over h^3c_0^3} \epsilon^2 {1 \over \exp \left({\epsilo
 #| include: false
 
 using Plots
+import Pkg
+Pkg.activate("..")
 ```
 
 ## Calculation
 
 ```{julia}
-#| label: using-things
+#| label: blackbody-intensity
 #| eval: true
 #| include: true
 
-c = 3.0e8
-h = 6.626e-34
-kb = 1.381e-23
-
-function blackbody(λs::Float64, t::Float64)
-    first_term = 2 * h * c^2 / λs^5
-    @. inside_exp = h * c / λs / kb / t
-    @. outside_exp = exp(inside_exp) - 1
-    @. second_term = 1 / outside_exp
+function blackbody(λs::Vector{Float64}, temp::Float64)
+    c = 3.0e8
+    h = 6.626e-34
+    kb = 1.381e-23
+    first_term = @. 2 * h * c^2 / λs^5
+    inside_exp = @. h * c / λs / kb / temp
+    outside_exp = @. exp(inside_exp) - 1
+    second_term = @. 1 / outside_exp
     first_term .* second_term
 end
 ```
@@ -44,11 +45,11 @@ end
 ## Plot it
 
 ```{julia}
-#| label: using-things
+#| label: plot-intensity
 #| eval: true
 #| include: true
 
-λs = range(start = 0.0, stop = 1000.0, length = 100)
-ys = blackbody()
-plot(ts, )
+λs = collect(range(start = 1.0e-6, stop = 1.0e-4, length = 100))
+ys = blackbody(λs, 300.0)
+plot(λs, ys)
 ```
