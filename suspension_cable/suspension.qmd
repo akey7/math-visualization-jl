@@ -72,25 +72,39 @@ What is meant to be solved for is H, and when the correct value of H is provided
 #| eval: true
 #| include: true
 
-tension(h::Float64; s::Float64, x::Float64, w::Float64) = h/w * sinh(w * x / h) - s
+f1(h::Float64; s::Float64, x::Float64, w::Float64) = h/w * sinh(w * x / h) - s
 ```
 
 Here is a partial function application meant to be used with a solver for a cable of length s = 25 ft, x = 15 ft, w = 5 lbs/ft.
 
 ```{julia}
-#| label: partial-tension-function-application
+#| label: partial-f1-function-application
 #| eval: true
 #| include: true
 
-partial_tension(h) = tension(h; s = 25.0, x = 15.0, w = 5.0)
+partial(h) = f1(h; s = 25.0, x = 15.0, w = 5.0)
 ```
 
-### Generalized solver application
+### Generalized solver execution
 
 ```{julia}
 #| label: generalized-solution
 #| eval: true
 #| include: true
 
-fzeros(partial_tension, 30, 60)
+fzeros(partial, 30, 60)
+```
+
+## Wrap it up in a single function
+
+### Unified function
+
+This function will return H for provided s, w, x.
+
+```{julia}
+#| label: wrap-in-single-function
+#| eval: true
+#| include: true
+
+println("TBD")
 ```
