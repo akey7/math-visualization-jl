@@ -95,7 +95,7 @@ partial(h) = f1(h; s = 25.0, x = 15.0, w = 5.0)
 fzeros(partial, 30, 60)
 ```
 
-## Wrap it up in a single function
+## Wrap tension in a unified function
 
 ### Unified function
 
@@ -112,7 +112,7 @@ function tension(; s::Float64, x::Float64, w::Float64, guess_lower::Float64, gue
 end
 ```
 
-### Test unified function.
+### Test unified tension function.
 
 It still should return approximately 40.8.
 
@@ -121,5 +121,43 @@ It still should return approximately 40.8.
 #| eval: true
 #| include: true
 
-tension(s = s = 25.0, x = 15.0, w = 5.0, guess_lower = 30.0, guess_upper = 60.0)
+tension(s = 25.0, x = 15.0, w = 5.0, guess_lower = 30.0, guess_upper = 60.0)
+```
+
+## Plot curve of cable
+
+### Equation of the curve
+
+$$ y(x, H, W) = {H \over W} \cosh \left({W \over H} x \right) $$
+
+I will call this function `curve(x, H, W)` in the code.
+
+```{julia}
+#| label: curve-function
+#| eval: true
+#| include: true
+
+function curve(; xs::Vector{Float64}, dist_from_support::Float64, w::Float64, s::Float64, guess_lower::Float64, guess_upper::Float64)
+    ys = zeros(Float64, length(xs))
+    for (i, x) ∈ enumerate(xs)
+        h = tension(x = dist_from_support, w = w, s = s, guess_lower = guess_lower, guess_upper = guess_upper)
+        if length(h) < 1
+            throw(ErrorException("No solutions for tension! s=$s, w=$w, x=$x, guess_lower=$guess_lower, guess_upper=$guess_upper"))
+        end
+        ys[i] = h[1] / w * cosh(w * x / h[1])
+    end
+    ys
+end
+```
+
+### Plot the function
+
+```{julia}
+#| label: plot-curve
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -15.0, stop = 15.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 30.0, guess_upper = 60.0)
+plot(xs, ys, xlims = (-15.0, 17.0), ylims = (0.0, maximum(ys)*1.1))
 ```
