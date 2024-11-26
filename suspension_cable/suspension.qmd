@@ -106,5 +106,20 @@ This function will return H for provided s, w, x.
 #| eval: true
 #| include: true
 
-println("TBD")
+function tension(; s::Float64, x::Float64, w::Float64, guess_lower::Float64, guess_upper::Float64)
+    partial(h) = h/w * sinh(w * x / h) - s
+    fzeros(partial, guess_lower, guess_upper)
+end
+```
+
+### Test unified function.
+
+It still should return approximately 40.8.
+
+```{julia}
+#| label: test-single-function
+#| eval: true
+#| include: true
+
+tension(s = s = 25.0, x = 15.0, w = 5.0, guess_lower = 30.0, guess_upper = 60.0)
 ```
