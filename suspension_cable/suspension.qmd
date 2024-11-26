@@ -159,5 +159,8 @@ end
 
 xs = collect(range(start = -15.0, stop = 15.0, length = 100))
 ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 30.0, guess_upper = 60.0)
-plot(xs, ys, xlims = (-15.0, 17.0), ylims = (0.0, maximum(ys)*1.1))
+
+plot(xs, ys, xlims = (-20.0, 20.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
 ```
