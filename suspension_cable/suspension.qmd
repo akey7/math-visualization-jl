@@ -7,4 +7,35 @@ format:
     code-fold: false
 ---
 
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
 
+import Pkg
+Pkg.activate("..")
+using Plots
+using Roots
+```
+
+$$ 0 = \left({H \over 5} \sinh {5 \over H} 15\right) - 25$$
+
+Define this equation into a function:
+
+```{julia}
+#| label: f-H
+#| eval: true
+#| include: true
+
+f(h) = (h/5.0 * sinh(5.0/h) * 15) - 25
+```
+
+Find the zeros (starting guess between 30 and 60)
+
+```{julia}
+#| label: find-zero
+#| eval: true
+#| include: true
+
+fzeros(f, 30, 60)
+```
