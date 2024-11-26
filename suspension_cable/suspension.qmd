@@ -152,12 +152,47 @@ end
 
 ### Plot the function
 
+First with poles at wide distance
+
 ```{julia}
-#| label: plot-curve
+#| label: plot-curve-wide
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -18.0, stop = 18.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 18.0, w = 5.0, s = 25.0, guess_lower = 0.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+```
+
+Second with the poles at moderate distance
+
+```{julia}
+#| label: plot-curve-middle
 #| eval: true
 #| include: true
 
 xs = collect(range(start = -15.0, stop = 15.0, length = 100))
-ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 30.0, guess_upper = 60.0)
-plot(xs, ys, xlims = (-15.0, 17.0), ylims = (0.0, maximum(ys)*1.1))
+ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 00.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+```
+
+Then with poles at narrow distance
+
+```{julia}
+#| label: plot-curve-narrow
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -10.0, stop = 10.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 10.0, w = 5.0, s = 25.0, guess_lower = 0.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
 ```
