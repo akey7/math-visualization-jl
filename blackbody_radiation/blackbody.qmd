@@ -1,5 +1,5 @@
 ---
-title: "Bloackbody Radiation"
+title: "Blackbody Radiation"
 format:
   html:
     toc: true
