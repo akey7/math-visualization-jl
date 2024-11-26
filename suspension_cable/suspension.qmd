@@ -137,10 +137,10 @@ I will call this function `curve(x, H, W)` in the code.
 #| eval: true
 #| include: true
 
-function curve(; xs::Vector{Float64}, x_at_bottom::Float64, w::Float64, s::Float64, guess_lower::Float64, guess_upper::Float64)
+function curve(; xs::Vector{Float64}, dist_from_support::Float64, w::Float64, s::Float64, guess_lower::Float64, guess_upper::Float64)
     ys = zeros(Float64, length(xs))
     for (i, x) ∈ enumerate(xs)
-        h = tension(x = x_at_bottom, w = w, s = s, guess_lower = guess_lower, guess_upper = guess_upper)
+        h = tension(x = dist_from_support, w = w, s = s, guess_lower = guess_lower, guess_upper = guess_upper)
         if length(h) < 1
             throw(ErrorException("No solutions for tension! s=$s, w=$w, x=$x, guess_lower=$guess_lower, guess_upper=$guess_upper"))
         end
@@ -157,7 +157,7 @@ end
 #| eval: true
 #| include: true
 
-xs = collect(range(start = -10.0, stop = 15.0, length = 100))
-ys = curve(xs = xs, x_at_bottom = 15.0, w = 5.0, s = 25.0, guess_lower = 30.0, guess_upper = 60.0)
-plot(xs, ys)
+xs = collect(range(start = -15.0, stop = 15.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 30.0, guess_upper = 60.0)
+plot(xs, ys, xlims = (-15.0, 17.0))
 ```
