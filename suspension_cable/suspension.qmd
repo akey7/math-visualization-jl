@@ -27,10 +27,20 @@ Define this equation into a function:
 #| eval: true
 #| include: true
 
-f(h) = (h/5.0 * sinh(5.0/h) * 15) - 25
+f(h) = sinh(75.0/h) - 125.0/h
 ```
 
-Find the zeros (starting guess between 30 and 60)
+What should the answer be:
+
+```{julia}
+#| label: ground-truth
+#| eval: true
+#| include: true
+
+f(40.8)
+```
+
+Find the zeros numerically:
 
 ```{julia}
 #| label: find-zero
