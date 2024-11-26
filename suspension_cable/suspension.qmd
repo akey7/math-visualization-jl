@@ -58,7 +58,7 @@ fzeros(f0, 30, 60)
 This equation models the tension at the bottom of a suspension cable suspended from two supports.
 
 ### Generalized equation
-$$ \left[{H \over W} \sinh\left({W \over H} x\right)\right] - s $$
+$$ f(H, s, x, W) = \left[{H \over W} \sinh\left({W \over H} x\right)\right] - s $$
 
 - s: Half the total length of the cable in ft
 - x: Distance of the middle from each of the supports in ft
