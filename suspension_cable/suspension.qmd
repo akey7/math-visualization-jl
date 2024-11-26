@@ -18,8 +18,11 @@ using Plots
 using Roots
 ```
 
-$$ 0 = \left({H \over 5} \sinh {5 \over H} 15\right) - 25$$
+## Function to solve
 
+This equation models the tension at the bottom of a suspension cable, where the cable is 5 lbs/ft, the bottom middle is 15 ft from a support, and the total cable length is 30 ft. 
+
+$$ 0 = \left({H \over 5} \sinh {5 \over H} 15\right) - 25 $$
 Define this equation into a function:
 
 ```{julia}
@@ -27,7 +30,7 @@ Define this equation into a function:
 #| eval: true
 #| include: true
 
-f(h) = sinh(75.0/h) - 125.0/h
+f0(h) = sinh(75.0/h) - 125.0/h
 ```
 
 What should the answer be:
@@ -37,15 +40,57 @@ What should the answer be:
 #| eval: true
 #| include: true
 
-f(40.8)
+f0(40.8)
 ```
 
-Find the zeros numerically:
+## Find the zeros numerically
 
 ```{julia}
-#| label: find-zero
+#| label: find-zero-01
 #| eval: true
 #| include: true
 
-fzeros(f, 30, 60)
+fzeros(f0, 30, 60)
+```
+
+## Generalize
+
+This equation models the tension at the bottom of a suspension cable suspended from two supports.
+
+### Generalized equation
+$$ \left[{H \over W} \sinh\left({W \over H} x\right)\right] - s $$
+
+- s: Half the total length of the cable in ft
+- x: Distance of the middle from each of the supports in ft
+- W: Weight of the cable in lbs/ft
+- H: Tension at bottom of cable
+
+What is meant to be solved for is H, and when the correct value of H is provided, this function should approximately return 0. Use a partial function application of the following equation to pass to a solver and find the correct value of H.
+
+```{julia}
+#| label: tension-function
+#| eval: true
+#| include: true
+
+tension(h::Float64; s::Float64, x::Float64, w::Float64) = h/w * sinh(w * x / h) - s
+```
+
+Here is a partial function application meant to be used with a solver for a cable of length s = 25 ft, x = 15 ft, w = 5 lbs/ft.
+
+```{julia}
+#| label: partial-tension-function-application
+#| eval: true
+#| include: true
+
+partial_tension(h) = tension(h; s = 25.0, x = 15.0, w = 5.0)
+```
+
+### Generalized solver application
+
+```{julia}
+#| label: generalized-solution
+#| eval: true
+#| include: true
+
+fzeros(partial_tension, 30, 60)
 ```
