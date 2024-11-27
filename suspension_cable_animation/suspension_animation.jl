@@ -74,7 +74,11 @@ function curve(;
     ys
 end
 
-function render_frame(anim::Plots.Animation, max_dist_from_support::Float64, dist_from_support::Float64)
+function render_frame(
+    anim::Plots.Animation,
+    max_dist_from_support::Float64,
+    dist_from_support::Float64,
+)
     width = 1080
     height = 1920 / 2
     xs = collect(
@@ -92,14 +96,12 @@ function render_frame(anim::Plots.Animation, max_dist_from_support::Float64, dis
         xs,
         ys,
         xlims = (-20.0, 25.0),
-        ylims = (0.0, maximum(ys) * 1.1),
+        ylims = (0.0, 31.0),
         legend = :none,
         linewidth = 3.0,
-        height = height,
-        width = width,
     )
-    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
-    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    plot!([minimum(xs), minimum(xs)], [0.0, 31.0], color = :red, linewidth = 7.0)
+    plot!([maximum(xs), maximum(xs)], [0.0, 31.0], color = :red, linewidth = 7.0)
     frame(anim)
 end
 
