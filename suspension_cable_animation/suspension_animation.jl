@@ -45,14 +45,48 @@ Returns
 `Vector{Float64}`
 Y coordinates corresponding to each x coordinate.
 """
-function curve(; xs::Vector{Float64}, dist_from_support::Float64, w::Float64, s::Float64, guess_lower::Float64, guess_upper::Float64)
+function curve(;
+    xs::Vector{Float64},
+    dist_from_support::Float64,
+    w::Float64,
+    s::Float64,
+    guess_lower::Float64,
+    guess_upper::Float64,
+)
     ys = zeros(Float64, length(xs))
     for (i, x) ∈ enumerate(xs)
-        h = tension(x = dist_from_support, w = w, s = s, guess_lower = guess_lower, guess_upper = guess_upper)
+        h = tension(
+            x = dist_from_support,
+            w = w,
+            s = s,
+            guess_lower = guess_lower,
+            guess_upper = guess_upper,
+        )
         if length(h) < 1
-            throw(ErrorException("No solutions for tension! s=$s, w=$w, x=$x, guess_lower=$guess_lower, guess_upper=$guess_upper"))
+            throw(
+                ErrorException(
+                    "No solutions for tension! s=$s, w=$w, x=$x, guess_lower=$guess_lower, guess_upper=$guess_upper",
+                ),
+            )
         end
         ys[i] = h[1] / w * cosh(w * x / h[1])
     end
     ys
+end
+
+function render_frame(anim, max_dist_from_support::Float64, dist_from_support::Float64)
+    xs = collect(
+        range(start = -max_dist_from_support, stop = max_dist_from_support, length = 100),
+    )
+    ys = curve(
+        xs = xs,
+        dist_from_support = dist_from_support,
+        w = 5.0,
+        s = 25.0,
+        guess_lower = 30.0,
+        guess_upper = 60.0,
+    )
+    plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys) * 1.1), legend = :none, linewidth = 3.0)
+    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
 end
