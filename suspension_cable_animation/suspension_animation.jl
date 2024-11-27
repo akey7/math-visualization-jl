@@ -121,9 +121,11 @@ Render the animation by calling the frame generation function in a loop.
 function render_curve_animation()
     fps = 30
     seconds = 5
-    n_frames = fps * seconds
+    n_frames = Int64(fps * seconds / 2)
     anim = Animation()
-    dists_from_support = range(start = 18.0, stop = 15.0, length = n_frames)
+    seq1 = range(start = 18.0, stop = 15.0, length = n_frames)
+    seq2 = range(start = 15.0, stop = 18.0, length = n_frames)
+    dists_from_support = [seq1; seq2]
     for dist_from_support ∈ dists_from_support
         render_frame(anim, dist_from_support)
     end
