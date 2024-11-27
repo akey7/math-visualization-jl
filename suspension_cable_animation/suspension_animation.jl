@@ -116,12 +116,12 @@ function render_frame(
     bottom_location = ys[Int64(length(ys) / 2)]
     bottom_annotation = @sprintf("%.1f", bottom_location)
     annotate!(0.0, bottom_location + 1.0, text("$bottom_annotation ft", :black, 16))
-    quiver!([0.0], [0.0], quiver = ([0.0], [bottom_location - 0.25]), color = :orange, linewidth = 7.0)
-    width_dimension = maximum(xs) - minimum(ys)
+    quiver!([0.0], [0.0], quiver = ([0.0], [bottom_location - 0.5]), color = :orange, linewidth = 7.0)
+    width_dimension = maximum(xs) - minimum(xs)
     width_annotation = @sprintf("%.1f", width_dimension)
     annotate!(0.0, maximum(ys), text("$width_annotation ft", :black, 16))
-    quiver!([2.0], [maximum(ys)], quiver = ([maximum(xs) - 2.75], [0.0]), color = :orange, linewidth = 7.0)
-    quiver!([-2.0], [maximum(ys)], quiver = ([minimum(xs) + 2.5], [0.0]), color = :orange, linewidth = 7.0)
+    quiver!([3.0], [maximum(ys)], quiver = ([maximum(xs) - 3.75], [0.0]), color = :orange, linewidth = 7.0)
+    quiver!([-3.0], [maximum(ys)], quiver = ([minimum(xs) + 3.75], [0.0]), color = :orange, linewidth = 7.0)
     frame(anim)
 end
 
