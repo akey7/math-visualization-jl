@@ -86,15 +86,11 @@ Arguments
 """
 function render_frame(
     anim::Plots.Animation,
-    max_dist_from_support::Float64,
     dist_from_support::Float64,
 )
     xs = collect(
         range(start = -dist_from_support, stop = dist_from_support, length = 100),
     )
-    # xs = collect(
-    #     range(start = -max_dist_from_support, stop = max_dist_from_support, length = 100),
-    # )
     ys = curve(
         xs = xs,
         dist_from_support = dist_from_support,
@@ -129,7 +125,7 @@ function render_curve_animation()
     anim = Animation()
     dists_from_support = range(start = 20.0, stop = 15.0, length = n_frames)
     for dist_from_support ∈ dists_from_support
-        render_frame(anim, 20.0, dist_from_support)
+        render_frame(anim, dist_from_support)
     end
     mp4(anim, "suspension_animation.mp4", fps = fps)
 end
