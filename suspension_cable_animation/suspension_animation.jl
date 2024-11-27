@@ -93,7 +93,7 @@ function render_frame(
     plot(
         xs,
         ys,
-        xlims = (-20.0, 25.0),
+        xlims = (-25.0, 25.0),
         ylims = (0.0, 50.0),
         legend = :none,
         linewidth = 3.0,
