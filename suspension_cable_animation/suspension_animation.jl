@@ -106,7 +106,7 @@ function render_frame(
         xlims = (-25.0, 25.0),
         ylims = (0.0, 30.0),
         legend = :none,
-        linewidth = 3.0,
+        linewidth = 10.0,
         size = (1080, 1920 / 2),
     )
     plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
@@ -116,6 +116,7 @@ function render_frame(
     bottom_location = ys[Int64(length(ys) / 2)]
     bottom_annotation = @sprintf("%.1f", bottom_location)
     annotate!(0.0, bottom_location + 1.0, text("$bottom_annotation ft", :black, 16))
+    quiver!([0.0], [0.0], quiver = ([0.0], [bottom_location - 0.25]), color = :orange, linewidth = 7.0)
     frame(anim)
 end
 
