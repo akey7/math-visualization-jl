@@ -94,12 +94,12 @@ function render_frame(
         xs,
         ys,
         xlims = (-20.0, 25.0),
-        ylims = (0.0, 31.0),
+        ylims = (0.0, 50.0),
         legend = :none,
         linewidth = 3.0,
     )
-    plot!([minimum(xs), minimum(xs)], [0.0, 31.0], color = :red, linewidth = 7.0)
-    plot!([maximum(xs), maximum(xs)], [0.0, 31.0], color = :red, linewidth = 7.0)
+    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
     frame(anim)
 end
 
@@ -108,7 +108,7 @@ function render_curve_animation()
     seconds = 5
     n_frames = fps * seconds
     anim = Animation()
-    dists_from_support = range(start = 15.0, stop = 20.0, length = n_frames)
+    dists_from_support = range(start = 20.0, stop = 15.0, length = n_frames)
     for dist_from_support ∈ dists_from_support
         render_frame(anim, 20.0, dist_from_support)
     end
