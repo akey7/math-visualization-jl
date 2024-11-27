@@ -74,6 +74,16 @@ function curve(;
     ys
 end
 
+"""
+    render_frame(anim::Plots.Animation, max_dist_from_support::Float64, dist_from_support::Float64)
+
+Render a single frame of the suspension cable with the bottom at a particular distance from the supports and supports going up to where the supports would be.
+
+Arguments
+1. `anim::Plots.Animation` Animation to render into.
+2. `max_dist_from_support::Float64` The maximum distance the bottom might be at from the supports to keep parts of the animation constant.
+3. `dist_from_support::Float64` The distance from support of the center of the cable for this frame.
+"""
 function render_frame(
     anim::Plots.Animation,
     max_dist_from_support::Float64,
@@ -103,6 +113,11 @@ function render_frame(
     frame(anim)
 end
 
+"""
+    render_curve_animation()
+
+Render the animation by calling the frame generation function in a loop.
+"""
 function render_curve_animation()
     fps = 30
     seconds = 5
