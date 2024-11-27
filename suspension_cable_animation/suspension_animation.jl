@@ -79,8 +79,6 @@ function render_frame(
     max_dist_from_support::Float64,
     dist_from_support::Float64,
 )
-    width = 1080
-    height = 1920 / 2
     xs = collect(
         range(start = -max_dist_from_support, stop = max_dist_from_support, length = 100),
     )
