@@ -35,6 +35,7 @@ Manifest.toml
 *.js
 *.woff
 *.quarto_ipynb
+*.mp4
 
 # Ignore any conda environments
 env/
