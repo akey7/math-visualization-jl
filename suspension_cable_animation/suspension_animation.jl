@@ -107,6 +107,7 @@ function render_frame(
         ylims = (0.0, 50.0),
         legend = :none,
         linewidth = 3.0,
+        size = (1080, 1920 / 2),
     )
     plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
     plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
