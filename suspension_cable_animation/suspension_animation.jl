@@ -90,8 +90,11 @@ function render_frame(
     dist_from_support::Float64,
 )
     xs = collect(
-        range(start = -max_dist_from_support, stop = max_dist_from_support, length = 100),
+        range(start = -dist_from_support, stop = dist_from_support, length = 100),
     )
+    # xs = collect(
+    #     range(start = -max_dist_from_support, stop = max_dist_from_support, length = 100),
+    # )
     ys = curve(
         xs = xs,
         dist_from_support = dist_from_support,
