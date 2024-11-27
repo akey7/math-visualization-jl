@@ -1,5 +1,6 @@
 using Plots
 using Roots
+using Printf
 
 """
     tension(; s::Float64, x::Float64, w::Float64, guess_lower::Float64, guess_upper::Float64)
@@ -110,6 +111,8 @@ function render_frame(
     )
     plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
     plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    height_annotation = @sprintf("%.1f", maximum(ys))
+    annotate!(minimum(xs), maximum(ys) + 1.0, text(height_annotation, :black, 16)) 
     frame(anim)
 end
 
