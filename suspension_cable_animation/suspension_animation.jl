@@ -103,7 +103,7 @@ function render_frame(
         xs,
         ys,
         xlims = (-25.0, 25.0),
-        ylims = (0.0, 50.0),
+        ylims = (0.0, 30.0),
         legend = :none,
         linewidth = 3.0,
         size = (1080, 1920 / 2),
@@ -123,7 +123,7 @@ function render_curve_animation()
     seconds = 5
     n_frames = fps * seconds
     anim = Animation()
-    dists_from_support = range(start = 20.0, stop = 15.0, length = n_frames)
+    dists_from_support = range(start = 18.0, stop = 15.0, length = n_frames)
     for dist_from_support ∈ dists_from_support
         render_frame(anim, dist_from_support)
     end
