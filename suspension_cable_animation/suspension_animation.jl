@@ -120,7 +120,8 @@ function render_frame(
     width_dimension = maximum(xs) - minimum(ys)
     width_annotation = @sprintf("%.1f", width_dimension)
     annotate!(0.0, maximum(ys), text("$width_annotation ft", :black, 16))
-    quiver!([2.0], [maximum(ys)], quiver = ([maximum(xs) - 2.5], [0.0]), color = :orange, linewidth = 7.0)
+    quiver!([2.0], [maximum(ys)], quiver = ([maximum(xs) - 2.75], [0.0]), color = :orange, linewidth = 7.0)
+    quiver!([-2.0], [maximum(ys)], quiver = ([minimum(xs) + 2.5], [0.0]), color = :orange, linewidth = 7.0)
     frame(anim)
 end
 
