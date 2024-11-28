@@ -108,6 +108,11 @@ function render_frame(
         legend = :none,
         linewidth = 10.0,
         size = (1080, 1920 / 2),
+        xtickfont = 18,
+        ytickfont = 18,
+        guidefont = 18,
+        xlabel = "ft",
+        ylabel = "ft",
     )
     plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
     plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
