@@ -8,7 +8,7 @@ using Printf
 Calculate tension at bottom of a suspension cable hung from two supports.
 
 Arguments
-1. `s::Float64` Total length of the cable in feet.
+1. `s::Float64` Half the length of the cable in feet.
 2. `x::Float64` Distance of bottom of cable from supports in feet.
 3. `w::Float64` Weight of the cable in lb/ft
 4. `guess_lower::Float64` Lower bound of guessed tension range. For the solver.
@@ -38,7 +38,7 @@ Arguments
 1. `xs::Vector{Float64}` Vector of x coordinates along which to calculate the curve.
 2. `dist_from_support::Float64` Distance of the bottom of the cable from the support.
 3. `w::Float64` Weight of the cable in lb/ft
-4. `s::Float64` Total length of the cable in feet.
+4. `s::Float64` Half the length of the cable in feet.
 5. `guess_lower::Float64` Lower bound of guessed tension range. For the solver. Should encompass all possible ranges of tensions.
 6. `guess_upper::Float64` Upper bound of guessed tension range. For the solver. Should encompass all possible ranges of tensions.
 
