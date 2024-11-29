@@ -107,7 +107,7 @@ function render_frame(anim::Plots.Animation, dist_from_support::Float64)
         size = (1080, 1920 / 2),
         xtickfont = 18,
         ytickfont = 18,
-        guidefont = 18,
+        guidefont = 24,
         xlabel = "ft",
         ylabel = "ft",
         margin = 25px,
