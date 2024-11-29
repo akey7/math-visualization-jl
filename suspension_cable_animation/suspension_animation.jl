@@ -111,9 +111,10 @@ function render_frame(anim::Plots.Animation, dist_from_support::Float64)
         xlabel = "ft",
         ylabel = "ft",
         margin = 25px,
+        color = "#2F1847",
     )
-    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
-    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = "#D63AF9", linewidth = 7.0)
+    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = "#D63AF9", linewidth = 7.0)
     height_annotation = @sprintf("%.1f", maximum(ys))
     annotate!(minimum(xs), maximum(ys) + 1.5, text("$height_annotation ft", :black, 24))
     bottom_location = ys[Int64(length(ys) / 2)]
@@ -123,7 +124,7 @@ function render_frame(anim::Plots.Animation, dist_from_support::Float64)
         [0.0],
         [0.0],
         quiver = ([0.0], [bottom_location - 0.5]),
-        color = :orange,
+        color = "#F9B3D1",
         linewidth = 7.0,
     )
     width_dimension = maximum(xs) - minimum(xs)
@@ -133,14 +134,14 @@ function render_frame(anim::Plots.Animation, dist_from_support::Float64)
         [4.0],
         [maximum(ys)],
         quiver = ([maximum(xs) - 4.75], [0.0]),
-        color = :orange,
+        color = "#F9B3D1",
         linewidth = 7.0,
     )
     quiver!(
         [-4.0],
         [maximum(ys)],
         quiver = ([minimum(xs) + 4.75], [0.0]),
-        color = :orange,
+        color = "#F9B3D1",
         linewidth = 7.0,
     )
     frame(anim)
