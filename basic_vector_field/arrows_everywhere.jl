@@ -7,8 +7,8 @@ end
 annotations = []
 xs::Vector{Float64} = []
 vs::Vector{Float64} = []
-for x ∈ range(-1.0, 1.0, 3)
-    for v ∈ range(-1.0, 1.0, 3)
+for x ∈ [-1.0, 0.0, 1.0]
+    for v ∈ [-1.0, 0.0, 1.0]
         push!(xs, x)
         push!(vs, v)
         (ẋ, v̇) = f_xv(x, v)
