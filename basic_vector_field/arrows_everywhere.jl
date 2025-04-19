@@ -7,16 +7,16 @@ end
 annotations = []
 xs::Vector{Float64} = []
 vs::Vector{Float64} = []
-for x ∈ range(-10.0, 10.0, 20)
-    for v ∈ range(-10.0, 10.0, 20)
+for x ∈ [-1.0, 1.0]
+    for v ∈ [0.0]
         push!(xs, x)
         push!(vs, v)
         (ẋ, v̇) = f_xv(x, v)
         annotation = attr(
             ax = x,
             ay = v,
-            x = x - ẋ,
-            y = v - v̇,
+            x = x + ẋ,
+            y = v + v̇,
             axref = "x",
             ayref = "y",
             showarrow = true,
@@ -34,7 +34,7 @@ trace1 = scatter(
     mode = "markers",
     marker = attr(color = "blue", size = 2),
 )
-layout = Layout(annotations = annotations)
+layout = Layout(annotations = annotations, width = 500, height = 500)
 p = plot([trace1], layout)
 display(p)
 println("Press enter to exit...")
