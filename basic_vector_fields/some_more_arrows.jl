@@ -5,8 +5,8 @@ function f_xv(x::Float64, v::Float64, ω::Float64 = 1.0)
 end
 
 annotations = []
-xs = [-1.0, 1.0, 0.0, 0.0]
-ys = [0.0, 0.0, -1.0, 1.0]
+xs = [-1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 1.0, 1.0, 1.0]
+ys = [0.0, 0.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0]
 for (x, y) ∈ zip(xs, ys)
     (ẋ, ẏ) = f_xv(x, y)
     annotation = attr(
