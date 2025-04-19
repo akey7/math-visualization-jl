@@ -10,16 +10,17 @@ ys = [0.0, 0.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0]
 for (x, y) ∈ zip(xs, ys)
     (ẋ, ẏ) = f_xv(x, y)
     annotation = attr(
-        ax = x,
-        ay = y,
-        x = x + ẋ,
-        y = y + ẏ,
+        x = x,
+        y = y,
+        ax = x + ẋ,
+        ay = y + ẏ,
         axref = "x",
         ayref = "y",
         showarrow = true,
         arrowcolor = "black",
         arrowhead = 2,
         arrowsize = 2,
+        arrowside = "end",
         text = "",
     )
     push!(annotations, annotation)
