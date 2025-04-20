@@ -28,12 +28,7 @@ for x ∈ [-1.0, 0.0, 1.0]
         push!(annotations, annotation)
     end
 end
-trace1 = scatter(
-    x = xs,
-    y = vs,
-    mode = "markers",
-    marker = attr(color = "blue", size = 10),
-)
+trace1 = scatter(x = xs, y = vs, mode = "markers", marker = attr(color = "blue", size = 10))
 layout = Layout(annotations = annotations, width = 500, height = 500)
 p = plot([trace1], layout)
 display(p)

@@ -25,12 +25,7 @@ for (x, y) ∈ zip(xs, ys)
     )
     push!(annotations, annotation)
 end
-trace1 = scatter(
-    x = xs,
-    y = ys,
-    mode = "markers",
-    marker = attr(color = "blue", size = 10),
-)
+trace1 = scatter(x = xs, y = ys, mode = "markers", marker = attr(color = "blue", size = 10))
 layout = Layout(annotations = annotations, width = 500, height = 500)
 p = plot([trace1], layout)
 display(p)
