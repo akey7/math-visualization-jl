@@ -1,26 +1,16 @@
 using PlotlyJS
 
-function f(t::Float64; a::Float64, x0::Float64 = 1.0, y0::Float64 = 1.0)
-    x = x0 * exp(a*t)
-    y = y0 * exp(-t)
-    (x, y)
-end
-
+x_eq(t, x0, a) = x0 * exp(a * t)
+y_eq(t, y0) = y0 * exp(-t)
+x0s = range(-1.0, 1.0, 3)
+y0s = range(-1.0, 1.0, 3)
+ts = range(-1.0, 1.0, length=10)
 a = -2.0
-traces::Vector{AbstractTrace} = []
-for x0 ∈ range(-1.0, 1.0, 5)
-    xs::Vector{Float64} = []
-    ys::Vector{Float64} = []
-    for t ∈ range(-1.0, 1.0, 100)
-        (x, y) = f(t; a = a, x0 = x0)
-        push!(xs, x)
-        push!(ys, y)
-    end
-    trace = scatter(
-        x = xs,
-        y = ys,
-        mode = "lines",
-    )
+traces::Vector{GenericTrace} = []
+for (x0, y0) ∈ zip(x0s, y0s)
+    xs = x_eq.(ts, x0, a)
+    ys = y_eq.(ts, y0)
+    trace = scatter(x = xs, y = ys, mode = "lines")
     push!(traces, trace)
 end
 layout = Layout(width = 500, height = 500)
