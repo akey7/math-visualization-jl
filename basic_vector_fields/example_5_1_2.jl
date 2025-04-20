@@ -11,13 +11,13 @@ function portrait(a::Float64, rotations::Int64)
     for (x0, y0) ∈ zip(x0s, y0s)
         xs = x_eq.(ts, x0, a)
         ys = y_eq.(ts, y0)
-        trace = scatter(x = xs, y = ys, mode = "lines", showlegend = false)
+        trace = scatter(x = xs, y = ys, mode = "lines", line = attr(color = "black"), showlegend = false)
         push!(traces, trace)
     end
     layout = Layout(width = 500, height = 500)
     plot(traces, layout)
 end
 
-display(portrait(-2.0, 10))
+display(portrait(-2.0, 12))
 println("Press enter to continue")
 readline()
