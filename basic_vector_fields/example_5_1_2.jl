@@ -28,12 +28,13 @@ function portrait(a::Float64, r::Float64, angles::Vector{Float64})
         push!(traces, trace_line)
         push!(traces, trace_point)
     end
-    layout = Layout(width = 500, height = 500)
+    title = "a = $a"
+    layout = Layout(title = title, width = 500, height = 500)
     plot(traces, layout)
 end
 
 display(portrait(-2.0, 0.1, [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]))
-# display(portrait(-1.0, 1.0, 6))
+display(portrait(-1.0, 1.0, [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]))
 # display(portrait(0.0, 1.0, 6))
 # display(portrait(1.0, 1.0, 6))
 println("Press enter to continue")
