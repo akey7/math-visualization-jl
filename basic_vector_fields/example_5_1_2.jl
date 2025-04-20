@@ -3,8 +3,9 @@ using PlotlyJS
 x_eq(t, x0, a) = x0 * exp(a * t)
 y_eq(t, y0) = y0 * exp(-t)
 
-function portrait(a::Float64, r::Float64, angles::Vector{Float64})
+function portrait(a::Float64, r::Float64)
     traces::Vector{GenericTrace} = []
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
     x0s = [r * cos(θ) for θ ∈ angles]
     y0s = [r * sin(θ) for θ ∈ angles]
     ts = range(0.0, 2.0, length = 10)
@@ -33,9 +34,9 @@ function portrait(a::Float64, r::Float64, angles::Vector{Float64})
     plot(traces, layout)
 end
 
-display(portrait(-2.0, 0.1, [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]))
-display(portrait(-1.0, 1.0, [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]))
-# display(portrait(0.0, 1.0, 6))
-# display(portrait(1.0, 1.0, 6))
+display(portrait(-2.0, 0.1))
+display(portrait(-1.0, 1.0))
+# display(portrait(0.0, 1.0, [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]))
+display(portrait(1.0, 1.0))
 println("Press enter to continue")
 readline()
