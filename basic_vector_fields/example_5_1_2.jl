@@ -12,13 +12,14 @@ function portrait(a::Float64, r::Float64)
     for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
         xs = x_eq.(ts, x0, a)
         ys = y_eq.(ts, y0)
+        showlegend = i == 1
         trace_start = scatter(
             x = [x0],
             y = [y0],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
             name = "start",
-            showlegend = i == 1,
+            showlegend = showlegend,
         )
         trace_line = scatter(
             x = xs,
@@ -26,7 +27,7 @@ function portrait(a::Float64, r::Float64)
             mode = "lines",
             line = attr(color = "black"),
             name = "path",
-            showlegend = i == 1,
+            showlegend = showlegend,
         )
         trace_end = scatter(
             x = [xs[end]],
@@ -34,7 +35,7 @@ function portrait(a::Float64, r::Float64)
             mode = "markers",
             marker = attr(color = "red", size = 10),
             name = "end",
-            showlegend = i == 1,
+            showlegend = showlegend,
         )
         push!(traces, trace_start)
         push!(traces, trace_line)
