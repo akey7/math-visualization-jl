@@ -9,7 +9,7 @@ function portrait(a::Float64, r::Float64)
     x0s = [r * cos(θ) for θ ∈ angles]
     y0s = [r * sin(θ) for θ ∈ angles]
     ts = range(0.0, 2.0, length = 10)
-    for (x0, y0) ∈ zip(x0s, y0s)
+    for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
         xs = x_eq.(ts, x0, a)
         ys = y_eq.(ts, y0)
         trace_start = scatter(
@@ -17,21 +17,24 @@ function portrait(a::Float64, r::Float64)
             y = [y0],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
-            showlegend = false,
+            name = "start",
+            showlegend = i == 1,
         )
         trace_line = scatter(
             x = xs,
             y = ys,
             mode = "lines",
             line = attr(color = "black"),
-            showlegend = false,
+            name = "path",
+            showlegend = i == 1,
         )
         trace_end = scatter(
             x = [xs[end]],
             y = [ys[end]],
             mode = "markers",
             marker = attr(color = "red", size = 10),
-            showlegend = false,
+            name = "end",
+            showlegend = i == 1,
         )
         push!(traces, trace_start)
         push!(traces, trace_line)
