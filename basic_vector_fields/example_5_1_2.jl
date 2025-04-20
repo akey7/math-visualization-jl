@@ -7,7 +7,7 @@ function portrait(a::Float64, r::Float64, rotations::Int64)
     traces::Vector{GenericTrace} = []
     x0s = [r * cos(θ) for θ ∈ range(0.0, 2π, rotations)]
     y0s = [r * sin(θ) for θ ∈ range(0.0, 2π, rotations)]
-    ts = range(-1.0, 1.0, length = 10)
+    ts = range(0.0, 1.0, length = 10)
     for (x0, y0) ∈ zip(x0s, y0s)
         xs = x_eq.(ts, x0, a)
         ys = y_eq.(ts, y0)
