@@ -13,5 +13,5 @@ for i ∈ 1:2
     λ = eig.values[i]
     lhs = A * v
     rhs = λ * v 
-    println(all(lhs .≈ rhs))
+    println(lhs ≈ rhs)
 end
