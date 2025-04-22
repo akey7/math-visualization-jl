@@ -5,7 +5,8 @@ using PlotlyJS
 # DEFINE A MATRIX AND INITIAL CONDITIONS            #
 #####################################################
 
-A = [1.0 1.0; 4.0 -2.0]
+# A = [1.0 1.0; 4.0 -2.0]
+A = [1.0 -2.0; -3.0 4.0]
 initial_conditions = [2.0; -3.0]
 
 #####################################################
@@ -53,9 +54,6 @@ xs1 = cs .* eig.vectors[1, 1]
 ys1 = cs .* eig.vectors[2, 1]
 xs2 = cs .* eig.vectors[1, 2]
 ys2 = cs .* eig.vectors[2, 2]
-ts = range(-1.0, 1.0, 100)
-xs3 = x_eq.(ts)
-ys3 = x_eq.(ts)
 traces = [
     scatter(x = xs1, y = ys1, mode = "lines", line = attr(color = "black")),
     scatter(
@@ -83,7 +81,6 @@ traces = [
         model = "markers",
         marker = attr(color = "red", size = 10),
     ),
-    scatter(x = xs3, y = ys3, mode = "lines", line = attr(color = "black")),
 ]
 layout = Layout(width = 500, height = 500, legend = false)
 p = plot(traces, layout)
