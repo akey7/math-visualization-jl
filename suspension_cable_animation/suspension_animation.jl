@@ -1,6 +1,8 @@
 using Plots
+using Plots.PlotMeasures
 using Roots
 using Printf
+gr()
 
 """
     tension(; s::Float64, x::Float64, w::Float64, guess_lower::Float64, guess_upper::Float64)
@@ -85,13 +87,8 @@ Arguments
 2. `max_dist_from_support::Float64` The maximum distance the bottom might be at from the supports to keep parts of the animation constant.
 3. `dist_from_support::Float64` The distance from support of the center of the cable for this frame.
 """
-function render_frame(
-    anim::Plots.Animation,
-    dist_from_support::Float64,
-)
-    xs = collect(
-        range(start = -dist_from_support, stop = dist_from_support, length = 100),
-    )
+function render_frame(anim::Plots.Animation, dist_from_support::Float64)
+    xs = collect(range(start = -dist_from_support, stop = dist_from_support, length = 100))
     ys = curve(
         xs = xs,
         dist_from_support = dist_from_support,
@@ -108,20 +105,45 @@ function render_frame(
         legend = :none,
         linewidth = 10.0,
         size = (1080, 1920 / 2),
+        xtickfont = 18,
+        ytickfont = 18,
+        guidefont = 24,
+        xlabel = "ft",
+        ylabel = "ft",
+        margin = 25px,
+        color = "#2F1847",
     )
-    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
-    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+    plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = "#D63AF9", linewidth = 7.0)
+    plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = "#D63AF9", linewidth = 7.0)
     height_annotation = @sprintf("%.1f", maximum(ys))
-    annotate!(minimum(xs), maximum(ys) + 1.0, text("$height_annotation ft", :black, 16))
+    annotate!(minimum(xs), maximum(ys) + 1.5, text("$height_annotation ft", :black, 24))
     bottom_location = ys[Int64(length(ys) / 2)]
     bottom_annotation = @sprintf("%.1f", bottom_location)
-    annotate!(0.0, bottom_location + 1.0, text("$bottom_annotation ft", :black, 16))
-    quiver!([0.0], [0.0], quiver = ([0.0], [bottom_location - 0.5]), color = :orange, linewidth = 7.0)
+    annotate!(0.0, bottom_location + 1.5, text("$bottom_annotation ft", :black, 24))
+    quiver!(
+        [0.0],
+        [0.0],
+        quiver = ([0.0], [bottom_location - 0.5]),
+        color = "#F9B3D1",
+        linewidth = 7.0,
+    )
     width_dimension = maximum(xs) - minimum(xs)
     width_annotation = @sprintf("%.1f", width_dimension)
-    annotate!(0.0, maximum(ys), text("$width_annotation ft", :black, 16))
-    quiver!([3.0], [maximum(ys)], quiver = ([maximum(xs) - 3.75], [0.0]), color = :orange, linewidth = 7.0)
-    quiver!([-3.0], [maximum(ys)], quiver = ([minimum(xs) + 3.75], [0.0]), color = :orange, linewidth = 7.0)
+    annotate!(0.0, maximum(ys), text("$width_annotation ft", :black, 24))
+    quiver!(
+        [4.0],
+        [maximum(ys)],
+        quiver = ([maximum(xs) - 4.75], [0.0]),
+        color = "#F9B3D1",
+        linewidth = 7.0,
+    )
+    quiver!(
+        [-4.0],
+        [maximum(ys)],
+        quiver = ([minimum(xs) + 4.75], [0.0]),
+        color = "#F9B3D1",
+        linewidth = 7.0,
+    )
     frame(anim)
 end
 
