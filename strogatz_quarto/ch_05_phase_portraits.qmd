@@ -1,0 +1,9 @@
+---
+title: "Strogatz 3rd Ed Ch. 5 Inspired Phase Portraits"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+engine: jupyter
+---
