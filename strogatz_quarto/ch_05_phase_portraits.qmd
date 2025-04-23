@@ -41,7 +41,7 @@ x_eq(t, x0, a) = x0 * exp(a * t)
 y_eq(t, y0) = y0 * exp(-t)
 ```
 
-The function to draw the phase portraits is:
+The function to draw a selection of the phase portraits found in Figure 5.1.5 is the following:
 
 ```{julia}
 #| label: fig-5-1-5-portrait-function
@@ -123,7 +123,9 @@ function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 50
 end
 ```
 
-The text shows plots for varying values of *a*, which are reflected in the plots below. The plots are made with Plotly, so they can be hovered and zoomed, too!
+The text shows plots for varying values of *a*, which are reflected in the plots below. The blue dots are at the beginnings of the paths and the red dots are at the end of the paths to give a sense of directionality to the plots.
+
+The plots are made with Plotly, so they can be hovered and zoomed, too!
 
 ```{julia}
 #| label: fig-5-1-5-01
@@ -131,7 +133,25 @@ The text shows plots for varying values of *a*, which are reflected in the plots
 #| echo: true
 #| eval: true
 
-portrait(-2.0, 0.1, 300, 300)
+portrait(-2.0, 0.1, 550, 500)
+```
+
+```{julia}
+#| label: fig-5-1-5-02
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(-1.0, 1.0, 550, 500)
+```
+
+```{julia}
+#| label: fig-5-1-5-03
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(1.0, 1.0, 550, 500)
 ```
 
 ## Fig 5.2.2-Inspired
