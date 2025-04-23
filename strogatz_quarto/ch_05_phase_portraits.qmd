@@ -44,4 +44,8 @@ y
 \end{pmatrix}
 $$
 
-In this document section, I will call 2x2 matrices of the above form *A*.
+The text's solution solves for initial conditions:
+
+$$ (x_0, y_0) = (2, 3) $$
+
+In the following plot, I will solve for many initial conditions to make the phase portrait as shown in the Julia code below. Also, I will call the 2x2 matrices in the equation above *A*.
