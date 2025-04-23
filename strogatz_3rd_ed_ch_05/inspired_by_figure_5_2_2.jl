@@ -100,6 +100,6 @@ function portrait(
 end
 
 display(portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
-display(portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.75, 0.75, 100))))
+display(portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100))))
 println("Press enter to exit...")
 readline()
