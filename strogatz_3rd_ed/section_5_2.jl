@@ -26,29 +26,30 @@ end
 
 A = [1.0 1.0; 4.0 -2.0]
 ts = range(-1.0, 1.0, 100)
+x0s = [1.0, 2.0, 3.0]
+y0s = [-3.0, -2.0, -1.0]
 traces::Vector{GenericTrace} = []
-for x ∈ [2.0]
-    for y ∈ [-3.0]
-        x_eq, y_eq = solve_for_ic(A, [x, y])
-        xs = x_eq.(ts)
-        ys = y_eq.(ts)
-        trace_line = scatter(x = xs, y = ys, mode = "lines", marker = attr(color = "black"))
-        trace_start = scatter(
-            x = [xs[1]],
-            y = [ys[1]],
-            mode = "markers",
-            marker = attr(color = "blue", size = 10),
-        )
-        trace_end = scatter(
-            x = [xs[end]],
-            y = [ys[end]],
-            mode = "markers",
-            marker = attr(color = "red", size = 10),
-        )
-        push!(traces, trace_start)
-        push!(traces, trace_line)
-        push!(traces, trace_end)
-    end
+for (x0, y0) ∈ Base.product(x0s, y0s)
+    x_eq, y_eq = solve_for_ic(A, [x0, y0])
+    xs = x_eq.(ts)
+    ys = y_eq.(ts)
+    trace_line = scatter(x = xs, y = ys, mode = "lines", marker = attr(color = "black"))
+    trace_start = scatter(
+        x = [xs[1]],
+        y = [ys[1]],
+        mode = "markers",
+        marker = attr(color = "blue", size = 10),
+        showlegend = false,
+    )
+    trace_end = scatter(
+        x = [xs[end]],
+        y = [ys[end]],
+        mode = "markers",
+        marker = attr(color = "red", size = 10),
+    )
+    push!(traces, trace_start)
+    push!(traces, trace_line)
+    push!(traces, trace_end)
 end
 layout = Layout(width = 500, height = 500)
 p = plot(traces, layout)
