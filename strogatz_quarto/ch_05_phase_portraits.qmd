@@ -24,6 +24,118 @@ using PlotlyJS
 
 Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post, I seek to make similar phase portraits in Julia to enhance y understanding of the material.
 
+## Fig. 5.1.5-Inspired
+
+There are three phase portraits from the discussion of Figure 5.1.5 that I wanted to display. I set initial conditions at cartesian-coordinate conversions of points around the unit circle to create these plots. As shown in the text, the system being plotted is:
+
+$$ x(t) = x_0 e^{at} $$
+$$ y(t) = y_0 e^{-t} $$
+
+Which are conveniently expressed in Julia code:
+
+```{julia}
+#| label: fig-5-1-5-system-of-eqs
+#| include: true
+#| echo: true
+#| eval: true
+
+x_eq(t, x0, a) = x0 * exp(a * t)
+y_eq(t, y0) = y0 * exp(-t)
+```
+
+The function to draw the phase portraits is:
+
+```{julia}
+#| label: fig-5-1-5-portrait-function
+#| include: true
+#| echo: true
+#| eval: true
+
+function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 500)
+    traces::Vector{GenericTrace} = []
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
+    x0s = [r * cos(θ) for θ ∈ angles]
+    y0s = [r * sin(θ) for θ ∈ angles]
+    ts = range(0.0, 2.0, length = 10)
+    for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
+        xs = x_eq.(ts, x0, a)
+        ys = y_eq.(ts, y0)
+        showlegend = i == 1
+        trace_start = scatter(
+            x = [x0],
+            y = [y0],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        trace_line = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            line = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        trace_end = scatter(
+            x = [xs[end]],
+            y = [ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "end",
+            showlegend = showlegend,
+        )
+        push!(traces, trace_start)
+        push!(traces, trace_line)
+        push!(traces, trace_end)
+    end
+    title = "<b>a = $a</b>"
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        title = title,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        width = width,
+        height = height,
+    )
+    plot(traces, layout)
+end
+```
+
+The text shows plots for varying values of *a*, which are reflected in the plots below. The plots are made with Plotly, so they can be hovered and zoomed, too!
+
+```{julia}
+#| label: fig-5-1-5-01
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(-2.0, 0.1, 300, 300)
+```
+
 ## Fig 5.2.2-Inspired
 
 Leading up to Figure 5.2.2, we are taken through solving the following:
