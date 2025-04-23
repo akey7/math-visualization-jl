@@ -1,7 +1,7 @@
 using LinearAlgebra
 using PlotlyJS
 
-function solve_for_ic(A::Matrix{Float64}, ics::Vector{Float64})
+function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     println("#####################################################")
     println("# BEGIN SOLVE                                       #")
     println("#####################################################")
@@ -35,30 +35,31 @@ function portrait(
     x0s = [r * cos(θ) for θ ∈ angles]
     y0s = [r * sin(θ) for θ ∈ angles]
     traces::Vector{GenericTrace} = []
-    for (x0, y0) ∈ Base.product(x0s, y0s)
-        x_eq, y_eq = solve_for_ic(A, [x0, y0])
+    for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+        x_eq, y_eq = solve_for_ics(A, [x0, y0])
         xs = x_eq.(ts)
         ys = y_eq.(ts)
+        showlegend = 1 == 1
         trace_line = scatter(
             x = xs,
             y = ys,
             mode = "lines",
             marker = attr(color = "black"),
-            showlegend = false,
+            showlegend = showlegend,
         )
         trace_start = scatter(
             x = [xs[1]],
             y = [ys[1]],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
-            showlegend = false,
+            showlegend = showlegend,
         )
         trace_end = scatter(
             x = [xs[end]],
             y = [ys[end]],
             mode = "markers",
             marker = attr(color = "red", size = 10),
-            showlegend = false,
+            showlegend = showlegend,
         )
         push!(traces, trace_start)
         push!(traces, trace_line)
