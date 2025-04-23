@@ -22,11 +22,11 @@ using PlotlyJS
 
 ## Phase Portrait Inspiration
 
-Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post, I seek to make similar phase portraits in code so that I can understand the portriats better.
+Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post, I seek to make similar phase portraits in Julia to enhance y understanding of the material.
 
-### Inspired by Figure 5.2.2
+## Fig 5.2.2-Inspired
 
-Leading up to figure 5.2, we are taken through solving the following:
+Leading up to Figure 5.2.2, we are taken through solving the following:
 
 $$
 \begin{pmatrix}
@@ -48,4 +48,6 @@ The text's solution solves for initial conditions:
 
 $$ (x_0, y_0) = (2, 3) $$
 
-In the following plot, I will solve for many initial conditions to make the phase portrait as shown in the Julia code below. Also, I will call the 2x2 matrices in the equation above *A*.
+In the following plot, I will solve for initial conditions around the unit circle converted to cartesian coordinates to make the phase portrait as shown in the Julia code below.
+
+> I will call the 2x2 matrices in the equation above *A*.
