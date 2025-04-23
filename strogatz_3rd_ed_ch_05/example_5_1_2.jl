@@ -70,8 +70,8 @@ function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 50
             gridcolor = gridcolor,
             gridwidth = gridwidth,
         ),
-        width = width, 
-        height = height
+        width = width,
+        height = height,
     )
     plot(traces, layout)
 end
