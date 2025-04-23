@@ -42,6 +42,10 @@ using IJulia
 installkernel("Julia", "--project=@.")
 ```
 
+### Compatiable version of WebIO for PlotlyJS
+
+[https://github.com/JuliaGizmos/WebIO.jl/issues/514](https://github.com/JuliaGizmos/WebIO.jl/issues/514)
+
 ### Quarto installation
 
 [This only needs to be done once per machine for each upgrade of Quarto or Julia.](https://quarto.org/docs/get-started/)

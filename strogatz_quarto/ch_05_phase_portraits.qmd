@@ -5,7 +5,7 @@ format:
     toc: true
     html-math-method: mathjax
     code-fold: false
-engine: jupyter
+engine: julia
 ---
 
 ```{julia}
@@ -14,8 +14,6 @@ engine: jupyter
 #| include: false
 #| echo: false
 
-using Pkg
-Pkg.activate("..")
 using LinearAlgebra
 using PlotlyJS
 ```
