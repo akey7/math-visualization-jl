@@ -39,19 +39,21 @@ function portrait(
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         xs = x_eq.(ts)
         ys = y_eq.(ts)
-        showlegend = 1 == 1
-        trace_line = scatter(
-            x = xs,
-            y = ys,
-            mode = "lines",
-            marker = attr(color = "black"),
-            showlegend = showlegend,
-        )
+        showlegend = i == 1
         trace_start = scatter(
             x = [xs[1]],
             y = [ys[1]],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        trace_line = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            marker = attr(color = "black"),
+            name = "path",
             showlegend = showlegend,
         )
         trace_end = scatter(
@@ -59,6 +61,7 @@ function portrait(
             y = [ys[end]],
             mode = "markers",
             marker = attr(color = "red", size = 10),
+            name = "stop",
             showlegend = showlegend,
         )
         push!(traces, trace_start)
