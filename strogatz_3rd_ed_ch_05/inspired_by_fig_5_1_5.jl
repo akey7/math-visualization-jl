@@ -41,7 +41,7 @@ function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 50
         push!(traces, trace_line)
         push!(traces, trace_end)
     end
-    title = "a = $a"
+    title = "<b>a = $a</b>"
     plot_bgcolor = "white"
     paper_bgcolor = "white"
     border_width = 1

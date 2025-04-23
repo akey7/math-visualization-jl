@@ -68,7 +68,7 @@ function portrait(
         push!(traces, trace_line)
         push!(traces, trace_end)
     end
-    title = "A = $(string(A))"
+    title = "<b>A = $(string(A))</b>"
     plot_bgcolor = "white"
     paper_bgcolor = "white"
     border_width = 1
