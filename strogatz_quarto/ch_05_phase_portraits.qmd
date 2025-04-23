@@ -1,0 +1,311 @@
+---
+title: "Strogatz 3rd Ed Ch. 5 Inspired Phase Portraits"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+engine: julia
+---
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+#| echo: false
+
+using LinearAlgebra
+using PlotlyJS
+```
+
+## Phase Portrait Inspiration
+
+Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post, I seek to make similar phase portraits in Julia to enhance y understanding of the material.
+
+> In function definitions below, the trailing `;` prevents extraneous output in this document.
+
+## Fig. 5.1.5-Inspired
+
+There are three phase portraits from the discussion of Figure 5.1.5 that I wanted to display. I set initial conditions at cartesian-coordinate conversions of points around the unit circle to create these plots. As shown in the text, the system being plotted is:
+
+$$ x(t) = x_0 e^{at} $$
+$$ y(t) = y_0 e^{-t} $$
+
+Which are conveniently expressed in Julia code:
+
+```{julia}
+#| label: section-01-system-of-eqs
+#| include: true
+#| echo: true
+#| eval: true
+
+x_eq(t, x0, a) = x0 * exp(a * t)
+y_eq(t, y0) = y0 * exp(-t);
+```
+
+The function to draw a selection of the phase portraits found in Figure 5.1.5 is the following:
+
+```{julia}
+#| label: section-01-portrait-function
+#| include: true
+#| echo: true
+#| eval: true
+
+function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 500)
+    traces::Vector{GenericTrace} = []
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
+    x0s = [r * cos(θ) for θ ∈ angles]
+    y0s = [r * sin(θ) for θ ∈ angles]
+    ts = range(0.0, 2.0, length = 10)
+    for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
+        xs = x_eq.(ts, x0, a)
+        ys = y_eq.(ts, y0)
+        showlegend = i == 1
+        trace_start = scatter(
+            x = [x0],
+            y = [y0],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        trace_line = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            line = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        trace_end = scatter(
+            x = [xs[end]],
+            y = [ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "end",
+            showlegend = showlegend,
+        )
+        push!(traces, trace_start)
+        push!(traces, trace_line)
+        push!(traces, trace_end)
+    end
+    title = "<b>a = $a</b>"
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        title = title,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        width = width,
+        height = height,
+    )
+    plot(traces, layout)
+end;
+```
+
+The text shows plots for varying values of *a*, which are reflected in the plots below. The blue dots are at the beginnings of the paths and the red dots are at the end of the paths to give a sense of directionality to the plots.
+
+The plots are made with Plotly, so they can be hovered and zoomed, too!
+
+```{julia}
+#| label: section-01-01
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(-2.0, 0.1, 550, 500)
+```
+
+```{julia}
+#| label: section-01-02
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(-1.0, 1.0, 550, 500)
+```
+
+```{julia}
+#| label: section-01-03
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(1.0, 1.0, 550, 500)
+```
+
+## Fig 5.2.2-Inspired
+
+Leading up to Figure 5.2.2, we are taken through solving the following:
+
+$$
+\begin{pmatrix}
+\dot x \\
+\dot y
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 1 \\
+4 & -2
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y
+\end{pmatrix}
+$$
+
+As shown in the book, the solution to this system is:
+
+$$ x(t) = e^{2t} + e^{-3t} $$
+$$ y(t) = e^{2t} - 4e^{-3t} $$
+
+Like the book, I will call the 2x2 matrices in the equation above *A*. The text's solution solves for initial conditions (x<sub>0</sub>, y<sub>0</sub>) = (2, 3), but in the examples below I solve for different initial conditions to get many different curves.
+
+The following functions takes a given *A* matrix and vector of initial conditions, computes eigensolutions, and solves for c<sub>1</sub> and c<sub>2</sub> and returns the appropriate x(t) and y(t) functions to plot the phase portraits.
+
+```{julia}
+#| label: section-02-01
+#| include: true
+#| echo: true
+#| eval: true
+
+function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
+    eig = eigen(A)
+    λ = eig.values
+    v = eig.vectors
+    c = eig.vectors \ ics
+    x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
+    y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
+    x_eq, y_eq
+end;
+```
+
+The following plot is very similar to `portrait()` above, except it is designed to accomodate the *A* matrix and call `solve_for_ics()`:
+
+```{julia}
+#| label: section-02-02
+#| include: true
+#| echo: true
+#| eval: true
+
+function portrait(
+    A::Matrix{Float64},
+    r::Float64,
+    ts::Vector{Float64},
+    width::Int64 = 500,
+    height::Int64 = 500,
+)
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
+    x0s = [r * cos(θ) for θ ∈ angles]
+    y0s = [r * sin(θ) for θ ∈ angles]
+    traces::Vector{GenericTrace} = []
+    for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+        x_eq, y_eq = solve_for_ics(A, [x0, y0])
+        xs = x_eq.(ts)
+        ys = y_eq.(ts)
+        showlegend = i == 1
+        trace_start = scatter(
+            x = [xs[1]],
+            y = [ys[1]],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        trace_line = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            marker = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        trace_end = scatter(
+            x = [xs[end]],
+            y = [ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "stop",
+            showlegend = showlegend,
+        )
+        push!(traces, trace_start)
+        push!(traces, trace_line)
+        push!(traces, trace_end)
+    end
+    title = "<b>A = $(string(A))</b>"
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        title = title,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        width = width,
+        height = height,
+    )
+    plot(traces, layout)
+end;
+```
+
+As before, the blue dots show beginings of paths and the red dots show the end.
+
+```{julia}
+#| label: section-02-03
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
+```
+
+```{julia}
+#| label: section-02-04
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100)), 550, 500)
+```
