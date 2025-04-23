@@ -7,3 +7,18 @@ format:
     code-fold: false
 engine: jupyter
 ---
+
+```{julia}
+using Pkg
+Pkg.activate("..")
+using LinearAlgebra
+using PlotlyJS
+```
+
+## Phase Portrait Inspiration
+
+Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post, I seek to make similar phase portraits in code so that I can understand the portriats better.
+
+### Inspired by Figure 5.2.2
+
+
