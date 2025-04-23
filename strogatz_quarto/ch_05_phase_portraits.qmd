@@ -176,6 +176,11 @@ y
 \end{pmatrix}
 $$
 
+As shown in the book, the solution to this system is:
+
+$$ x(t) = e^{2t} + e^{-3t} $$
+$$ y(t) = e^{2t} - 4e^{-3t} $$
+
 Like the book, I will call the 2x2 matrices in the equation above *A*. The text's solution solves for initial conditions (x<sub>0</sub>, y<sub>0</sub>) = (2, 3), but in the examples below I solve for different initial conditions to get many different curves.
 
 The following functions takes a given *A* matrix and vector of initial conditions, computes eigensolutions, and solves for c<sub>1</sub> and c<sub>2</sub> and returns the appropriate x(t) and y(t) functions to plot the phase portraits.
@@ -283,4 +288,24 @@ function portrait(
     )
     plot(traces, layout)
 end;
+```
+
+As before, the blue dots show beginings of paths and the red dots show the end.
+
+```{julia}
+#| label: section-02-03
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
+```
+
+```{julia}
+#| label: section-02-04
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100)), 550, 500)
 ```
