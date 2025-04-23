@@ -3,7 +3,7 @@ using PlotlyJS
 x_eq(t, x0, a) = x0 * exp(a * t)
 y_eq(t, y0) = y0 * exp(-t)
 
-function portrait(a::Float64, r::Float64)
+function portrait(a::Float64, r::Float64, width::Int64 = 500, height::Int64 = 500)
     traces::Vector{GenericTrace} = []
     angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
     x0s = [r * cos(θ) for θ ∈ angles]
@@ -42,7 +42,37 @@ function portrait(a::Float64, r::Float64)
         push!(traces, trace_end)
     end
     title = "a = $a"
-    layout = Layout(title = title, width = 500, height = 500)
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        title = title,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        width = width, 
+        height = height
+    )
     plot(traces, layout)
 end
 
