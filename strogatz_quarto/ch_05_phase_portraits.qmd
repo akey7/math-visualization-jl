@@ -9,6 +9,11 @@ engine: jupyter
 ---
 
 ```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+#| echo: false
+
 using Pkg
 Pkg.activate("..")
 using LinearAlgebra
@@ -21,4 +26,22 @@ Chapter 5 in Strogatz, 3rd edition has many great phase portraits! In this post,
 
 ### Inspired by Figure 5.2.2
 
+Leading up to figure 5.2, we are taken through solving the following:
 
+$$
+\begin{pmatrix}
+\dot x \\
+\dot y
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 1 \\
+4 & -2
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y
+\end{pmatrix}
+$$
+
+In this document section, I will call 2x2 matrices of the above form *A*.
