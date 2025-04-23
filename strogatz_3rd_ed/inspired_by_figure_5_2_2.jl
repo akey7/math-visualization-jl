@@ -58,10 +58,12 @@ function portrait(A::Matrix{Float64}, r::Float64, ts::Vector{Float64})
         push!(traces, trace_line)
         push!(traces, trace_end)
     end
-    layout = Layout(width = 500, height = 500)
+    title = string(A)
+    layout = Layout(title = title, width = 500, height = 500)
     plot(traces, layout)
 end
 
 display(portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
+display(portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.75, 0.75, 100))))
 println("Press enter to exit...")
 readline()
