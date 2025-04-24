@@ -37,12 +37,12 @@ end
 
 function complex_portrait(
     A::Matrix{Float64},
+    angles::Vector{Float64},
     rs::Vector{Float64},
     ts::Vector{Float64},
     width::Int64 = 500,
     height::Int64 = 500,
 )
-    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
     x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
     y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     real_traces::Vector{GenericTrace} = []
@@ -173,7 +173,9 @@ end
 display(
     complex_portrait(
         [3.0 -3.0; 2.0 2.0],
-        [0.5, 1.5],
+        # [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4],
+        [0.0, π/2, π, 3π/2],
+        [1.0],
         collect(range(-2.0, 1.0, 100)),
         1100,
         500,
