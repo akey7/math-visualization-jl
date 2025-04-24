@@ -120,7 +120,7 @@ function complex_portrait(
 end
 
 display(
-    complex_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-1.0, 1.0, 100)), 550, 500),
+    complex_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-2.0, 1.0, 100)), 550, 500),
 )
 println("Press enter to exit...")
 readline()
