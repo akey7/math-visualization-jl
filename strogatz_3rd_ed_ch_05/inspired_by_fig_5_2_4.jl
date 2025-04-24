@@ -45,39 +45,39 @@ function complex_portrait(
     angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
     x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
     y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
-    traces::Vector{GenericTrace} = []
+    real_traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
-        xs = real(x_eq.(ts))
-        ys = real(y_eq.(ts))
+        real_xs = real(x_eq.(ts))
+        real_ys = real(y_eq.(ts))
         showlegend = i == 1
-        trace_start = scatter(
-            x = [xs[1]],
-            y = [ys[1]],
+        real_trace_start = scatter(
+            x = [real_xs[1]],
+            y = [real_ys[1]],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
             name = "start",
             showlegend = showlegend,
         )
-        trace_path = scatter(
-            x = xs,
-            y = ys,
+        real_trace_path = scatter(
+            x = real_xs,
+            y = real_ys,
             mode = "lines",
             line = attr(color = "black"),
             name = "path",
             showlegend = showlegend,
         )
-        trace_end = scatter(
-            x = [xs[end]],
-            y = [ys[end]],
+        real_trace_end = scatter(
+            x = [real_xs[end]],
+            y = [real_ys[end]],
             mode = "markers",
             marker = attr(color = "red", size = 10),
             name = "stop",
             showlegend = showlegend,
         )
-        push!(traces, trace_start)
-        push!(traces, trace_path)
-        push!(traces, trace_end)
+        push!(real_traces, real_trace_start)
+        push!(real_traces, real_trace_path)
+        push!(real_traces, real_trace_end)
     end
     title = "<b>A = $(string(A))</b>"
     plot_bgcolor = "white"
@@ -111,7 +111,7 @@ function complex_portrait(
         width = width,
         height = height,
     )
-    plot(traces, layout)
+    plot(real_traces, layout)
 end
 
 display(
