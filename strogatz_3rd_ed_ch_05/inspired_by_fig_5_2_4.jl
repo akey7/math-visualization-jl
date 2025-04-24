@@ -24,9 +24,9 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
         α = real(λ)
         ω = imag(λ)
         x_eq_complex(t::Float64) =
-            c[1]*v[1, 1]*exp(α[1]t)*cos(ω[1]*t) + c[2]*v[1, 2]*exp(α[1]*t)*sin(ω[1]t)
+            c[1]*v[1, 1]*exp(α[1]t)*cos(ω[1]*t) + c[2]*v[1, 2]*exp(α[1]*t)*sin(ω[1]*t)
         y_eq_complex(t::Float64) =
-            c[1]*v[1, 1]*exp(α[2]t)*cos(ω[2]*t) + c[2]*v[1, 2]*exp(α[2]*t)*sin(ω[2]t)
+            c[1]*v[1, 1]*exp(α[2]t)*cos(ω[2]*t) + c[2]*v[1, 2]*exp(α[2]*t)*sin(ω[2]*t)
         return x_eq_complex, y_eq_complex
     else  # Result is real
         x_eq_real(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
