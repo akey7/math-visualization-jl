@@ -47,7 +47,12 @@ function complex_portrait(
     y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     real_traces::Vector{GenericTrace} = []
     imag_traces::Vector{GenericTrace} = []
-    for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+    x0s_y0s = collect(Base.product(x0s, y0s))
+    println("Length of x0s_y0s: $(length(x0s_y0s))")
+    for x0_y0 ∈ x0s_y0s
+        println(x0_y0)
+    end
+    for (i, (x0, y0)) ∈ enumerate(x0s_y0s)
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         real_xs = real(x_eq.(ts))
         real_ys = real(y_eq.(ts))
