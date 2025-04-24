@@ -84,7 +84,7 @@ function complex_portrait(
             mode = "markers",
             marker = attr(color = "blue", size = 10),
             name = "start",
-            showlegend = showlegend,
+            showlegend = false,
         )
         imag_trace_path = scatter(
             x = imag_xs,
@@ -92,7 +92,7 @@ function complex_portrait(
             mode = "lines",
             line = attr(color = "black"),
             name = "path",
-            showlegend = showlegend,
+            showlegend = false,
         )
         imag_trace_end = scatter(
             x = [imag_xs[end]],
@@ -100,7 +100,7 @@ function complex_portrait(
             mode = "markers",
             marker = attr(color = "red", size = 10),
             name = "stop",
-            showlegend = showlegend,
+            showlegend = false,
         )
         push!(real_traces, real_trace_start)
         push!(real_traces, real_trace_path)
