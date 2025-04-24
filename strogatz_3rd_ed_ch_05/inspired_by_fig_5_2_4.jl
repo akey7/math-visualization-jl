@@ -46,10 +46,13 @@ function complex_portrait(
     x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
     y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     real_traces::Vector{GenericTrace} = []
+    imag_traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         real_xs = real(x_eq.(ts))
         real_ys = real(y_eq.(ts))
+        imag_xs = imag(x_eq.(ts))
+        imag_ys = imag(y_eq.(ts))
         showlegend = i == 1
         real_trace_start = scatter(
             x = [real_xs[1]],
@@ -75,9 +78,43 @@ function complex_portrait(
             name = "stop",
             showlegend = showlegend,
         )
+        imag_trace_start = scatter(
+            x = [imag_xs[1]],
+            y = [imag_ys[1]],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        imag_trace_path = scatter(
+            x = imag_xs,
+            y = imag_ys,
+            mode = "lines",
+            line = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        imag_trace_end = scatter(
+            x = [imag_xs[end]],
+            y = [imag_ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "stop",
+            showlegend = showlegend,
+        )
         push!(real_traces, real_trace_start)
         push!(real_traces, real_trace_path)
         push!(real_traces, real_trace_end)
+        push!(imag_traces, imag_trace_start)
+        push!(imag_traces, imag_trace_path)
+        push!(imag_traces, imag_trace_end)
+    end
+    fig = make_subplots(rows = 1, cols = 2, subplot_titles = ["Real" "Imaginary"])
+    for real_trace ∈ real_traces
+        add_trace!(fig, real_trace, row = 1, col = 1)
+    end
+    for imag_trace ∈ imag_traces
+        add_trace!(fig, imag_trace, row = 1, col = 2)
     end
     title = "<b>A = $(string(A))</b>"
     plot_bgcolor = "white"
@@ -86,7 +123,8 @@ function complex_portrait(
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    layout = Layout(
+    relayout!(
+        fig,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         title = title,
@@ -108,10 +146,28 @@ function complex_portrait(
             gridcolor = gridcolor,
             gridwidth = gridwidth,
         ),
+        xaxis2 = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis2 = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
         width = width,
         height = height,
     )
-    plot(real_traces, layout)
+    fig
 end
 
 display(
@@ -119,7 +175,7 @@ display(
         [3.0 -3.0; 2.0 2.0],
         [0.5, 1.5],
         collect(range(-2.0, 1.0, 100)),
-        550,
+        1100,
         500,
     ),
 )
