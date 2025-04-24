@@ -117,7 +117,7 @@ end
 display(
     complex_portrait(
         [3.0 -3.0; 2.0 2.0],
-        collect(range(0.5, 1.5, 3)),
+        [0.5, 1.5],
         collect(range(-2.0, 1.0, 100)),
         550,
         500,
