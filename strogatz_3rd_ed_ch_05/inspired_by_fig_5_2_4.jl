@@ -37,14 +37,14 @@ end
 
 function complex_portrait(
     A::Matrix{Float64},
-    r::Float64,
+    rs::Vector{Float64},
     ts::Vector{Float64},
     width::Int64 = 500,
     height::Int64 = 500,
 )
     angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
-    x0s = [r * cos(θ) for θ ∈ angles]
-    y0s = [r * sin(θ) for θ ∈ angles]
+    x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
+    y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
         # x_eq, y_eq = solve_for_ics(A, [x0, y0])
@@ -120,7 +120,13 @@ function complex_portrait(
 end
 
 display(
-    complex_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-2.0, 1.0, 100)), 550, 500),
+    complex_portrait(
+        [3.0 -3.0; 2.0 2.0],
+        collect(range(0.5, 1.5, 3)),
+        collect(range(-2.0, 1.0, 100)),
+        550,
+        500,
+    ),
 )
 println("Press enter to exit...")
 readline()
