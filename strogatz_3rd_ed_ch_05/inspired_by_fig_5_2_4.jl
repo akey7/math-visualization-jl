@@ -47,14 +47,9 @@ function complex_portrait(
     y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
-        # x_eq, y_eq = solve_for_ics(A, [x0, y0])
-        # xs = x_eq.(ts)
-        # ys = y_eq.(ts)
-
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         xs = real(x_eq.(ts))
         ys = real(y_eq.(ts))
-
         showlegend = i == 1
         trace_start = scatter(
             x = [xs[1]],
