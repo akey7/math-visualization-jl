@@ -10,32 +10,21 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     println("Initial conditions:")
     display(ics)
     eig = eigen(A)
-    println("Eigenvalues:")
+    println("Eigenvalues")
     λ = eig.values
     display(λ)
-    println("Normalized eigenvectors:")
+    println("Normalized eigenvectors")
     v = eig.vectors
     display(v)
     c = eig.vectors \ ics
-    println("c1 and c2:")
+    println("c1 and c2")
     display(c)
-    discriminant = tr(A)^2 - 4 * det(A)
-    if discriminant < 0.0  # Result is complex
-        α = real(λ)
-        ω = imag(λ)
-        x_eq(t::Float64) =
-            c[1]*v[1, 1]*exp(α[1]t)*cos(ω[1]t) + c[2]*v[1, 2]*exp(α[1]*t)*sin(ω[1]t)
-        y_eq(t::Float64) =
-            c[1]*v[1, 1]*exp(α[2]t)*cos(ω[2]t) + c[2]*v[1, 2]*exp(α[2]*t)*sin(ω[2]t)
-        return x_eq, y_eq
-    else  # Result is real
-        x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
-        y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
-        return x_eq, y_eq
-    end
+    x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
+    y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
+    x_eq, y_eq
 end
 
-function real_portrait(
+function portrait(
     A::Matrix{Float64},
     r::Float64,
     ts::Vector{Float64},
@@ -114,8 +103,8 @@ function real_portrait(
     plot(traces, layout)
 end
 
-display(real_portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
-display(real_portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100))))
-display(real_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-1.0, 1.0, 100)), 550, 500))
+display(portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
+display(portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100))))
+display(portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-1.0, 1.0, 100)), 550, 500))
 println("Press enter to exit...")
 readline()
