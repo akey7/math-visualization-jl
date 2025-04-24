@@ -126,9 +126,16 @@ function complex_portrait(
     y0s = [r * sin(θ) for θ ∈ angles]
     traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+        # x_eq, y_eq = solve_for_ics(A, [x0, y0])
+        # xs = x_eq.(ts)
+        # ys = y_eq.(ts)
+
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
-        xs = x_eq.(ts)
-        ys = y_eq.(ts)
+        xs = real(x_eq.(ts))
+        ys = real(y_eq.(ts))
+
+        println(xs)
+        println(ys)
         showlegend = i == 1
         trace_start = scatter(
             x = [xs[1]],
@@ -138,7 +145,25 @@ function complex_portrait(
             name = "start",
             showlegend = showlegend,
         )
+        trace_path = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            line = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        trace_end = scatter(
+            x = [xs[end]],
+            y = [ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "stop",
+            showlegend = showlegend,
+        )
         push!(traces, trace_start)
+        push!(traces, trace_path)
+        push!(traces, trace_end)
     end
     title = "<b>A = $(string(A))</b>"
     plot_bgcolor = "white"
@@ -178,7 +203,7 @@ end
 # display(real_portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
 # display(real_portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100))))
 display(
-    complex_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-1.0, 1.0, 100)), 550, 500),
+    complex_portrait([3.0 -3.0; 2.0 2.0], 1.0, collect(range(-1.0, 1.0, 10)), 550, 500),
 )
 println("Press enter to exit...")
 readline()
