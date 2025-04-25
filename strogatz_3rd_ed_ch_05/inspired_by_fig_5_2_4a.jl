@@ -23,7 +23,10 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     if discriminant < 0.0  # Result is complex
         α = real(λ)
         ω = imag(λ)
-        
+        f(t::Float64) =
+            c[1] .* v[:, 1] .* (cos(ω[1])+complex(0.0, α[1]*sin(ω[1]))) +
+            c[2] .* v[:, 2] .* (cos(ω[2])+complex(0.0, α[2]*sin(ω[2])))
+        return f
     else  # Result is real
         x_eq_real(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
         y_eq_real(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
@@ -31,21 +34,25 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     end
 end
 
-function portrait(
+function complex_portrait(
     A::Matrix{Float64},
-    r::Float64,
+    angles::Vector{Float64},
+    rs::Vector{Float64},
     ts::Vector{Float64},
     width::Int64 = 500,
     height::Int64 = 500,
 )
-    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
-    x0s = [r * cos(θ) for θ ∈ angles]
-    y0s = [r * sin(θ) for θ ∈ angles]
+    x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
+    y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     traces::Vector{GenericTrace} = []
     for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
-        x_eq, y_eq = solve_for_ics(A, [x0, y0])
-        xs = x_eq.(ts)
-        ys = y_eq.(ts)
+        f = solve_for_ics(A, [x0, y0])
+        values = f.(ts)
+        println(values)
+        xs = real(values[1, :])
+        ys = imag(values[2, :])
+        println(xs)
+        println(ys)
         showlegend = i == 1
         trace_start = scatter(
             x = [xs[1]],
@@ -116,8 +123,8 @@ display(
         # [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4],
         [0.0, π/2, π, 3π/2],
         [1.0],
-        collect(range(-2.0, 1.0, 100)),
-        1100,
+        collect(range(-2.0, 1.0, 10)),
+        550,
         500,
     ),
 )
