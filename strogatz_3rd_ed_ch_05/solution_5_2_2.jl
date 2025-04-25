@@ -36,6 +36,6 @@ function portrait(A::Matrix{Float64}, x0::Vector{Float64}, tspan::Tuple{Float64,
     plot(traces, layout)
 end
 
-display(portrait([0.0 1.0; -2.0 -1.0], [1.0, 0.0], (0.0, 1.0)))
+display(portrait([1.0 -1.0; 1.0 1.0], [1.0, 0.0], (0.0, 1.0)))
 println("Press enter to exit...")
 readline()
