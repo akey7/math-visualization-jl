@@ -16,6 +16,7 @@ engine: julia
 
 using LinearAlgebra
 using PlotlyJS
+using DifferentialEquations
 ```
 
 ## Phase Portrait Inspiration
@@ -308,4 +309,58 @@ portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
 #| eval: true
 
 portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100)), 550, 500)
+```
+
+## Problem and Solution 5.2.2-Inspired
+
+Problem 5.2.2 seeks to solve
+
+$$
+\begin{pmatrix}
+\dot x \\
+\dot y
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & -1 \\
+1 & 1
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y
+\end{pmatrix}
+$$
+
+What makes this interesting is that it results in complex eigenvalues. In the back of the book, the solution is given as:
+
+$$
+\mathbf x(t) = c_1 e^t 
+\begin{pmatrix}
+\cos t \\
+\sin t
+\end{pmatrix}
++ c_2e^t
+\begin{pmatrix}
+-\sin t \\
+\cos t
+\end{pmatrix}
+$$
+
+However, no further guidance was given on how to find *c<sub>1</sub>* and *c<sub>2</sub>*, so in orer to make the nifty spiral plots promised by such a system, I needed to find another approach. Enter `DifferentialEquations.jl`, the Julia massive Julia package for solving DEs. With this package in hand, the following code made quick work of the problem:
+
+```{julia}
+#| label: section-03-01
+#| include: true
+#| echo: true
+#| eval: true
+
+function solve_system(
+    A::Matrix{Float64},
+    x0::Vector{Float64},
+    tspan::Tuple{Float64,Float64},
+)
+    f(x, p, t) = A * x
+    prob = ODEProblem(f, x0, tspan)
+    solve(prob, Tsit5())
+end
 ```
