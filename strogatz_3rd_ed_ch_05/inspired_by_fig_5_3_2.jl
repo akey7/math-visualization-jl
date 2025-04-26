@@ -20,7 +20,7 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     println("c1 and c2")
     display(c)
     x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
-    y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
+    y_eq(t::Float64) = c[1]*v[2, 1]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
     x_eq, y_eq
 end
 
