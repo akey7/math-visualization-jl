@@ -55,7 +55,8 @@ function portrait(
         push!(traces, trace_start)
         push!(traces, trace_end)
     end
-    layout = Layout(width = width, height = height)
+    title = "<b>A = $A</b>"
+    layout = Layout(title = title, width = width, height = height)
     plot(traces, layout)
 end
 
