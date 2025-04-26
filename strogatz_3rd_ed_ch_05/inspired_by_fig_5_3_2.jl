@@ -23,5 +23,3 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
     x_eq, y_eq
 end
-
-
