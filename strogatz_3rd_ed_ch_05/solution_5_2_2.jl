@@ -85,7 +85,7 @@ function portrait(
             showgrid = true,
             gridcolor = gridcolor,
             gridwidth = gridwidth,
-        )
+        ),
     )
     plot(traces, layout)
 end
