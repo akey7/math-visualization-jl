@@ -45,7 +45,7 @@ trace_fxy = contour(
     contours_coloring = "lines",
     colorscale = colorscale,
     line = attr(width = 2),
-    name = "f(x,y) nullcline",
+    name = "f(x,y)",
 )
 trace_gxy = contour(
     x = xs,
@@ -56,7 +56,7 @@ trace_gxy = contour(
     contours_coloring = "lines",
     colorscale = colorscale,
     line = attr(width = 2),
-    name = "g(x,y) nullcline",
+    name = "g(x,y)",
 )
 trace_fixed_points = scatter(
     x = [fixed_point[1]],
