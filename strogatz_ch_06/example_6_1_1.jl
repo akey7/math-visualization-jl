@@ -19,7 +19,8 @@ end
 initial_x = [0.5, 0.5]
 prob = NonlinearProblem(system_of_eqs, initial_x)
 sol = solve(prob, NewtonRaphson())
-println("Fixed point: ", sol.u)
+fixed_point = sol.u
+println("Fixed point: ", fixed_point)
 
 ########################################################
 # CALCULATE CONTOURS TO FIND NULLCLINES                #
@@ -44,6 +45,7 @@ trace_fxy = contour(
     contours_coloring = "lines",
     colorscale = colorscale,
     line = attr(width = 2),
+    name = "f(x,y) nullcline",
 )
 trace_gxy = contour(
     x = xs,
@@ -54,6 +56,13 @@ trace_gxy = contour(
     contours_coloring = "lines",
     colorscale = colorscale,
     line = attr(width = 2),
+    name = "g(x,y) nullcline",
+)
+trace_fixed_points = scatter(
+    x = [fixed_point[1]],
+    y = [fixed_point[2]],
+    mode = "markers",
+    marker = attr(color = "firebrick", size = 10),
 )
 plot_bgcolor = "white"
 paper_bgcolor = "white"
@@ -85,7 +94,7 @@ layout = Layout(
         gridwidth = gridwidth,
     ),
 )
-display(plot([trace_fxy, trace_gxy], layout))
+display(plot([trace_fxy, trace_gxy, trace_fixed_points], layout))
 
 ########################################################
 # PROMPT TO EXIT                                       #
