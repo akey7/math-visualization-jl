@@ -34,21 +34,26 @@ g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
-trace_f = contour(
+colorscale = [[0, "gold"]]
+trace_fxy = contour(
     x = xs,
     y = ys,
     z = f_xy',
     contours_start = 0,
     contours_end = 0,
-    contours_coloring = "lines"
+    contours_coloring = "lines",
+    colorscale = colorscale,
+    line = attr(width = 2),
 )
-trace_g = contour(
+trace_gxy = contour(
     x = xs,
     y = ys,
     z = g_xy',
     contours_start = 0,
     contours_end = 0,
-    contours_coloring = "lines"
+    contours_coloring = "lines",
+    colorscale = colorscale,
+    line = attr(width = 2),
 )
 plot_bgcolor = "white"
 paper_bgcolor = "white"
@@ -57,10 +62,30 @@ gridwidth = 1
 border_color = "black"
 gridcolor = "lightgray"
 layout = Layout(
-    width = 550, 
-    height = 550
+    width = 550,
+    height = 500,
+    plot_bgcolor = plot_bgcolor,
+    paper_bgcolor = paper_bgcolor,
+    xaxis = attr(
+        showline = true,
+        linewidth = border_width,
+        linecolor = border_color,
+        mirror = true,
+        showgrid = true,
+        gridcolor = gridcolor,
+        gridwidth = gridwidth,
+    ),
+    yaxis = attr(
+        showline = true,
+        linewidth = border_width,
+        linecolor = border_color,
+        mirror = true,
+        showgrid = true,
+        gridcolor = gridcolor,
+        gridwidth = gridwidth,
+    ),
 )
-display(plot([trace_f, trace_g], layout))
+display(plot([trace_fxy, trace_gxy], layout))
 
 ########################################################
 # PROMPT TO EXIT                                       #
