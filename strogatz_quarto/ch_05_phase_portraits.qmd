@@ -202,7 +202,7 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     v = eig.vectors
     c = eig.vectors \ ics
     x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
-    y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
+    y_eq(t::Float64) = c[1]*v[2, 1]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
     x_eq, y_eq
 end;
 ```
@@ -215,7 +215,7 @@ The following plot is very similar to `portrait()` above, except it is designed 
 #| echo: true
 #| eval: true
 
-function portrait(
+function portrait02(
     A::Matrix{Float64},
     r::Float64,
     ts::Vector{Float64},
@@ -303,7 +303,7 @@ As before, the blue dots show beginings of paths and the red dots show the end.
 #| echo: true
 #| eval: true
 
-portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
+portrait02([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
 ```
 
 ```{julia}
@@ -312,7 +312,7 @@ portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100)), 550, 500)
 #| echo: true
 #| eval: true
 
-portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100)), 550, 500)
+portrait02([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100)), 550, 500)
 ```
 
 ## Problem and Solution 5.2.2-Inspired
@@ -377,7 +377,7 @@ The following function, very similar to those above, can plot such a system.
 #| echo: true
 #| eval: true
 
-function portrait02(
+function portrait03(
     A::Matrix{Float64},
     tspan::Tuple{Float64,Float64},
     rs::Vector{Float64},
@@ -464,7 +464,7 @@ Here is the plot of a solution to Problem 5.2.2
 #| echo: true
 #| eval: true
 
-portrait02(
+portrait03(
     [1.0 -1.0; 1.0 1.0],
     (0.0, 2.0),
     [0.5],
@@ -498,12 +498,159 @@ $$
 #| echo: true
 #| eval: true
 
-portrait02(
+portrait03(
     [3.0 -3.0; 2.0 2.0],
     (0.0, 2.0),
     [0.5],
     [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4],
     550,
     500,
+)
+```
+
+## Figure 5.3.2-inspired
+
+Figure 5.3.2 represents the following system:
+
+$$
+\begin{pmatrix}
+\dot x \\
+\dot y
+\end{pmatrix}
+=
+\begin{pmatrix}
+a & b \\
+b & a
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y
+\end{pmatrix}
+$$
+
+Assuming:
+
+$$ a < 0, b > 0 $$
+
+To solve the systems, I use the `solve_for_ics()` function I use earlier since the eigenvalues are real-valued. To plot these phase portraits I use the following function, similar to those above, but with a few tweaks to make plotting these phase portraits easier:
+
+```{julia}
+#| label: section-04-01
+#| include: true
+#| echo: true
+#| eval: true
+
+function portrait(
+    A::Matrix{Float64},
+    angles::Vector{Float64},
+    rs::Vector{Float64},
+    ts::Vector{Float64},
+    width::Int64 = 500,
+    height::Int64 = 500,
+)
+    x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
+    y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
+    traces::Vector{GenericTrace} = []
+    # for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+    for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
+        x_eq, y_eq = solve_for_ics(A, [x0, y0])
+        xs = x_eq.(ts)
+        ys = y_eq.(ts)
+        showlegend = i == 1
+        trace_start = scatter(
+            x = [xs[1]],
+            y = [ys[1]],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start",
+            showlegend = showlegend,
+        )
+        trace_line = scatter(
+            x = xs,
+            y = ys,
+            mode = "lines",
+            marker = attr(color = "black"),
+            name = "path",
+            showlegend = showlegend,
+        )
+        trace_end = scatter(
+            x = [xs[end]],
+            y = [ys[end]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "stop",
+            showlegend = showlegend,
+        )
+        push!(traces, trace_start)
+        push!(traces, trace_line)
+        push!(traces, trace_end)
+    end
+    title = "<b>A = $(string(A))</b>"
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        title = title,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        width = width,
+        height = height,
+    )
+    plot(traces, layout)
+end;
+```
+
+(Actually, in the book this represents a Romeo and Juliet story, but I am switching back to x and y for the purposes of this demo.) 
+
+The first phase portrait has a = -2 and b = 1 to match the condition a<sup>2</sup> > b<sup>2</sup>:
+
+```{julia}
+#| label: section-04-02
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(
+    [-2.0 1.0; 1.0 -2.0],
+    [0.0, π/2, π/4, 3π/4, π, 5π/4, 3π/2, 7π/4],
+    [1.0],
+    collect(range(-1.0, 1.0, 100)),
+)
+```
+
+The second phase portrait has a = -1 and b = 2 to match the condition a<sup>2</sup> < b<sup>2</sup>:
+
+```{julia}
+#| label: section-04-03
+#| include: true
+#| echo: true
+#| eval: true
+
+portrait(
+    [-1.0 2.0; 2.0 -1.0],
+    [0.0, π/4, π/3, 2π/3, 3π/4, 5π/6, 7π/6, 5π/4, 4π/3, 5π/3, 7π/4, 11π/6],
+    [1.0],
+    collect(range(-0.5, 0.5, 100)),
 )
 ```
