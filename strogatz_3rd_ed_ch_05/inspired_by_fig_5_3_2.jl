@@ -20,21 +20,22 @@ function solve_for_ics(A::Matrix{Float64}, ics::Vector{Float64})
     println("c1 and c2")
     display(c)
     x_eq(t::Float64) = c[1]*v[1, 1]*exp(λ[1]*t) + c[2]*v[1, 2]*exp(λ[2]*t)
-    y_eq(t::Float64) = c[1]*v[1, 2]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
+    y_eq(t::Float64) = c[1]*v[2, 1]*exp(λ[1]*t) + c[2]*v[2, 2]*exp(λ[2]*t)
     x_eq, y_eq
 end
 
 function portrait(
     A::Matrix{Float64},
-    r::Float64,
+    angles::Vector{Float64},
+    rs::Vector{Float64},
     ts::Vector{Float64},
-    width::Int64 = 500,
+    width::Int64 = 550,
     height::Int64 = 500,
 )
-    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
-    x0s = [r * cos(θ) for θ ∈ angles]
-    y0s = [r * sin(θ) for θ ∈ angles]
+    x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
+    y0s = [r * sin(θ) for θ ∈ angles, r ∈ rs]
     traces::Vector{GenericTrace} = []
+    # for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
     for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         xs = x_eq.(ts)
@@ -103,7 +104,21 @@ function portrait(
     plot(traces, layout)
 end
 
-display(portrait([1.0 1.0; 4.0 -2.0], 1.0, collect(range(-0.75, 0.75, 100))))
-display(portrait([2.0 2.0; 3.0 -3.0], 1.0, collect(range(-0.5, 0.5, 100))))
-println("Press enter to exit...")
+display(
+    portrait(
+        [-2.0 1.0; 1.0 -2.0],
+        [0.0, π/2, π/4, 3π/4, π, 5π/4, 3π/2, 7π/4],
+        [1.0],
+        collect(range(-1.0, 1.0, 100)),
+    ),
+)
+display(
+    portrait(
+        [-1.0 2.0; 2.0 -1.0],
+        [0.0, π/4, π/3, 2π/3, 3π/4, 5π/6, 7π/6, 5π/4, 4π/3, 5π/3, 7π/4, 11π/6],
+        [1.0],
+        collect(range(-0.5, 0.5, 100)),
+    ),
+)
+println("Press enter to exit")
 readline()
