@@ -35,7 +35,7 @@ function portrait(
     x0s = [r * cos(θ) for θ ∈ angles]
     y0s = [r * sin(θ) for θ ∈ angles]
     traces::Vector{GenericTrace} = []
-    for (i, (x0, y0)) ∈ enumerate(Base.product(x0s, y0s))
+    for (i, (x0, y0)) ∈ enumerate(zip(x0s, y0s))
         x_eq, y_eq = solve_for_ics(A, [x0, y0])
         xs = x_eq.(ts)
         ys = y_eq.(ts)
