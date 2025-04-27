@@ -545,7 +545,7 @@ function portrait(
     angles::Vector{Float64},
     rs::Vector{Float64},
     ts::Vector{Float64},
-    width::Int64 = 500,
+    width::Int64 = 550,
     height::Int64 = 500,
 )
     x0s = [r * cos(θ) for θ ∈ angles, r ∈ rs]
