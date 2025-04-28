@@ -35,7 +35,6 @@ g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
-colorscale = [[0, "gold"]]
 trace_fxy = contour(
     x = xs,
     y = ys,
@@ -43,7 +42,7 @@ trace_fxy = contour(
     contours_start = 0,
     contours_end = 0,
     contours_coloring = "lines",
-    colorscale = colorscale,
+    colorscale = [[0, "gold"], [1.0, "white"]],
     line = attr(width = 2),
     name = "f(x,y)",
 )
@@ -54,7 +53,7 @@ trace_gxy = contour(
     contours_start = 0,
     contours_end = 0,
     contours_coloring = "lines",
-    colorscale = colorscale,
+    colorscale = [[0, "darkorange"], [1.0, "white"]],
     line = attr(width = 2),
     name = "g(x,y)",
 )
@@ -94,7 +93,7 @@ layout = Layout(
         gridwidth = gridwidth,
     ),
 )
-display(plot([trace_fxy, trace_gxy, trace_fixed_points], layout))
+display(plot([trace_gxy, trace_fxy, trace_fixed_points], layout))
 
 ########################################################
 # PROMPT TO EXIT                                       #
