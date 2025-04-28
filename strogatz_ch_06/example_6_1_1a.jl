@@ -23,21 +23,31 @@ fixed_point = sol.u
 println("Fixed point: ", fixed_point)
 
 ########################################################
-# CALCULATE CONTOURS TO FIND NULLCLINES                #
+# CALCULATE CONTOURS TO DRAW NULLCLINES                #
 ########################################################
 
-xs = range(-2.0, 2.0, 100)
-ys = range(-2.0, 2.0, 100)
-f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
-g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
+contour_xs = range(-2.0, 2.0, 100)
+contour_ys = range(-2.0, 2.0, 100)
+f_xy = [f([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
+g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
+
+########################################################
+# CALCULATE SLOPE FIELD                                #
+########################################################
+
+start_xs = range(-2.0, 2.0, 10)
+start_ys = range(-2.0, 2.0, 10)
+end_xs = [x + f([x, y]) for x ∈ start_xs, y ∈ start_ys]
+end_ys = [y + g([x, y]) for x ∈ start_xs, y ∈ start_ys]
 
 ########################################################
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
+traces::Vector{GenericTrace} = []
 trace_fxy = contour(
-    x = xs,
-    y = ys,
+    x = contour_xs,
+    y = contour_ys,
     z = f_xy',
     contours_start = 0,
     contours_end = 0,
@@ -46,9 +56,10 @@ trace_fxy = contour(
     line = attr(width = 2),
     name = "f(x,y)",
 )
+push!(traces, trace_fxy)
 trace_gxy = contour(
-    x = xs,
-    y = ys,
+    x = contour_xs,
+    y = contour_ys,
     z = g_xy',
     contours_start = 0,
     contours_end = 0,
@@ -57,12 +68,18 @@ trace_gxy = contour(
     line = attr(width = 2),
     name = "g(x,y)",
 )
+push!(traces, trace_gxy)
 trace_fixed_points = scatter(
     x = [fixed_point[1]],
     y = [fixed_point[2]],
     mode = "markers",
     marker = attr(color = "firebrick", size = 10),
 )
+push!(traces, trace_fixed_points)
+println(length(end_xs))
+for ((start_x, start_y), (end_x, end_y)) ∈ zip(zip(start_xs, start_ys), (end_xs, end_ys))
+    println("($start_x, $start_y) to ($end_x, $end_y)")
+end
 plot_bgcolor = "white"
 paper_bgcolor = "white"
 border_width = 1
@@ -93,7 +110,7 @@ layout = Layout(
         gridwidth = gridwidth,
     ),
 )
-display(plot([trace_gxy, trace_fxy, trace_fixed_points], layout))
+display(plot(traces, layout))
 
 ########################################################
 # PROMPT TO EXIT                                       #
