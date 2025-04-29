@@ -35,10 +35,14 @@ g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 # CALCULATE SLOPE FIELD                                #
 ########################################################
 
-start_xs = range(-2.0, 2.0, 10)
-start_ys = range(-2.0, 2.0, 10)
-end_xs = [x + f([x, y]) for x ∈ start_xs, y ∈ start_ys]
-end_ys = [y + g([x, y]) for x ∈ start_xs, y ∈ start_ys]
+start_xs = collect(range(-1.5, 1.5, 10))
+start_ys = collect(range(-1.5, 1.5, 10))
+start_xys = Base.product(start_xs, start_ys)
+scaler = 1 / length(start_xs)
+end_xys = [
+    (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
+    start_xy ∈ start_xys
+]
 
 ########################################################
 # ASSEMBLE FINAL PLOT                                  #
@@ -55,6 +59,7 @@ trace_fxy = contour(
     colorscale = [[0, "gold"], [1.0, "white"]],
     line = attr(width = 2),
     name = "f(x,y)",
+    showlegend = false,
 )
 push!(traces, trace_fxy)
 trace_gxy = contour(
@@ -67,6 +72,7 @@ trace_gxy = contour(
     colorscale = [[0, "darkorange"], [1.0, "white"]],
     line = attr(width = 2),
     name = "g(x,y)",
+    showlegend = false,
 )
 push!(traces, trace_gxy)
 trace_fixed_points = scatter(
@@ -74,11 +80,21 @@ trace_fixed_points = scatter(
     y = [fixed_point[2]],
     mode = "markers",
     marker = attr(color = "firebrick", size = 10),
+    name = "Fixed Point",
+    showlegend = false,
 )
 push!(traces, trace_fixed_points)
-println(length(end_xs))
-for ((start_x, start_y), (end_x, end_y)) ∈ zip(zip(start_xs, start_ys), (end_xs, end_ys))
-    println("($start_x, $start_y) to ($end_x, $end_y)")
+for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
+    println("$start_xy to $end_xy")
+    trace_slope = scatter(
+        x = [start_xy[1], end_xy[1]],
+        y = [start_xy[2], end_xy[2]],
+        mode = "lines",
+        line = attr(color = "green"),
+        name = "slope",
+        showlegend = false,
+    )
+    push!(traces, trace_slope)
 end
 plot_bgcolor = "white"
 paper_bgcolor = "white"
