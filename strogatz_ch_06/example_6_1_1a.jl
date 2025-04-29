@@ -27,7 +27,7 @@ println("Fixed point: ", fixed_point)
 # CALCULATE CONTOURS TO DRAW NULLCLINES                #
 ########################################################
 
-contour_xs = range(-2.0, 2.0, 100)
+contour_xs = range(-4.0, 2.0, 100)
 contour_ys = range(-2.0, 2.0, 100)
 f_xy = [f([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
@@ -36,8 +36,8 @@ g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 # CALCULATE SLOPE FIELD                                #
 ########################################################
 
-start_xs = collect(range(-1.5, 1.5, 10))
-start_ys = collect(range(-1.5, 1.5, 10))
+start_xs = collect(range(-4.0, 4.0, 20))
+start_ys = collect(range(-2.0, 2.0, 10))
 start_xys = Base.product(start_xs, start_ys)
 scaler = 1 / length(start_xs)
 end_xys = [
@@ -54,18 +54,27 @@ function system_of_eqs_02!(dy, y, p, t)
     dy[2] = -y[2]
 end
 
-angles = [0.0, π/2, π, 3π/2]
-rs = [1.0]
-u0s = [[r * cos(θ), r * sin(θ)] for θ ∈ angles, r ∈ rs]
-tspan = (-1.0, 1.0)
-dt = 0.1
+# angles = [0.0, π/2, π, 3π/2]
+# rs = [1.0]
+# u0s = [[r * cos(θ), r * sin(θ)] for θ ∈ angles, r ∈ rs]
+u0s = [
+    [-1.5, 1.0],
+    [-1.5, -1.0],
+    [0.0, -1.0],
+    [1.0, 0.0],
+    [0.0, 1.0],
+    [-0.83, 1.11],
+    [0.722, 1.11],
+    [-1.89, -0.105],
+]
+tspan = (-0.5, 0.5)
+dt = 0.01
 trajectories = []
 for u0 ∈ u0s
     prob02 = ODEProblem(system_of_eqs_02!, u0, tspan)
     sol02 = solve(prob02, RK4(), dt = dt)
     push!(trajectories, sol02.u)
 end
-println(trajectories)
 
 ########################################################
 # ASSEMBLE FINAL PLOT                                  #
@@ -112,14 +121,13 @@ for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
         x = [start_xy[1], end_xy[1]],
         y = [start_xy[2], end_xy[2]],
         mode = "lines",
-        line = attr(color = "green"),
+        line = attr(color = "lawngreen"),
         name = "slope",
         showlegend = false,
     )
     push!(traces, trace_slope)
 end
 for (i, trajectory) ∈ enumerate(trajectories)
-    println(trajectory)
     trace_start = scatter(
         x = [trajectory[1][1]],
         y = [trajectory[1][2]],
