@@ -1,4 +1,5 @@
 using NonlinearSolve
+using DifferentialEquations
 using PlotlyJS
 
 ########################################################
@@ -45,6 +46,28 @@ end_xys = [
 ]
 
 ########################################################
+# CALCUALTE A FEW TRAJECTORIES                         #
+########################################################
+
+function system_of_eqs_02!(dy, y, p, t)
+    dy[1] = y[1] + exp(-y[2])
+    dy[2] = -y[2]
+end
+
+angles = [0.0, π/2, π, 3π/2]
+rs = [1.0]
+u0s = [[r * cos(θ), r * sin(θ)] for θ ∈ angles, r ∈ rs]
+tspan = (-1.0, 1.0)
+dt = 0.1
+trajectories = []
+for u0 ∈ u0s
+    prob02 = ODEProblem(system_of_eqs_02!, u0, tspan)
+    sol02 = solve(prob02, RK4(), dt = dt)
+    push!(trajectories, sol02.u)
+end
+println(trajectories)
+
+########################################################
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
@@ -85,7 +108,6 @@ trace_fixed_points = scatter(
 )
 push!(traces, trace_fixed_points)
 for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
-    println("$start_xy to $end_xy")
     trace_slope = scatter(
         x = [start_xy[1], end_xy[1]],
         y = [start_xy[2], end_xy[2]],
@@ -95,6 +117,36 @@ for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
         showlegend = false,
     )
     push!(traces, trace_slope)
+end
+for (i, trajectory) ∈ enumerate(trajectories)
+    println(trajectory)
+    trace_start = scatter(
+        x = [trajectory[1][1]],
+        y = [trajectory[1][2]],
+        mode = "markers",
+        marker = attr(color = "blue", size = 10),
+        name = "start $i",
+        showlegend = false,
+    )
+    trace_trajectory = scatter(
+        x = [x for (x, _) ∈ trajectory],
+        y = [y for (_, y) ∈ trajectory],
+        mode = "lines",
+        line = attr(color = "black"),
+        name = "trajectory $i",
+        showlegend = false,
+    )
+    trace_end = scatter(
+        x = [trajectory[end][1]],
+        y = [trajectory[end][2]],
+        mode = "markers",
+        marker = attr(color = "red", size = 10),
+        name = "end $i",
+        showlegend = false,
+    )
+    push!(traces, trace_start)
+    push!(traces, trace_trajectory)
+    push!(traces, trace_end)
 end
 plot_bgcolor = "white"
 paper_bgcolor = "white"
