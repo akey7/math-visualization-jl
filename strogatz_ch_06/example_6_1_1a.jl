@@ -37,7 +37,7 @@ g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 ########################################################
 
 start_xs = collect(range(-4.0, 4.0, 20))
-start_ys = collect(range(-2.0, 2.0, 10))
+start_ys = collect(range(-1.5, 1.5, 10))
 start_xys = Base.product(start_xs, start_ys)
 scaler = 1 / length(start_xs)
 end_xys = [
@@ -66,6 +66,7 @@ u0s = [
     [-0.83, 1.11],
     [0.722, 1.11],
     [-1.89, -0.105],
+    [-1.90, -0.475]
 ]
 tspan = (-0.5, 0.5)
 dt = 0.01
@@ -111,7 +112,7 @@ trace_fixed_points = scatter(
     x = [fixed_point[1]],
     y = [fixed_point[2]],
     mode = "markers",
-    marker = attr(color = "firebrick", size = 10),
+    marker = attr(color = "firebrick", size = 15),
     name = "Fixed Point",
     showlegend = false,
 )
