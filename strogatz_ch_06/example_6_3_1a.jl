@@ -6,18 +6,11 @@ using ForwardDiff
 using PlotlyJS
 
 ########################################################
-# SYSTEM OF EQUATIONS                                  #
-########################################################
-
-f(x) = -x[1] + x[1]^3
-g(x) = -2*x[2]
-
-########################################################
 # FIND FIXED POINTS                                    #
 ########################################################
 
 function find_fixed_points()
-    system_of_eqs(u, p) = SA[-u[1] + u[1]^3, -2*u[2]]
+    system_of_eqs(u, p) = SA[-u[1]+u[1]^3, -2*u[2]]
     guess_xs = range(-2.0, 2.0, 10)
     guess_ys = range(-2.0, 2.0, 10)
     fixed_points = []
@@ -59,3 +52,78 @@ function find_jacobians()
     jacobians
 end
 println(find_jacobians())
+
+########################################################
+# SYSTEM OF EQUATIONS FOR NULLCLINES, SLOPE FIELD      #
+########################################################
+
+f(u) = -u[1] + u[1]^3
+g(u) = -2*u[2]
+
+########################################################
+# CALCULATE SLOPE FIELD                                #
+########################################################
+
+start_xs = collect(range(-4.0, 4.0, 20))
+start_ys = collect(range(-1.5, 1.5, 10))
+start_xys = Base.product(start_xs, start_ys)
+scaler = 1 / length(start_xs)
+end_xys = [
+    (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
+    start_xy ∈ start_xys
+]
+
+########################################################
+# ASSEMBLE FINAL PLOT                                  #
+########################################################
+
+traces::Vector{GenericTrace} = []
+for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
+    trace_slope = scatter(
+        x = [start_xy[1], end_xy[1]],
+        y = [start_xy[2], end_xy[2]],
+        mode = "lines",
+        line = attr(color = "lawngreen"),
+        name = "slope",
+        showlegend = false,
+    )
+    push!(traces, trace_slope)
+end
+plot_bgcolor = "white"
+paper_bgcolor = "white"
+border_width = 1
+gridwidth = 1
+border_color = "black"
+gridcolor = "lightgray"
+layout = Layout(
+    width = 550,
+    height = 500,
+    plot_bgcolor = plot_bgcolor,
+    paper_bgcolor = paper_bgcolor,
+    xaxis = attr(
+        showline = true,
+        linewidth = border_width,
+        linecolor = border_color,
+        mirror = true,
+        showgrid = true,
+        gridcolor = gridcolor,
+        gridwidth = gridwidth,
+    ),
+    yaxis = attr(
+        showline = true,
+        linewidth = border_width,
+        linecolor = border_color,
+        mirror = true,
+        showgrid = true,
+        gridcolor = gridcolor,
+        gridwidth = gridwidth,
+    ),
+)
+display(plot(traces, layout))
+
+########################################################
+# PROMPT TO EXIT                                       #
+########################################################
+
+println("Press enter to exit...")
+readline()
