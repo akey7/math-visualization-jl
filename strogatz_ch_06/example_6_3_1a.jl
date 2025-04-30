@@ -61,11 +61,20 @@ f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1] + u[1]^3
 g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -2*u[2]
 
 ########################################################
+# CALCULATE CONTOURS TO DRAW NULLCLINES                #
+########################################################
+
+contour_xs = range(-1.0, 1.0, 100)
+contour_ys = range(-1.0, 1.0, 100)
+f_xy = [f([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
+g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
+
+########################################################
 # CALCULATE SLOPE FIELD                                #
 ########################################################
 
-start_xs = collect(range(-4.0, 4.0, 20))
-start_ys = collect(range(-1.5, 1.5, 10))
+start_xs = collect(range(-1.0, 1.0, 10))
+start_ys = collect(range(-1.0, 1.0, 10))
 start_xys = Base.product(start_xs, start_ys)
 scaler = 1 / length(start_xs)
 end_xys = [
@@ -78,6 +87,32 @@ end_xys = [
 ########################################################
 
 traces::Vector{GenericTrace} = []
+trace_fxy = contour(
+    x = contour_xs,
+    y = contour_ys,
+    z = f_xy',
+    contours_start = 0,
+    contours_end = 0,
+    contours_coloring = "lines",
+    colorscale = [[0, "gold"], [1.0, "white"]],
+    line = attr(width = 2),
+    name = "f(x,y)",
+    showlegend = false,
+)
+push!(traces, trace_fxy)
+trace_gxy = contour(
+    x = contour_xs,
+    y = contour_ys,
+    z = g_xy',
+    contours_start = 0,
+    contours_end = 0,
+    contours_coloring = "lines",
+    colorscale = [[0, "darkorange"], [1.0, "white"]],
+    line = attr(width = 2),
+    name = "g(x,y)",
+    showlegend = false,
+)
+push!(traces, trace_gxy)
 for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
     trace_slope = scatter(
         x = [start_xy[1], end_xy[1]],
