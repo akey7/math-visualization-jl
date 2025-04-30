@@ -2,6 +2,7 @@ using NonlinearSolve
 using DifferentialEquations
 using SciMLBase
 using StaticArrays
+using ForwardDiff
 using PlotlyJS
 
 ########################################################
@@ -40,4 +41,21 @@ function find_fixed_points()
     end
     fixed_points
 end
-println(find_fixed_points())
+fps = find_fixed_points()
+println(fps)
+
+########################################################
+# COMPUTE JACOBIANS AT FIXED POINTS                    #
+########################################################
+
+function find_jacobians()
+    jacobians = []
+    for fp ∈ fps
+        jacobian = ForwardDiff.jacobian(fp) do u
+            [-u[1] + u[1]^3, -2*u[2]]
+        end
+        push!(jacobians, jacobian)
+    end
+    jacobians
+end
+println(find_jacobians())
