@@ -54,6 +54,13 @@ end
 println(find_jacobians())
 
 ########################################################
+# MIN AND MAX X, Y FOR PLOTTING                        #
+########################################################
+
+min_x, max_x = -1.5, 1.5
+min_y, max_y = -1.0, 1.0
+
+########################################################
 # SYSTEM OF EQUATIONS FOR NULLCLINES, SLOPE FIELD      #
 ########################################################
 
@@ -64,8 +71,8 @@ g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -2*u[2]
 # CALCULATE CONTOURS TO DRAW NULLCLINES                #
 ########################################################
 
-contour_xs = range(-1.0, 1.0, 100)
-contour_ys = range(-1.0, 1.0, 100)
+contour_xs = range(min_x, max_x, 100)
+contour_ys = range(min_y, max_y, 100)
 f_xy = [f([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 
@@ -73,8 +80,8 @@ g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
 # CALCULATE SLOPE FIELD                                #
 ########################################################
 
-start_xs = collect(range(-1.0, 1.0, 10))
-start_ys = collect(range(-1.0, 1.0, 10))
+start_xs = collect(range(min_x, max_x, 10))
+start_ys = collect(range(min_y, max_y, 10))
 start_xys = Base.product(start_xs, start_ys)
 scaler = 1 / length(start_xs)
 end_xys = [
