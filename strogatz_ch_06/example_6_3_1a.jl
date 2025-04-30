@@ -16,13 +16,13 @@ g(x) = -2*x[2]
 ########################################################
 
 function find_fixed_points()
-    nls_system_of_eqs(u, p) = SA[-u[1] + u[1]^3, -2*u[2]]
+    system_of_eqs(u, p) = SA[-u[1] + u[1]^3, -2*u[2]]
     guess_xs = range(-2.0, 2.0, 10)
     guess_ys = range(-2.0, 2.0, 10)
     fixed_points = []
     for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
         u0 = SA[guess_x, guess_y]
-        prob = NonlinearProblem(nls_system_of_eqs, u0)
+        prob = NonlinearProblem(system_of_eqs, u0)
         sol = solve(prob, NewtonRaphson())
         if SciMLBase.successful_retcode(sol)
             found = false
