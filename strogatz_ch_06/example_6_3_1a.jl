@@ -57,8 +57,8 @@ println(find_jacobians())
 # SYSTEM OF EQUATIONS FOR NULLCLINES, SLOPE FIELD      #
 ########################################################
 
-f(u) = -u[1] + u[1]^3
-g(u) = -2*u[2]
+f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1] + u[1]^3
+g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -2*u[2]
 
 ########################################################
 # CALCULATE SLOPE FIELD                                #
