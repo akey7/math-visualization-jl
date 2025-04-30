@@ -98,6 +98,26 @@ function trajectory_eqs!(du, u, p, t)
     du[2] = -2*u[2]
 end
 
+u0s = [
+    [-0.833, -0.556],
+    # [-1.67, -0.556],
+    # [-1.67, 0.556],
+    [-0.833, 0.556],
+]
+tspans = [
+    (-0.5, 0.5),
+    # (-0.5, 0.5),
+    # (-0.5, 0.5),
+    (-0.5, 0.5),
+]
+dt = 1e-4
+trajectories = []
+for (u0, tspan) ∈ zip(u0s, tspans)
+    trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
+    trajectory_sol = solve(trajectory_prob, Tsit5())
+    push!(trajectories, trajectory_sol.u) 
+end
+
 ########################################################
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
@@ -139,6 +159,35 @@ for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
         showlegend = false,
     )
     push!(traces, trace_slope)
+end
+for (i, trajectory) ∈ enumerate(trajectories)
+    trace_start = scatter(
+        x = [trajectory[1][1]],
+        y = [trajectory[1][2]],
+        mode = "markers",
+        marker = attr(color = "blue", size = 10),
+        name = "start $i",
+        showlegend = false,
+    )
+    trace_trajectory = scatter(
+        x = [x for (x, _) ∈ trajectory],
+        y = [y for (_, y) ∈ trajectory],
+        mode = "lines",
+        line = attr(color = "black"),
+        name = "trajectory $i",
+        showlegend = false,
+    )
+    trace_end = scatter(
+        x = [trajectory[end][1]],
+        y = [trajectory[end][2]],
+        mode = "markers",
+        marker = attr(color = "red", size = 10),
+        name = "end $i",
+        showlegend = false,
+    )
+    push!(traces, trace_start)
+    push!(traces, trace_trajectory)
+    push!(traces, trace_end)
 end
 plot_bgcolor = "white"
 paper_bgcolor = "white"
