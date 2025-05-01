@@ -52,13 +52,14 @@ function find_jacobians()
     end
     jacobians
 end
-println(find_jacobians())
+As = find_jacobians()
+println(As)
 
 ########################################################
 # CLASSIFY FIXED POINTS                                #
 ########################################################
 
-function classify(A::Matrix{Float64})
+function classify_jacobian(A::Matrix{Float64})
     τ = tr(A)
     Δ = det(A)
     discriminant = tr(A)^2 - 4*det(A)
@@ -158,6 +159,12 @@ end
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
+annotations = []
+for (fp, A) ∈ zip(fps, As)
+    classification = classify_jacobian(A)
+    annotation = attr(x = fp[1], y = fp[2], text = classification)
+    push!(annotations, annotation) 
+end
 traces::Vector{GenericTrace} = []
 trace_fxy = contour(
     x = contour_xs,
@@ -254,6 +261,7 @@ layout = Layout(
         gridcolor = gridcolor,
         gridwidth = gridwidth,
     ),
+    annotations = annotations,
 )
 display(plot(traces, layout))
 
