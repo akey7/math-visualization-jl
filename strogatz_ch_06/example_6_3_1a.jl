@@ -3,6 +3,7 @@ using DifferentialEquations
 using SciMLBase
 using StaticArrays
 using ForwardDiff
+using LinearAlgebra
 using PlotlyJS
 
 ########################################################
@@ -52,6 +53,34 @@ function find_jacobians()
     jacobians
 end
 println(find_jacobians())
+
+########################################################
+# CLASSIFY FIXED POINTS                                #
+########################################################
+
+function classify(A::Matrix{Float64})
+    τ = tr(A)
+    Δ = det(A)
+    discriminant = tr(A)^2 - 4*det(A)
+    if Δ < 0.0
+        return "Saddle"
+    else
+        if isapprox(discriminant, 0.0)
+            return "Star, Degenerate"
+        elseif discriminant > 0.0
+            if isapprox(τ, 0.0)
+                return "Neutral Stable"
+            elseif τ < 0.0
+                return "Stable"
+            else
+                return "Unstable"
+            end
+        else
+            return "Spiral"
+        end
+    end
+    return "Unknown"
+end
 
 ########################################################
 # MIN AND MAX X, Y FOR PLOTTING                        #
