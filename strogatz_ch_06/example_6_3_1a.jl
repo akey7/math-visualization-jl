@@ -152,7 +152,7 @@ trajectories = []
 for (u0, tspan) ∈ zip(u0s, tspans)
     trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
     trajectory_sol = solve(trajectory_prob, Tsit5())
-    push!(trajectories, trajectory_sol.u) 
+    push!(trajectories, trajectory_sol.u)
 end
 
 ########################################################
@@ -162,8 +162,8 @@ end
 annotations = []
 for (fp, A) ∈ zip(fps, As)
     classification = classify_jacobian(A)
-    annotation = attr(x = fp[1], y = fp[2], text = classification)
-    push!(annotations, annotation) 
+    annotation = attr(x = fp[1], y = fp[2], text = "<b>$classification</b>")
+    push!(annotations, annotation)
 end
 traces::Vector{GenericTrace} = []
 trace_fxy = contour(
@@ -231,6 +231,21 @@ for (i, trajectory) ∈ enumerate(trajectories)
     push!(traces, trace_start)
     push!(traces, trace_trajectory)
     push!(traces, trace_end)
+end
+for (fp, A) ∈ zip(fps, As)
+    classification = classify_jacobian(A)
+    size = 15
+    color = "darkorchid"
+    symbol = classification == "Saddle" ? "circle-open" : "circle"
+    trace_fp = scatter(
+        x = [fp[1]],
+        y = [fp[2]],
+        mode = "markers",
+        marker = attr(color = color, symbol = symbol, size = size),
+        showlegend = false,
+        name = "Fixed Points",
+    )
+    push!(traces, trace_fp)
 end
 plot_bgcolor = "white"
 paper_bgcolor = "white"
