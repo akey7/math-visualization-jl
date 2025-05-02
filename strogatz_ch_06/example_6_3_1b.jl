@@ -177,126 +177,150 @@ trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
 # ASSEMBLE FINAL PLOT                                  #
 ########################################################
 
-annotations = []
-for (fp, A) ∈ zip(fps, As)
-    classification = classify_jacobian(A)
-    annotation = attr(x = fp[1], y = fp[2], text = "<b>$classification</b>")
-    push!(annotations, annotation)
-end
-traces::Vector{GenericTrace} = []
-trace_fxy = contour(
-    x = contour_xs,
-    y = contour_ys,
-    z = contour_f_xy',
-    contours_start = 0,
-    contours_end = 0,
-    contours_coloring = "lines",
-    colorscale = [[0, "gold"], [1.0, "white"]],
-    line = attr(width = 2),
-    name = "f(x,y)",
-    showlegend = false,
+function final_plot(;
+    fps,
+    As,
+    contour_xs,
+    contour_ys,
+    contour_f_xy,
+    contour_g_xy,
+    slope_start_xys,
+    slope_end_xys,
+    trajectories,
 )
-push!(traces, trace_fxy)
-trace_gxy = contour(
-    x = contour_xs,
-    y = contour_ys,
-    z = contour_g_xy',
-    contours_start = 0,
-    contours_end = 0,
-    contours_coloring = "lines",
-    colorscale = [[0, "darkorange"], [1.0, "white"]],
-    line = attr(width = 2),
-    name = "g(x,y)",
-    showlegend = false,
+    annotations = []
+    for (fp, A) ∈ zip(fps, As)
+        classification = classify_jacobian(A)
+        annotation = attr(x = fp[1], y = fp[2], text = "<b>$classification</b>")
+        push!(annotations, annotation)
+    end
+    traces::Vector{GenericTrace} = []
+    trace_fxy = contour(
+        x = contour_xs,
+        y = contour_ys,
+        z = contour_f_xy',
+        contours_start = 0,
+        contours_end = 0,
+        contours_coloring = "lines",
+        colorscale = [[0, "gold"], [1.0, "white"]],
+        line = attr(width = 2),
+        name = "f(x,y)",
+        showlegend = false,
+    )
+    push!(traces, trace_fxy)
+    trace_gxy = contour(
+        x = contour_xs,
+        y = contour_ys,
+        z = contour_g_xy',
+        contours_start = 0,
+        contours_end = 0,
+        contours_coloring = "lines",
+        colorscale = [[0, "darkorange"], [1.0, "white"]],
+        line = attr(width = 2),
+        name = "g(x,y)",
+        showlegend = false,
+    )
+    push!(traces, trace_gxy)
+    for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
+        trace_slope = scatter(
+            x = [start_xy[1], end_xy[1]],
+            y = [start_xy[2], end_xy[2]],
+            mode = "lines",
+            line = attr(color = "lawngreen"),
+            name = "slope",
+            showlegend = false,
+        )
+        push!(traces, trace_slope)
+    end
+    for (i, trajectory) ∈ enumerate(trajectories)
+        trace_start = scatter(
+            x = [trajectory[1][1]],
+            y = [trajectory[1][2]],
+            mode = "markers",
+            marker = attr(color = "blue", size = 10),
+            name = "start $i",
+            showlegend = false,
+        )
+        trace_trajectory = scatter(
+            x = [x for (x, _) ∈ trajectory],
+            y = [y for (_, y) ∈ trajectory],
+            mode = "lines",
+            line = attr(color = "black"),
+            name = "trajectory $i",
+            showlegend = false,
+        )
+        trace_end = scatter(
+            x = [trajectory[end][1]],
+            y = [trajectory[end][2]],
+            mode = "markers",
+            marker = attr(color = "red", size = 10),
+            name = "end $i",
+            showlegend = false,
+        )
+        push!(traces, trace_start)
+        push!(traces, trace_trajectory)
+        push!(traces, trace_end)
+    end
+    for (fp, A) ∈ zip(fps, As)
+        classification = classify_jacobian(A)
+        size = 15
+        color = "darkorchid"
+        symbol = classification == "Saddle" ? "circle-open" : "circle"
+        trace_fp = scatter(
+            x = [fp[1]],
+            y = [fp[2]],
+            mode = "markers",
+            marker = attr(color = color, symbol = symbol, size = size),
+            showlegend = false,
+            name = "Fixed Points",
+        )
+        push!(traces, trace_fp)
+    end
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        width = 550,
+        height = 500,
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        xaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        annotations = annotations,
+    )
+    return plot(traces, layout)
+end
+p = final_plot(;
+    fps = fps,
+    As = As,
+    contour_xs = contour_xs,
+    contour_ys = contour_ys,
+    contour_f_xy = contour_f_xy,
+    contour_g_xy = contour_g_xy,
+    slope_start_xys = start_xys,
+    slope_end_xys = end_xys,
+    trajectories = trajectories,
 )
-push!(traces, trace_gxy)
-for (start_xy, end_xy) ∈ zip(start_xys, end_xys)
-    trace_slope = scatter(
-        x = [start_xy[1], end_xy[1]],
-        y = [start_xy[2], end_xy[2]],
-        mode = "lines",
-        line = attr(color = "lawngreen"),
-        name = "slope",
-        showlegend = false,
-    )
-    push!(traces, trace_slope)
-end
-for (i, trajectory) ∈ enumerate(trajectories)
-    trace_start = scatter(
-        x = [trajectory[1][1]],
-        y = [trajectory[1][2]],
-        mode = "markers",
-        marker = attr(color = "blue", size = 10),
-        name = "start $i",
-        showlegend = false,
-    )
-    trace_trajectory = scatter(
-        x = [x for (x, _) ∈ trajectory],
-        y = [y for (_, y) ∈ trajectory],
-        mode = "lines",
-        line = attr(color = "black"),
-        name = "trajectory $i",
-        showlegend = false,
-    )
-    trace_end = scatter(
-        x = [trajectory[end][1]],
-        y = [trajectory[end][2]],
-        mode = "markers",
-        marker = attr(color = "red", size = 10),
-        name = "end $i",
-        showlegend = false,
-    )
-    push!(traces, trace_start)
-    push!(traces, trace_trajectory)
-    push!(traces, trace_end)
-end
-for (fp, A) ∈ zip(fps, As)
-    classification = classify_jacobian(A)
-    size = 15
-    color = "darkorchid"
-    symbol = classification == "Saddle" ? "circle-open" : "circle"
-    trace_fp = scatter(
-        x = [fp[1]],
-        y = [fp[2]],
-        mode = "markers",
-        marker = attr(color = color, symbol = symbol, size = size),
-        showlegend = false,
-        name = "Fixed Points",
-    )
-    push!(traces, trace_fp)
-end
-plot_bgcolor = "white"
-paper_bgcolor = "white"
-border_width = 1
-gridwidth = 1
-border_color = "black"
-gridcolor = "lightgray"
-layout = Layout(
-    width = 550,
-    height = 500,
-    plot_bgcolor = plot_bgcolor,
-    paper_bgcolor = paper_bgcolor,
-    xaxis = attr(
-        showline = true,
-        linewidth = border_width,
-        linecolor = border_color,
-        mirror = true,
-        showgrid = true,
-        gridcolor = gridcolor,
-        gridwidth = gridwidth,
-    ),
-    yaxis = attr(
-        showline = true,
-        linewidth = border_width,
-        linecolor = border_color,
-        mirror = true,
-        showgrid = true,
-        gridcolor = gridcolor,
-        gridwidth = gridwidth,
-    ),
-    annotations = annotations,
-)
-display(plot(traces, layout))
+display(p)
 
 ########################################################
 # PROMPT TO EXIT                                       #
