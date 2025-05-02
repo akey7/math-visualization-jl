@@ -120,14 +120,17 @@ contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
 # CALCULATE SLOPE FIELD                                #
 ########################################################
 
-start_xs = collect(range(min_x, max_x, 10))
-start_ys = collect(range(min_y, max_y, 10))
-start_xys = Base.product(start_xs, start_ys)
-scaler = 1 / length(start_xs)
-end_xys = [
-    (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
-    start_xy ∈ start_xys
-]
+function slope_field(xs, ys)
+    scaler = 1 / length(xs)
+    start_xys = Base.product(xs, ys)
+    end_xys = [
+        (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
+        start_xy ∈ start_xys
+    ]
+    return start_xys, end_xys
+end
+
+start_xys, end_xys = slope_field(range(min_x, max_x, 10), range(min_y, max_y, 10))
 
 ########################################################
 # CALCULATE A FEW TRAJECTORIES                         #
