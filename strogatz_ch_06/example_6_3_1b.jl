@@ -34,6 +34,7 @@ function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::Abs
     end
     return fixed_points
 end
+
 fixed_points_system_of_eqs(u, p) = SA[-u[1]+u[1]^3, -2*u[2]]
 fps = find_fixed_points(
     fixed_points_system_of_eqs;
@@ -46,17 +47,17 @@ println(fps)
 # COMPUTE JACOBIANS AT FIXED POINTS                    #
 ########################################################
 
-function find_jacobians()
+function find_jacobians(system_of_eqs)
     jacobians = []
     for fp ∈ fps
-        jacobian = ForwardDiff.jacobian(fp) do u
-            [-u[1] + u[1]^3, -2*u[2]]
-        end
+        jacobian = ForwardDiff.jacobian(system_of_eqs, fp)
         push!(jacobians, jacobian)
     end
     return jacobians
 end
-As = find_jacobians()
+
+forward_diff_system_of_eqs(u) = [-u[1] + u[1]^3, -2*u[2]]
+As = find_jacobians(forward_diff_system_of_eqs)
 println(As)
 
 ########################################################
@@ -105,10 +106,15 @@ g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -2*u[2]
 # CALCULATE CONTOURS TO DRAW NULLCLINES                #
 ########################################################
 
+function nullcline_contours(f, g, xs, ys)
+    f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
+    g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
+    return f_xy, g_xy
+end
+
 contour_xs = range(min_x, max_x, 100)
 contour_ys = range(min_y, max_y, 100)
-f_xy = [f([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
-g_xy = [g([x, y]) for x ∈ contour_xs, y ∈ contour_ys]
+contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
 
 ########################################################
 # CALCULATE SLOPE FIELD                                #
@@ -124,7 +130,7 @@ end_xys = [
 ]
 
 ########################################################
-# CALCUALTE A FEW TRAJECTORIES                         #
+# CALCULATE A FEW TRAJECTORIES                         #
 ########################################################
 
 function trajectory_eqs!(du, u, p, t)
@@ -173,7 +179,7 @@ traces::Vector{GenericTrace} = []
 trace_fxy = contour(
     x = contour_xs,
     y = contour_ys,
-    z = f_xy',
+    z = contour_f_xy',
     contours_start = 0,
     contours_end = 0,
     contours_coloring = "lines",
@@ -186,7 +192,7 @@ push!(traces, trace_fxy)
 trace_gxy = contour(
     x = contour_xs,
     y = contour_ys,
-    z = g_xy',
+    z = contour_g_xy',
     contours_start = 0,
     contours_end = 0,
     contours_coloring = "lines",
