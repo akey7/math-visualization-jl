@@ -35,7 +35,7 @@ using PlotlyJS
 
 ### Fixed Points
 
-The first step in analyzing and plotting these phase portraits is to define the system of equations (for the plots in this document, this is done below). After that is done, fixed points can be found. There might be multiple fixed points for a given phase portrait, and the following functions finds those fixed points within a given region with `NonlinearSolve`.
+There might be multiple fixed points for a given phase portrait, and the following function finds fixed points within a given region with `NonlinearSolve`.
 
 ```{julia}
 #| label: fixed-point-finder
@@ -66,3 +66,25 @@ function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::Abs
     return fixed_points
 end;
 ```
+
+### Find Jacobians at Fixed Points
+
+The following function finds the Jacobians for the given system of equations and fixed points.
+
+```{julia}
+#| label: jacobian-finder
+#| include: true
+#| echo: true
+#| eval: true
+
+function find_jacobians(system_of_eqs, fps)
+    jacobians = []
+    for fp ∈ fps
+        jacobian = ForwardDiff.jacobian(system_of_eqs, fp)
+        push!(jacobians, jacobian)
+    end
+    return jacobians
+end;
+```
+
+
