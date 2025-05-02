@@ -10,8 +10,7 @@ using PlotlyJS
 # FIND FIXED POINTS                                    #
 ########################################################
 
-function find_fixed_points()
-    system_of_eqs(u, p) = SA[-u[1]+u[1]^3, -2*u[2]]
+function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange)
     guess_xs = range(-2.0, 2.0, 10)
     guess_ys = range(-2.0, 2.0, 10)
     fixed_points = []
@@ -33,9 +32,14 @@ function find_fixed_points()
             end
         end
     end
-    fixed_points
+    return fixed_points
 end
-fps = find_fixed_points()
+fixed_points_system_of_eqs(u, p) = SA[-u[1]+u[1]^3, -2*u[2]]
+fps = find_fixed_points(
+    fixed_points_system_of_eqs;
+    guess_xs = range(-2.0, 2.0, 10),
+    guess_ys = range(-2.0, 2.0, 10),
+)
 println(fps)
 
 ########################################################
@@ -50,7 +54,7 @@ function find_jacobians()
         end
         push!(jacobians, jacobian)
     end
-    jacobians
+    return jacobians
 end
 As = find_jacobians()
 println(As)
