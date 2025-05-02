@@ -136,6 +136,16 @@ start_xys, end_xys = slope_field(range(min_x, max_x, 10), range(min_y, max_y, 10
 # CALCULATE A FEW TRAJECTORIES                         #
 ########################################################
 
+function calculate_trajectories(trajectory_eqs!, u0s, tspans)
+    trajectories = []
+    for (u0, tspan) ∈ zip(u0s, tspans)
+        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
+        trajectory_sol = solve(trajectory_prob, Tsit5())
+        push!(trajectories, trajectory_sol.u)
+    end
+    return trajectories
+end
+
 function trajectory_eqs!(du, u, p, t)
     du[1] = -u[1] + u[1]^3
     du[2] = -2*u[2]
@@ -161,12 +171,7 @@ tspans = [
     (-0.1, 0.2),
     (-0.5, 0.5),
 ]
-trajectories = []
-for (u0, tspan) ∈ zip(u0s, tspans)
-    trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
-    trajectory_sol = solve(trajectory_prob, Tsit5())
-    push!(trajectories, trajectory_sol.u)
-end
+trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
 
 ########################################################
 # ASSEMBLE FINAL PLOT                                  #
