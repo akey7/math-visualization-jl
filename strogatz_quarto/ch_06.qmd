@@ -11,3 +11,24 @@ format:
 engine: julia
 freeze: false
 ---
+
+The following Julia packages will be needed for this document:
+
+```{julia}
+#| label: using-things
+#| include: true
+#| echo: true
+#| eval: true
+
+using NonlinearSolve
+using DifferentialEquations
+using SciMLBase
+using StaticArrays
+using ForwardDiff
+using LinearAlgebra
+using PlotlyJS
+```
+
+## Phase Portrait Analysis and Plotting Functions
+
+The first step in analyzing and plotting these phase portraits is to define the system of equations (for the plots in this document, this is done below). After that is done, fixed points can be found. There might be multiple fixed points for a given phase portrait, and the following functions finds those fixed points within a given region with `NonlinearSolve`.
