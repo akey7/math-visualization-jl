@@ -29,6 +29,40 @@ using LinearAlgebra
 using PlotlyJS
 ```
 
+> In the document below, many code cells have an extra `;` after the code to suppress junk from being output into this document.
+
 ## Phase Portrait Analysis and Plotting Functions
 
+### Fixed Points
+
 The first step in analyzing and plotting these phase portraits is to define the system of equations (for the plots in this document, this is done below). After that is done, fixed points can be found. There might be multiple fixed points for a given phase portrait, and the following functions finds those fixed points within a given region with `NonlinearSolve`.
+
+```{julia}
+#| label: fixed-point-finder
+#| include: true
+#| echo: true
+#| eval: true
+
+function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange)
+    fixed_points = []
+    for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+        u0 = SA[guess_x, guess_y]
+        prob = NonlinearProblem(system_of_eqs, u0)
+        sol = solve(prob, NewtonRaphson())
+        if SciMLBase.successful_retcode(sol)
+            found = false
+            for fixed_point ∈ fixed_points
+                if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                   isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                    found = true
+                    break
+                end
+            end
+            if !found
+                push!(fixed_points, sol.u)
+            end
+        end
+    end
+    return fixed_points
+end;
+```
