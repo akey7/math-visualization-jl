@@ -1,0 +1,13 @@
+---
+title: "Julia: Strogatz Chapter 06 Examples"
+author: "Alicia"
+date: "2025-05-02"
+categories: [julia, math]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+engine: julia
+freeze: false
+---
