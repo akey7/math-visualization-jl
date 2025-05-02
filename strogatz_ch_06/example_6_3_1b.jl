@@ -11,8 +11,6 @@ using PlotlyJS
 ########################################################
 
 function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange)
-    guess_xs = range(-2.0, 2.0, 10)
-    guess_ys = range(-2.0, 2.0, 10)
     fixed_points = []
     for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
         u0 = SA[guess_x, guess_y]
