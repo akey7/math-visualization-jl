@@ -235,57 +235,60 @@ function final_plot(;
         showlegend = false,
     )
     push!(traces, trace_gxy)
-    for (start_xy, end_xy) ∈ zip(slope_start_xys, slope_end_xys)
+    for (i, (start_xy, end_xy)) ∈ enumerate(zip(slope_start_xys, slope_end_xys))
+        showlegend = i == 1
         trace_slope = scatter(
             x = [start_xy[1], end_xy[1]],
             y = [start_xy[2], end_xy[2]],
             mode = "lines",
             line = attr(color = "lawngreen"),
             name = "slope",
-            showlegend = false,
+            showlegend = showlegend,
         )
         push!(traces, trace_slope)
     end
     for (i, trajectory) ∈ enumerate(trajectories)
+        showlegend = i == 1
         trace_start = scatter(
             x = [trajectory[1][1]],
             y = [trajectory[1][2]],
             mode = "markers",
             marker = attr(color = "blue", size = 10),
-            name = "start $i",
-            showlegend = false,
+            name = "start",
+            showlegend = showlegend,
         )
         trace_trajectory = scatter(
             x = [x for (x, _) ∈ trajectory],
             y = [y for (_, y) ∈ trajectory],
             mode = "lines",
             line = attr(color = "black"),
-            name = "trajectory $i",
-            showlegend = false,
+            name = "trajectory",
+            showlegend = showlegend,
         )
         trace_end = scatter(
             x = [trajectory[end][1]],
             y = [trajectory[end][2]],
             mode = "markers",
             marker = attr(color = "red", size = 10),
-            name = "end $i",
-            showlegend = false,
+            name = "end",
+            showlegend = showlegend,
         )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
     end
-    for (fp, A) ∈ zip(fps, As)
+    for (i, (fp, A)) ∈ enumerate(zip(fps, As))
         classification = classify_jacobian(A)
         size = 15
         color = "darkorchid"
         symbol = classification == "Saddle" ? "circle-open" : "circle"
+        showlegend = i == 1
         trace_fp = scatter(
             x = [fp[1]],
             y = [fp[2]],
             mode = "markers",
             marker = attr(color = color, symbol = symbol, size = size),
-            showlegend = false,
+            showlegend = showlegend,
             name = "Fixed Points",
         )
         push!(traces, trace_fp)
