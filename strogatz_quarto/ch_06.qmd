@@ -382,6 +382,8 @@ function example_6_3_1()
         [1.167, -0.556],
         [1.167, 0.556],
         [0.833, 0.556],
+        [0.0, 0.8],
+        [0.0, -0.8],
     ]
     tspans = [
         (-0.5, 0.5),
@@ -392,6 +394,8 @@ function example_6_3_1()
         (-0.1, 0.2),
         (-0.1, 0.2),
         (-0.5, 0.5),
+        (-0.5, 0.125),
+        (-0.5, 0.125),
     ]
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
 
