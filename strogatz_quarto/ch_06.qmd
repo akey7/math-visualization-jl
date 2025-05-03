@@ -88,3 +88,58 @@ end;
 ```
 
 
+### Classify Fixed Points
+
+This function classifies a fixed point depending trace and determinant of the Jacobian at that fixed point.
+
+```{julia}
+#| label: jacobian-classifier
+#| include: true
+#| echo: true
+#| eval: true
+
+function classify_jacobian(A::Matrix{Float64})
+    τ = tr(A)
+    Δ = det(A)
+    discriminant = tr(A)^2 - 4*det(A)
+    if Δ < 0.0
+        return "Saddle"
+    else
+        if isapprox(discriminant, 0.0)
+            return "Star, Degenerate"
+        elseif discriminant > 0.0
+            if isapprox(τ, 0.0)
+                return "Neutral Stable"
+            elseif τ < 0.0
+                return "Stable"
+            else
+                return "Unstable"
+            end
+        else
+            return "Spiral"
+        end
+    end
+    return "Unknown"
+end;
+```
+
+### Slope Field Calculation
+
+This function calculates the slope field defined by *f* and *g* over the points defined by `xs` and `ys`.
+
+```{julia}
+#| label: slope-field-function
+#| include: true
+#| echo: true
+#| eval: true
+
+function slope_field(xs, ys)
+    scaler = 1 / length(xs)
+    start_xys = Base.product(xs, ys)
+    end_xys = [
+        (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
+        start_xy ∈ start_xys
+    ]
+    return start_xys, end_xys
+end;
+```
