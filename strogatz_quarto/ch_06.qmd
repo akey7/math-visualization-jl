@@ -136,7 +136,7 @@ function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
     return f_xy, g_xy
-end
+end;
 ```
 
 ### Slope Field Calculation
@@ -351,7 +351,7 @@ function example_6_3_1()
     )
     println(fps)
 
-    # Find jacobians
+    # Find Jacobians
     forward_diff_system_of_eqs(u) = [-u[1] + u[1]^3, -2*u[2]]
     As = find_jacobians(forward_diff_system_of_eqs, fps)
     println(As)
@@ -418,4 +418,37 @@ function example_6_3_1()
 end
 
 example_6_3_1()
+```
+
+## Inspired by Lotka-Volterra Competition
+
+On Page 172 of Strogatz, the following system of equations that model two species vying for the same food resource, where is *x(t)* is the population of rabbits and *y(t)* the population of sheep.
+
+$$ \dot x = x(3-x-2y) $$
+$$ \dot y = y(2-x-y) $$
+
+```{julia}
+#| label: lotka-volterra-competition
+#| include: true
+#| echo: true
+#| eval: true
+
+function lotka_volterra_competition()
+
+    # Find fixed points
+    system_of_eqs_01(u, p) = SA[u[1]*(3-u[1]-2*u[2]), u[2]*(2-u[1]-u[2])]
+    fps = find_fixed_points(
+        system_of_eqs_01;
+        guess_xs = range(0.0, 3.25, 10),
+        guess_ys = range(0.0, 2.25, 10),
+    )
+    println(fps)
+
+    # Find Jacobians
+    system_of_eqs_02(u) = SA[u[1]*(3-u[1]-2*u[2]), u[2]*(2-u[1]-u[2])]
+    As = find_jacobians(system_of_eqs_02, fps)
+    println(As)
+end
+
+lotka_volterra_competition()
 ```
