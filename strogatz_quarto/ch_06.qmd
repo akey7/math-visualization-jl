@@ -466,11 +466,15 @@ function lotka_volterra_competition()
     end
 
     u0s = [
-        [0.0, 0.0],
+        [0.0, 0.222],
+        [0.333, 0.222],
+        [0.333, 0.444],
     ]
 
     tspans = [
-        (-0.5, 0.5)
+        (-1.0, 1e-3),
+        (-1.0, 1e-3),
+        (-1.0, 1e-3),
     ]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
