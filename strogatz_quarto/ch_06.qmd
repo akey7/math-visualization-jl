@@ -367,7 +367,6 @@ function example_6_3_1()
     start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
 
     # Compute trajectories
-
     function trajectory_eqs!(du, u, p, t)
         du[1] = -u[1] + u[1]^3
         du[2] = -2*u[2]
@@ -401,6 +400,7 @@ function example_6_3_1()
         (-0.5, 0.5),
         (-0.5, 0.5),
     ]
+
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
 
     # Create final plot
@@ -442,12 +442,51 @@ function lotka_volterra_competition()
         guess_xs = range(0.0, 3.25, 10),
         guess_ys = range(0.0, 2.25, 10),
     )
-    println(fps)
+    # println(fps)
 
     # Find Jacobians
-    system_of_eqs_02(u) = SA[u[1]*(3-u[1]-2*u[2]), u[2]*(2-u[1]-u[2])]
+    system_of_eqs_02(u) = [u[1]*(3-u[1]-2*u[2]), u[2]*(2-u[1]-u[2])]
     As = find_jacobians(system_of_eqs_02, fps)
-    println(As)
+    # println(As)
+
+    # Find contours to plot nullclines
+    min_x, max_x = 0.0, 3.0
+    min_y, max_y = 0.0, 2.0
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[1]*(3-u[1]-2*u[2])
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]*(2-u[1]-u[2])
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = u[1]*(3-u[1]-2*u[2])
+        du[2] = u[2]*(2-u[1]-u[2])
+    end
+
+    u0s = [
+        [0.0, 0.0],
+    ]
+
+    tspans = [
+        (-0.5, 0.5)
+    ]
+
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
+
+    # Create final plot
+    return final_plot(;
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
 end
 
 lotka_volterra_competition()
