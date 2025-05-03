@@ -482,6 +482,13 @@ function lotka_volterra_competition()
         [0.333, 0.667],
         [0.333, 0.889],
         [0.333, 1.111],
+
+        [2.0, 2.0],
+        [1.667, 2.0],
+        [1.333, 2.0],
+        [1.0, 2.0],
+        [0.667, 2.0],
+        [0.333, 2.0],
     ]
 
     tspans = [
@@ -501,6 +508,13 @@ function lotka_volterra_competition()
         (-1.0, 4.0),
         (-1.0, 4.0),
         (-1.0, 4.0),
+
+        (-1.0, 0.0),
+        (-1.0, 0.0),
+        (-1.0, 0.0),
+        (-1.0, 0.0),
+        (-1.0, 0.0),
+        (-1.0, 0.0),
     ]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
