@@ -564,6 +564,11 @@ function example_6_5_2()
         guess_ys = range(-0.1, 0.1, 3),
     )
     println(fps)
+
+    # Find Jacobians
+    system_of_eqs_02(u) = SA[u[2], u[1]-u[1]^3]
+    As = find_jacobians(system_of_eqs_02, fps)
+    println(As)
 end
 
 example_6_5_2()
