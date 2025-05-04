@@ -223,3 +223,66 @@ function final_plot(;
     )
     return plot(traces, layout)
 end
+
+#####################################################################
+# ASSUME MU = 1 IN THIS EXAMPLE                                     #
+#####################################################################
+
+function ex_7_1_2()
+    # Find fixed points
+    eqs_01(u, p) = SA[u[2], u[2]*(1-u[1]^2)-u[1]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(-3.5, 3.5, 10),
+        guess_ys = range(-3.5, 3.5, 10),
+    )
+    println(fps)
+
+    # Find Jacobians
+    eqs_02(u) = [u[2], u[2]*(1-u[1]^2)-u[1]]
+    As = find_jacobians(eqs_02, fps)
+    println(As)
+
+    # Find contours to plot nullclines
+    min_x, max_x = -1.5, 1.5
+    min_y, max_y = -1.0, 1.0
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]*(1-u[1]^2)-u[1]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = u[2]
+        du[2] = u[2]*(1-u[1]^2)-u[1]
+    end
+
+    u0s = [
+        [0.0, 1.0]
+    ]
+
+    tspans = [
+        (0.0, 1.0)
+    ]
+
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
+
+    # Create final plot
+    return final_plot(;
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
+end
+
+display(ex_7_1_2())
+println("Press enter to exit")
+readline()
