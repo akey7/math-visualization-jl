@@ -264,7 +264,7 @@ function ex_7_1_2()
     ]
 
     tspans = [
-        (0.0, 1.0)
+        (0.0, 8.0)
     ]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
