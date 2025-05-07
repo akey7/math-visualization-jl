@@ -243,9 +243,9 @@ function ex_7_1_2()
     As = find_jacobians(eqs_02, fps)
     println(As)
 
-    # Find contours to plot nullclines
-    min_x, max_x = -3.0, 3.0
-    min_y, max_y = -3.0, 3.0
+    # Find contours to plot nullclines and slope field
+    min_x, max_x = -4.0, 4.0
+    min_y, max_y = -4.0, 4.0
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]
     g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]*(1-u[1]^2)-u[1]
     contour_xs = range(min_x, max_x, 100)
@@ -260,11 +260,11 @@ function ex_7_1_2()
     end
 
     u0s = [
-        [0.0, 1.0]
+        [-0.444, 0.444]
     ]
 
     tspans = [
-        (0.0, 8.0)
+        (0.0, 20.0)
     ]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
