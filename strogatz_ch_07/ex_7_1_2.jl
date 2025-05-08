@@ -89,6 +89,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 end
 
 function final_plot(;
+    title,
     fps,
     As,
     contour_xs,
@@ -197,6 +198,7 @@ function final_plot(;
     border_color = "black"
     gridcolor = "lightgray"
     layout = Layout(
+        title=title,
         width = 550,
         height = 500,
         plot_bgcolor = plot_bgcolor,
@@ -228,7 +230,7 @@ end
 # ASSUME MU = 1 IN THIS EXAMPLE                                     #
 #####################################################################
 
-function ex_7_1_2()
+function ex_7_1_2(μ)
     # Find fixed points
     eqs_01(u, p) = SA[u[2], u[2]*(1-u[1]^2)-u[1]]
     fps = find_fixed_points(
@@ -259,22 +261,15 @@ function ex_7_1_2()
         du[2] = p[1]*(1-u[1]^2)*u[2]-u[1]
     end
 
-    u0s = [
-        [-0.444, 0.444]
-    ]
-
-    tspans = [
-        (0.0, 20.0)
-    ]
-
-    ps = [
-        [1.0]
-    ]
+    u0s = [[-0.444, 0.444]]
+    tspans = [(0.0, 20.0)]
+    ps = [[μ]]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
+        title = "<b>μ=$μ</b>",
         fps = fps,
         As = As,
         contour_xs = contour_xs,
@@ -287,6 +282,8 @@ function ex_7_1_2()
     )
 end
 
-display(ex_7_1_2())
+display(ex_7_1_2(0.5))
+display(ex_7_1_2(1.0))
+display(ex_7_1_2(1.5))
 println("Press enter to exit")
 readline()
