@@ -78,10 +78,10 @@ function slope_field(f, g, xs, ys)
     return start_xys, end_xys
 end
 
-function calculate_trajectories(trajectory_eqs!, u0s, tspans)
+function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
-    for (u0, tspan) ∈ zip(u0s, tspans)
-        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
+    for (u0, tspan, p) ∈ zip(u0s, tspans, ps)
+        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, p)
         trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
         push!(trajectories, trajectory_sol.u)
     end
@@ -256,7 +256,7 @@ function ex_7_1_2()
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
         du[1] = u[2]
-        du[2] = u[2]*(1-u[1]^2)-u[1]
+        du[2] = p[1]*(1-u[1]^2)*u[2]-u[1]
     end
 
     u0s = [
@@ -267,7 +267,11 @@ function ex_7_1_2()
         (0.0, 20.0)
     ]
 
-    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
+    ps = [
+        [1.0]
+    ]
+
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
