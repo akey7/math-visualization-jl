@@ -83,7 +83,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     for (u0, tspan, p) ∈ zip(u0s, tspans, ps)
         trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, p)
         trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
-        push!(trajectories, trajectory_sol.u)
+        push!(trajectories, (trajectory_sol.u, trajectory_sol.t))
     end
     return trajectories
 end
@@ -109,6 +109,7 @@ function final_plot(;
         push!(annotations, annotation)
     end
     traces::Vector{GenericTrace} = []
+    line_traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
         y = contour_ys,
@@ -147,7 +148,7 @@ function final_plot(;
         )
         push!(traces, trace_slope)
     end
-    for (i, trajectory) ∈ enumerate(trajectories)
+    for (i, (trajectory, trajectory_ts)) ∈ enumerate(trajectories)
         showlegend = i == 1
         trace_start = scatter(
             x = [trajectory[1][1]],
@@ -173,9 +174,14 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
+        line_trace = scatter(
+            x = trajectory_ts,
+            y = [y for (_, y) ∈ trajectory],
+        )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
+        push!(line_traces, line_trace)
     end
     for (i, (fp, A)) ∈ enumerate(zip(fps, As))
         classification = classify_jacobian(A)
@@ -199,11 +205,13 @@ function final_plot(;
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    fig = make_subplots(rows = 2, cols = 1)
+    fig = make_subplots(rows = 2, cols = 1, vertical_spacing = 0.1)
     for trace ∈ traces
         add_trace!(fig, trace, row = 1, col = 1)
     end
-    println("Attempting relayout!()")
+    for line_trace ∈ line_traces
+        add_trace!(fig, line_trace, row = 2, col = 1)
+    end
     relayout!(
         fig,
         title=title,
@@ -221,7 +229,25 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis = attr(
-            domain = [phase_portrait_min_y, phase_portrait_max_y],
+            # domain = [phase_portrait_min_y, phase_portrait_max_y],
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        xaxis2 = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis2 = attr(
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
