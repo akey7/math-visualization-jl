@@ -216,7 +216,7 @@ function final_plot(;
         fig,
         title=title,
         width = 550,
-        height = 600,
+        height = 850,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
