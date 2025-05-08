@@ -1,7 +1,7 @@
 ---
 title: "Julia: Strogatz Chapter 06 Examples"
 author: "Alicia"
-date: "2025-05-02"
+date: "2025-05-07"
 categories: [julia, math]
 format:
   html:
@@ -174,7 +174,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans)
     trajectories = []
     for (u0, tspan) ∈ zip(u0s, tspans)
         trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
-        trajectory_sol = solve(trajectory_prob, Tsit5())
+        trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
         push!(trajectories, trajectory_sol.u)
     end
     return trajectories
