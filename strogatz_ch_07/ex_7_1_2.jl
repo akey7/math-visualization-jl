@@ -99,6 +99,8 @@ function final_plot(;
     slope_start_xys,
     slope_end_xys,
     trajectories,
+    phase_portrait_min_y,
+    phase_portrait_max_y,
 )
     annotations = []
     for (fp, A) ∈ zip(fps, As)
@@ -197,10 +199,16 @@ function final_plot(;
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    layout = Layout(
+    fig = make_subplots(rows = 2, cols = 1)
+    for trace ∈ traces
+        add_trace!(fig, trace, row = 1, col = 1)
+    end
+    println("Attempting relayout!()")
+    relayout!(
+        fig,
         title=title,
         width = 550,
-        height = 500,
+        height = 600,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
@@ -213,6 +221,7 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis = attr(
+            domain = [phase_portrait_min_y, phase_portrait_max_y],
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
@@ -223,7 +232,7 @@ function final_plot(;
         ),
         annotations = annotations,
     )
-    return plot(traces, layout)
+    return fig
 end
 
 #####################################################################
@@ -279,6 +288,8 @@ function ex_7_1_2(μ)
         slope_start_xys = start_xys,
         slope_end_xys = end_xys,
         trajectories = trajectories,
+        phase_portrait_min_y = min_y,
+        phase_portrait_max_y = max_y,
     )
 end
 
