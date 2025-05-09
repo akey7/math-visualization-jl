@@ -78,17 +78,18 @@ function slope_field(f, g, xs, ys)
     return start_xys, end_xys
 end
 
-function calculate_trajectories(trajectory_eqs!, u0s, tspans)
+function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
-    for (u0, tspan) ∈ zip(u0s, tspans)
-        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan)
+    for (u0, tspan, p) ∈ zip(u0s, tspans, ps)
+        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, p)
         trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
-        push!(trajectories, trajectory_sol.u)
+        push!(trajectories, (trajectory_sol.u, trajectory_sol.t))
     end
     return trajectories
 end
 
 function final_plot(;
+    title,
     fps,
     As,
     contour_xs,
@@ -106,6 +107,7 @@ function final_plot(;
         push!(annotations, annotation)
     end
     traces::Vector{GenericTrace} = []
+    line_traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
         y = contour_ys,
@@ -144,7 +146,7 @@ function final_plot(;
         )
         push!(traces, trace_slope)
     end
-    for (i, trajectory) ∈ enumerate(trajectories)
+    for (i, (trajectory, trajectory_ts)) ∈ enumerate(trajectories)
         showlegend = i == 1
         trace_start = scatter(
             x = [trajectory[1][1]],
@@ -170,9 +172,15 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
+        line_trace = scatter(
+            x = trajectory_ts,
+            y = [y for (_, y) ∈ trajectory],
+            showlegend = false,
+        )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
+        push!(line_traces, line_trace)
     end
     for (i, (fp, A)) ∈ enumerate(zip(fps, As))
         classification = classify_jacobian(A)
@@ -196,9 +204,18 @@ function final_plot(;
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    layout = Layout(
+    fig = make_subplots(rows = 2, cols = 1, vertical_spacing = 0.1)
+    for trace ∈ traces
+        add_trace!(fig, trace, row = 1, col = 1)
+    end
+    for line_trace ∈ line_traces
+        add_trace!(fig, line_trace, row = 2, col = 1)
+    end
+    relayout!(
+        fig,
+        title=title,
         width = 550,
-        height = 500,
+        height = 850,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
@@ -211,6 +228,25 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis = attr(
+            # domain = [phase_portrait_min_y, phase_portrait_max_y],
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        xaxis2 = attr(
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis2 = attr(
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
@@ -221,14 +257,14 @@ function final_plot(;
         ),
         annotations = annotations,
     )
-    return plot(traces, layout)
+    return fig
 end
 
 #####################################################################
-# ASSUME MU = 1 IN THIS EXAMPLE                                     #
+# PLOT SEVERAL VALUES FOR μ                                         #
 #####################################################################
 
-function ex_7_1_2()
+function ex_7_1_2(μ)
     # Find fixed points
     eqs_01(u, p) = SA[u[2], u[2]*(1-u[1]^2)-u[1]]
     fps = find_fixed_points(
@@ -256,21 +292,18 @@ function ex_7_1_2()
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
         du[1] = u[2]
-        du[2] = u[2]*(1-u[1]^2)-u[1]
+        du[2] = p[1]*(1-u[1]^2)*u[2]-u[1]
     end
 
-    u0s = [
-        [-0.444, 0.444]
-    ]
+    u0s = [[-0.444, 0.444]]
+    tspans = [(0.0, 20.0)]
+    ps = [[μ]]
 
-    tspans = [
-        (0.0, 20.0)
-    ]
-
-    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans)
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
+        title = "<b>μ=$μ</b>",
         fps = fps,
         As = As,
         contour_xs = contour_xs,
@@ -283,6 +316,8 @@ function ex_7_1_2()
     )
 end
 
-display(ex_7_1_2())
+display(ex_7_1_2(0.5))
+display(ex_7_1_2(1.0))
+display(ex_7_1_2(1.5))
 println("Press enter to exit")
 readline()
