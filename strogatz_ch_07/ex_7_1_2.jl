@@ -99,8 +99,6 @@ function final_plot(;
     slope_start_xys,
     slope_end_xys,
     trajectories,
-    phase_portrait_min_y,
-    phase_portrait_max_y,
 )
     annotations = []
     for (fp, A) ∈ zip(fps, As)
@@ -177,6 +175,7 @@ function final_plot(;
         line_trace = scatter(
             x = trajectory_ts,
             y = [y for (_, y) ∈ trajectory],
+            showlegend = false,
         )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
@@ -314,8 +313,6 @@ function ex_7_1_2(μ)
         slope_start_xys = start_xys,
         slope_end_xys = end_xys,
         trajectories = trajectories,
-        phase_portrait_min_y = min_y,
-        phase_portrait_max_y = max_y,
     )
 end
 
