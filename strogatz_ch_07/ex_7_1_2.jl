@@ -107,7 +107,8 @@ function final_plot(;
         push!(annotations, annotation)
     end
     traces::Vector{GenericTrace} = []
-    line_traces::Vector{GenericTrace} = []
+    x_line_traces::Vector{GenericTrace} = []
+    y_line_traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
         y = contour_ys,
@@ -172,12 +173,15 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
-        line_trace =
+        x_line_trace =
+            scatter(x = trajectory_ts, y = [x for (x, _) ∈ trajectory], showlegend = false)
+        y_line_trace =
             scatter(x = trajectory_ts, y = [y for (_, y) ∈ trajectory], showlegend = false)
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
-        push!(line_traces, line_trace)
+        push!(x_line_traces, x_line_trace)
+        push!(y_line_traces, y_line_trace)
     end
     for (i, (fp, A)) ∈ enumerate(zip(fps, As))
         classification = classify_jacobian(A)
@@ -203,20 +207,23 @@ function final_plot(;
     gridcolor = "lightgray"
     fig = make_subplots(
         rows = 2,
-        cols = 1,
+        cols = 2,
         vertical_spacing = 0.1,
         subplot_titles = ["Phase Portrait" "Y Trajectory"],
     )
     for trace ∈ traces
         add_trace!(fig, trace, row = 1, col = 1)
     end
-    for line_trace ∈ line_traces
-        add_trace!(fig, line_trace, row = 2, col = 1)
+    for x_line_trace ∈ x_line_traces
+        add_trace!(fig, x_line_trace, row = 1, col = 2)
+    end
+    for y_line_trace ∈ y_line_traces
+        add_trace!(fig, y_line_trace, row = 2, col = 2)
     end
     relayout!(
         fig,
         title = title,
-        width = 550,
+        width = 1100,
         height = 850,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
@@ -250,6 +257,26 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis2 = attr(
+            title = "<b>x</b>",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        xaxis4 = attr(
+            title = "<b>t</b>",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis4 = attr(
             title = "<b>y</b>",
             showline = true,
             linewidth = border_width,
