@@ -350,5 +350,6 @@ end
 display(ex_7_1_2(0.5))
 display(ex_7_1_2(1.0))
 display(ex_7_1_2(1.5))
+display(ex_7_1_2(3.0))
 println("Press enter to exit")
 readline()
