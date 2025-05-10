@@ -172,11 +172,8 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
-        line_trace = scatter(
-            x = trajectory_ts,
-            y = [y for (_, y) ∈ trajectory],
-            showlegend = false,
-        )
+        line_trace =
+            scatter(x = trajectory_ts, y = [y for (_, y) ∈ trajectory], showlegend = false)
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
@@ -204,7 +201,12 @@ function final_plot(;
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    fig = make_subplots(rows = 2, cols = 1, vertical_spacing = 0.1)
+    fig = make_subplots(
+        rows = 2,
+        cols = 1,
+        vertical_spacing = 0.1,
+        subplot_titles = ["Phase Portrait" "Y Trajectory"],
+    )
     for trace ∈ traces
         add_trace!(fig, trace, row = 1, col = 1)
     end
@@ -213,7 +215,7 @@ function final_plot(;
     end
     relayout!(
         fig,
-        title=title,
+        title = title,
         width = 550,
         height = 850,
         plot_bgcolor = plot_bgcolor,
@@ -238,6 +240,7 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         xaxis2 = attr(
+            title = "<b>t</b>",
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
@@ -247,6 +250,7 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis2 = attr(
+            title = "<b>y</b>",
             showline = true,
             linewidth = border_width,
             linecolor = border_color,

@@ -6,7 +6,12 @@ using ForwardDiff
 using LinearAlgebra
 using PlotlyJS
 
-function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange, ps::Vector{Float64})
+function find_fixed_points(
+    system_of_eqs;
+    guess_xs::AbstractRange,
+    guess_ys::AbstractRange,
+    ps::Vector{Float64},
+)
     fixed_points = []
     for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
         u0 = [guess_x, guess_y]
