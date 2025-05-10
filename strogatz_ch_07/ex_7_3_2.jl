@@ -31,10 +31,10 @@ function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::Abs
     return fixed_points
 end
 
-function find_jacobians(system_of_eqs, fps)
+function find_jacobians(system_of_eqs, fps, ps)
     jacobians = []
     for fp ∈ fps
-        jacobian = ForwardDiff.jacobian(system_of_eqs, fp)
+        jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
         push!(jacobians, jacobian)
     end
     return jacobians
@@ -275,51 +275,50 @@ function ex_7_3_1(a, b)
     fps = find_fixed_points(
         eqs_01;
         guess_xs = range(-2.0, 2.0, 5),
-        guess_ys = range(0.0, 2π, 5),
+        guess_ys = range(-2.0, 2.0, 5),
         ps = ps,
     )
     println(fps)
 
-    # # Find Jacobians
-    # eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
-    # As = find_jacobians(eqs_02, fps)
-    # println(As)
+    # Find Jacobians
+    eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    As = find_jacobians(eqs_02, fps, ps)
+    println(As)
 
-    # # Find contours to plot nullclines and slope field
-    # min_x, max_x = -3.0, 3.0
-    # min_y, max_y = -3.0, 3.0
-    # f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[1]*(1-u[1]^2) + p[1]*u[1]*cos(u[2])
-    # g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = 1
-    # contour_xs = range(min_x, max_x, 100)
-    # contour_ys = range(min_y, max_y, 100)
-    # contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
-    # start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+    # Find contours to plot nullclines and slope field
+    min_x, max_x = -3.0, 3.0
+    min_y, max_y = -3.0, 3.0
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[2]-ps[1]*u[2]-u[1]^2*u[2]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
 
-    # # Compute trajectories
-    # function trajectory_eqs!(du, u, p, t)
-    #     du[1] = u[1]*(1-u[1]^2) + p[1]*u[1]*cos(u[2])
-    #     du[2] = 1
-    # end
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = u[1]*(1-u[1]^2) + p[1]*u[1]*cos(u[2])
+        du[2] = 1
+    end
 
-    # u0s = [[-0.444, 0.444]]
-    # tspans = [(0.0, 20.0)]
-    # ps = [[μ]]
+    u0s = [[-0.444, 0.444]]
+    tspans = [(0.0, 20.0)]
 
-    # trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
-    # # Create final plot
-    # return final_plot(;
-    #     title = "<b>μ=$μ</b>",
-    #     fps = fps,
-    #     As = As,
-    #     contour_xs = contour_xs,
-    #     contour_ys = contour_ys,
-    #     contour_f_xy = contour_f_xy,
-    #     contour_g_xy = contour_g_xy,
-    #     slope_start_xys = start_xys,
-    #     slope_end_xys = end_xys,
-    #     trajectories = trajectories,
-    # )
+    # Create final plot
+    return final_plot(;
+        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
 end
 
 display(ex_7_3_1(1.0, 1.0))
