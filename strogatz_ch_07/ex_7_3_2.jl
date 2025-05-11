@@ -290,6 +290,6 @@ function ex_7_3_2(a, b)
     )
 end
 
-display(ex_7_3_2(1.0, 1.0))
+display(ex_7_3_2(0.02, 0.6))
 println("Press enter to exit")
 readline()
