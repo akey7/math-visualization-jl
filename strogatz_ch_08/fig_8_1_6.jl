@@ -277,6 +277,8 @@ function fig_8_1_6(μ)
     )
 end
 
+display(fig_8_1_6(-1.0))
 display(fig_8_1_6(0.0))
+display(fig_8_1_6(1.0))
 println("Press enter to exit")
 readline()
