@@ -90,7 +90,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     for (u0, tspan) ∈ zip(u0s, tspans)
         trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, ps)
         trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
-        push!(trajectories, (trajectory_sol.u, trajectory_sol.t))
+        push!(trajectories, trajectory_sol.u)
     end
     return trajectories
 end
@@ -106,7 +106,6 @@ function final_plot(;
     slope_end_xys,
     trajectories,
 )
-    println(length(trajectories[1]))
     annotations = []
     for (fp, A) ∈ zip(fps, As)
         classification = classify_jacobian(A)
@@ -273,10 +272,11 @@ function ex_7_3_2(a, b)
         du[2] = p[2]-p[1]*u[2]-u[1]^2*u[2]
     end
 
-    u0s = [[0.333, 1.333]]
+    u0s = [[0.333, 0.889]]
     tspans = [(0.0, 10.0)]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+    # trajectories = [[(1.0, 1.0), (2.0, 2.0)]]
 
     # Create final plot
     return final_plot(;
