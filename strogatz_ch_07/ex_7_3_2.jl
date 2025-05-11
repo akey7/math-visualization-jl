@@ -272,8 +272,8 @@ function ex_7_3_2(a, b)
         du[2] = p[2]-p[1]*u[2]-u[1]^2*u[2]
     end
 
-    u0s = [[0.333, 0.889]]
-    tspans = [(0.0, 10.0)]
+    u0s = [[0.333, 0.889], [0.667, 2.667], [0.0, 0.222]]
+    tspans = [(0.0, 20.0), (0.0, 20.0), (0.0, 20.0)]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     # trajectories = [[(1.0, 1.0), (2.0, 2.0)]]
