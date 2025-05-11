@@ -6,12 +6,17 @@ using ForwardDiff
 using LinearAlgebra
 using PlotlyJS
 
-function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange)
+function find_fixed_points(
+    system_of_eqs;
+    guess_xs::AbstractRange,
+    guess_ys::AbstractRange,
+    ps::Vector{Float64},
+)
     fixed_points = []
     for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
-        u0 = SA[guess_x, guess_y]
-        prob = NonlinearProblem(system_of_eqs, u0)
-        sol = solve(prob, NewtonRaphson())
+        u0 = [guess_x, guess_y]
+        prob = NonlinearProblem(system_of_eqs, u0, ps)
+        sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
         if SciMLBase.successful_retcode(sol)
             found = false
             for fixed_point ∈ fixed_points
@@ -24,15 +29,17 @@ function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::Abs
             if !found
                 push!(fixed_points, sol.u)
             end
+        else
+            println("$u0 $(sol.retcode)")
         end
     end
     return fixed_points
 end
 
-function find_jacobians(system_of_eqs, fps)
+function find_jacobians(system_of_eqs, fps, ps)
     jacobians = []
     for fp ∈ fps
-        jacobian = ForwardDiff.jacobian(system_of_eqs, fp)
+        jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
         push!(jacobians, jacobian)
     end
     return jacobians
@@ -89,7 +96,6 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 end
 
 function final_plot(;
-    title,
     fps,
     As,
     contour_xs,
@@ -107,8 +113,6 @@ function final_plot(;
         push!(annotations, annotation)
     end
     traces::Vector{GenericTrace} = []
-    x_line_traces::Vector{GenericTrace} = []
-    y_line_traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
         y = contour_ys,
@@ -147,7 +151,7 @@ function final_plot(;
         )
         push!(traces, trace_slope)
     end
-    for (i, (trajectory, trajectory_ts)) ∈ enumerate(trajectories)
+    for (i, trajectory) ∈ enumerate(trajectories)
         showlegend = i == 1
         trace_start = scatter(
             x = [trajectory[1][1]],
@@ -173,15 +177,9 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
-        x_line_trace =
-            scatter(x = trajectory_ts, y = [x for (x, _) ∈ trajectory], showlegend = false)
-        y_line_trace =
-            scatter(x = trajectory_ts, y = [y for (_, y) ∈ trajectory], showlegend = false)
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
-        push!(x_line_traces, x_line_trace)
-        push!(y_line_traces, y_line_trace)
     end
     for (i, (fp, A)) ∈ enumerate(zip(fps, As))
         classification = classify_jacobian(A)
@@ -205,26 +203,9 @@ function final_plot(;
     gridwidth = 1
     border_color = "black"
     gridcolor = "lightgray"
-    fig = make_subplots(
-        rows = 2,
-        cols = 2,
-        vertical_spacing = 0.1,
-        subplot_titles = ["Phase Portrait" "Y Trajectory"],
-    )
-    for trace ∈ traces
-        add_trace!(fig, trace, row = 1, col = 1)
-    end
-    for x_line_trace ∈ x_line_traces
-        add_trace!(fig, x_line_trace, row = 1, col = 2)
-    end
-    for y_line_trace ∈ y_line_traces
-        add_trace!(fig, y_line_trace, row = 2, col = 2)
-    end
-    relayout!(
-        fig,
-        title = title,
-        width = 1100,
-        height = 850,
+    layout = Layout(
+        width = 550,
+        height = 500,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
@@ -237,47 +218,6 @@ function final_plot(;
             gridwidth = gridwidth,
         ),
         yaxis = attr(
-            # domain = [phase_portrait_min_y, phase_portrait_max_y],
-            showline = true,
-            linewidth = border_width,
-            linecolor = border_color,
-            mirror = true,
-            showgrid = true,
-            gridcolor = gridcolor,
-            gridwidth = gridwidth,
-        ),
-        xaxis2 = attr(
-            title = "<b>t</b>",
-            showline = true,
-            linewidth = border_width,
-            linecolor = border_color,
-            mirror = true,
-            showgrid = true,
-            gridcolor = gridcolor,
-            gridwidth = gridwidth,
-        ),
-        yaxis2 = attr(
-            title = "<b>x</b>",
-            showline = true,
-            linewidth = border_width,
-            linecolor = border_color,
-            mirror = true,
-            showgrid = true,
-            gridcolor = gridcolor,
-            gridwidth = gridwidth,
-        ),
-        xaxis4 = attr(
-            title = "<b>t</b>",
-            showline = true,
-            linewidth = border_width,
-            linecolor = border_color,
-            mirror = true,
-            showgrid = true,
-            gridcolor = gridcolor,
-            gridwidth = gridwidth,
-        ),
-        yaxis4 = attr(
-            title = "<b>y</b>",
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
@@ -288,33 +228,37 @@ function final_plot(;
         ),
         annotations = annotations,
     )
-    return fig
+    return plot(traces, layout)
 end
 
 #####################################################################
-# PLOT SEVERAL VALUES FOR μ                                         #
+# MAKE THE PLOT                                                     #
 #####################################################################
 
-function ex_7_1_2(μ)
+function ex_7_3_2(a, b)
+    # Define parameters of functions
+    ps = [a, b]
+
     # Find fixed points
-    eqs_01(u, p) = SA[u[2], u[2]*(1-u[1]^2)-u[1]]
+    eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
     fps = find_fixed_points(
         eqs_01;
-        guess_xs = range(-3.5, 3.5, 10),
-        guess_ys = range(-3.5, 3.5, 10),
+        guess_xs = range(0.0, 3.1, 5),
+        guess_ys = range(0.0, 1.1, 5),
+        ps = ps,
     )
     println(fps)
 
     # Find Jacobians
-    eqs_02(u) = [u[2], u[2]*(1-u[1]^2)-u[1]]
-    As = find_jacobians(eqs_02, fps)
+    eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    As = find_jacobians(eqs_02, fps, ps)
     println(As)
 
     # Find contours to plot nullclines and slope field
-    min_x, max_x = -3.0, 3.0
-    min_y, max_y = -3.0, 3.0
-    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]
-    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]*(1-u[1]^2)-u[1]
+    min_x, max_x = 0.0, 3.0
+    min_y, max_y = 0.0, 1.0
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[2]-ps[1]*u[2]-u[1]^2*u[2]
     contour_xs = range(min_x, max_x, 100)
     contour_ys = range(min_y, max_y, 100)
     contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
@@ -322,19 +266,18 @@ function ex_7_1_2(μ)
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = u[2]
-        du[2] = p[1]*(1-u[1]^2)*u[2]-u[1]
+        du[1] = u[1]*(1-u[1]^2) + p[1]*u[1]*cos(u[2])
+        du[2] = 1
     end
 
     u0s = [[-0.444, 0.444]]
     tspans = [(0.0, 20.0)]
-    ps = [[μ]]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
-        title = "<b>μ=$μ</b>",
+        # title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
         fps = fps,
         As = As,
         contour_xs = contour_xs,
@@ -347,9 +290,6 @@ function ex_7_1_2(μ)
     )
 end
 
-display(ex_7_1_2(0.5))
-display(ex_7_1_2(1.0))
-display(ex_7_1_2(1.5))
-display(ex_7_1_2(3.0))
+display(ex_7_3_2(0.02, 0.6))
 println("Press enter to exit")
 readline()

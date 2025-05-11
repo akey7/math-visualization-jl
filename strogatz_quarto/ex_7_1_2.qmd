@@ -1,3 +1,27 @@
+---
+title: "Julia: Strogatz Example 7.1.2"
+author: "Alicia"
+date: "2025-05-10"
+categories: [julia, math]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+engine: julia
+freeze: false
+---
+
+This document builds on Strogatz's Example 7.1.2 of the van der Pol equation.
+
+The following Julia packages will be needed for this document:
+
+```{julia}
+#| label: using-things
+#| include: true
+#| echo: true
+#| eval: true
+
 using NonlinearSolve
 using DifferentialEquations
 using SciMLBase
@@ -5,6 +29,21 @@ using StaticArrays
 using ForwardDiff
 using LinearAlgebra
 using PlotlyJS
+```
+
+> In the document below, many code cells have an extra `;` after the code to suppress junk from being output into this document.
+
+## Phase Portrait Analysis and Plotting Functions
+
+### Fixed Points
+
+There might be multiple fixed points for a given phase portrait, and the following function finds fixed points within a given region with `NonlinearSolve`.
+
+```{julia}
+#| label: fixed-points-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::AbstractRange)
     fixed_points = []
@@ -27,7 +66,18 @@ function find_fixed_points(system_of_eqs; guess_xs::AbstractRange, guess_ys::Abs
         end
     end
     return fixed_points
-end
+end;
+```
+
+### Find Jacobians at Fixed Points
+
+The following function finds the Jacobians for the given system of equations and fixed points.
+
+```{julia}
+#| label: find-jacobians-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function find_jacobians(system_of_eqs, fps)
     jacobians = []
@@ -36,7 +86,18 @@ function find_jacobians(system_of_eqs, fps)
         push!(jacobians, jacobian)
     end
     return jacobians
-end
+end;
+```
+
+### Classify Fixed Points
+
+This function classifies a fixed point depending trace and determinant of the Jacobian at that fixed point.
+
+```{julia}
+#| label: classify-jacobian-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function classify_jacobian(A::Matrix{Float64})
     τ = tr(A)
@@ -60,13 +121,33 @@ function classify_jacobian(A::Matrix{Float64})
         end
     end
     return "Unknown"
-end
+end;
+```
+
+## Nullcline Contours
+
+```{julia}
+#| label: nullcline-contours-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
     return f_xy, g_xy
-end
+end;
+```
+
+### Slope Field Calculation
+
+This function calculates the slope field defined by *f* and *g* over the points defined by `xs` and `ys`.
+
+```{julia}
+#| label: slope-field-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function slope_field(f, g, xs, ys)
     scaler = 1 / length(xs)
@@ -76,7 +157,18 @@ function slope_field(f, g, xs, ys)
         start_xy ∈ start_xys
     ]
     return start_xys, end_xys
-end
+end;
+```
+
+### Trajectory Calculation
+
+This function calculates trajectories of the `trajectory_eqs!` from the initial conditions given in `u0` over the spans given by `tspans`.
+
+```{julia}
+#| label: trajecotry-calculation-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
@@ -86,7 +178,18 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
         push!(trajectories, (trajectory_sol.u, trajectory_sol.t))
     end
     return trajectories
-end
+end;
+```
+
+### FINALLY: The Plotting Function
+
+The final function makes a plot with Plotly.
+
+```{julia}
+#| label: plotting-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function final_plot(;
     title,
@@ -173,10 +276,20 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
-        x_line_trace =
-            scatter(x = trajectory_ts, y = [x for (x, _) ∈ trajectory], showlegend = false)
-        y_line_trace =
-            scatter(x = trajectory_ts, y = [y for (_, y) ∈ trajectory], showlegend = false)
+        x_line_trace = scatter(
+            x = trajectory_ts, 
+            y = [x for (x, _) ∈ trajectory],
+            mode = "lines",
+            line = attr(color = "darkslateblue"),
+            name = "X Component",
+        )
+        y_line_trace = scatter(
+            x = trajectory_ts, 
+            y = [y for (_, y) ∈ trajectory],
+            mode = "lines",
+            line = attr(color = "crimson"),
+            name = "Y Component",
+        )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
@@ -223,8 +336,8 @@ function final_plot(;
     relayout!(
         fig,
         title = title,
-        width = 1100,
-        height = 850,
+        width = 800,
+        height = 700,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
@@ -289,11 +402,16 @@ function final_plot(;
         annotations = annotations,
     )
     return fig
-end
+end;
+```
 
-#####################################################################
-# PLOT SEVERAL VALUES FOR μ                                         #
-#####################################################################
+### Function to Assemble the Plots
+
+```{julia}
+#| label: plot-assembly-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function ex_7_1_2(μ)
     # Find fixed points
@@ -345,11 +463,66 @@ function ex_7_1_2(μ)
         slope_end_xys = end_xys,
         trajectories = trajectories,
     )
-end
+end;
+```
 
-display(ex_7_1_2(0.5))
-display(ex_7_1_2(1.0))
-display(ex_7_1_2(1.5))
-display(ex_7_1_2(3.0))
-println("Press enter to exit")
-readline()
+## Example 7.1.2
+
+This example explores the van der Pol equation:
+
+$$ \ddot{x} + \mu(x^2-1)\dot{x} + x $$
+
+To solve this second-order equation with an RK4 algorithm for visualization, I split it into a system of first-order equations:
+
+$$ {dx_1 \over dt} = x_2 $$
+
+$$ {dx_2 \over dt} = -\mu(x^2-1)x_2-x $$
+
+Then I plotted the phase portrait with the trajectories on it alongside the *x* and *y* components versus *t* of the trajectories separately.
+
+Below are phase portraits for differing values of mu.
+
+```{julia}
+#| label: fig-01
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(0.5)
+```
+
+```{julia}
+#| label: fig-02
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(1.0)
+```
+
+```{julia}
+#| label: fig-03
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(1.5)
+```
+
+```{julia}
+#| label: fig-04
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(2.0)
+```
+
+```{julia}
+#| label: fig-05
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(3.0)
+```
