@@ -254,6 +254,42 @@ function fig_8_1_6(μ)
         ps = ps,
     )
     println(fps)
+
+    # Find Jacobians
+    eqs_02(u, p) = [p[1]*u[1]-u[1]^3, -u[2]]
+    As = find_jacobians(eqs_02, fps, ps)
+    println(As)
+
+    # Find contours to plot nullclines and slope field
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[2]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = p[1]*u[1]-u[1]^3
+        du[2] = -u[2]
+    end
+    u0s = [[-1.0, 0.0], [1.0, 0.0]]
+    tspans = [(0.0, 1.0), (0.0, 1.0)]
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+
+    # Create final plot
+    return final_plot(;
+        title = "<b>μ=$(ps[1])</b>",
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
 end
 
 display(fig_8_1_6(0.0))
