@@ -392,3 +392,125 @@ function final_plot(;
     return fig
 end;
 ```
+
+### Function to Assemble the Plots
+
+```{julia}
+#| label: plot-assembly-function
+#| include: true
+#| echo: true
+#| eval: true
+
+function ex_7_1_2(μ)
+    # Find fixed points
+    eqs_01(u, p) = SA[u[2], u[2]*(1-u[1]^2)-u[1]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(-3.5, 3.5, 10),
+        guess_ys = range(-3.5, 3.5, 10),
+    )
+    println(fps)
+
+    # Find Jacobians
+    eqs_02(u) = [u[2], u[2]*(1-u[1]^2)-u[1]]
+    As = find_jacobians(eqs_02, fps)
+    println(As)
+
+    # Find contours to plot nullclines and slope field
+    min_x, max_x = -3.0, 3.0
+    min_y, max_y = -3.0, 3.0
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = u[2]*(1-u[1]^2)-u[1]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = u[2]
+        du[2] = p[1]*(1-u[1]^2)*u[2]-u[1]
+    end
+
+    u0s = [[-0.444, 0.444]]
+    tspans = [(0.0, 20.0)]
+    ps = [[μ]]
+
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+
+    # Create final plot
+    return final_plot(;
+        title = "<b>μ=$μ</b>",
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
+end;
+```
+
+## Example 7.1.2
+
+This example explores the van der Pol equation:
+
+$$ \ddot{x} + \mu(x^2-1)\dot{x} + x $$
+
+To solve this second-order equation with an RK4 algorithm for visualization, I split it into a system of first-order equations:
+
+$$ {dx_1 \over dt} = x_2 $$
+
+$$ {dx_2 \over dt} = -\mu(x^2-1)x_2-x $$
+
+Then I plotted the phase portrait with the trajectories on it alongside the *x* and *y* components versus *t* of the trajectories separately.
+
+Below are phase portraits for differing values of mu.
+
+```{julia}
+#| label: fig-01
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(0.5)
+```
+
+```{julia}
+#| label: fig-02
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(1.0)
+```
+
+```{julia}
+#| label: fig-03
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(1.5)
+```
+
+```{julia}
+#| label: fig-04
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(2.0)
+```
+
+```{julia}
+#| label: fig-05
+#| include: true
+#| echo: true
+#| eval: true
+
+ex_7_1_2(3.0)
+```
