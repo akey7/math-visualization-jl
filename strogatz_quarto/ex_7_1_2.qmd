@@ -1,5 +1,5 @@
 ---
-title: "Julia: Strogatz Chapter 06 Examples"
+title: "Julia: Strogatz Example 7.1.2"
 author: "Alicia"
 date: "2025-05-10"
 categories: [julia, math]
@@ -11,6 +11,8 @@ format:
 engine: julia
 freeze: false
 ---
+
+This document builds on Strogatz's Example 7.1.2 of the van der Pol equation.
 
 The following Julia packages will be needed for this document:
 
