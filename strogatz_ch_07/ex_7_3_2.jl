@@ -96,6 +96,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 end
 
 function final_plot(;
+    title,
     fps,
     As,
     contour_xs,
@@ -204,6 +205,7 @@ function final_plot(;
     border_color = "black"
     gridcolor = "lightgray"
     layout = Layout(
+        title = title,
         width = 550,
         height = 500,
         plot_bgcolor = plot_bgcolor,
@@ -276,11 +278,10 @@ function ex_7_3_2(a, b)
     tspans = [(0.0, 20.0), (0.0, 20.0), (0.0, 20.0)]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
-    # trajectories = [[(1.0, 1.0), (2.0, 2.0)]]
 
     # Create final plot
     return final_plot(;
-        # title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
+        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
         fps = fps,
         As = As,
         contour_xs = contour_xs,
