@@ -274,10 +274,20 @@ function final_plot(;
             name = "end",
             showlegend = showlegend,
         )
-        x_line_trace =
-            scatter(x = trajectory_ts, y = [x for (x, _) ∈ trajectory], showlegend = false)
-        y_line_trace =
-            scatter(x = trajectory_ts, y = [y for (_, y) ∈ trajectory], showlegend = false)
+        x_line_trace = scatter(
+            x = trajectory_ts, 
+            y = [x for (x, _) ∈ trajectory],
+            mode = "lines",
+            line = attr(color = "darkslateblue"),
+            name = "X Component",
+        )
+        y_line_trace = scatter(
+            x = trajectory_ts, 
+            y = [y for (_, y) ∈ trajectory],
+            mode = "lines",
+            line = attr(color = "crimson"),
+            name = "Y Component",
+        )
         push!(traces, trace_start)
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
@@ -324,8 +334,8 @@ function final_plot(;
     relayout!(
         fig,
         title = title,
-        width = 1100,
-        height = 850,
+        width = 800,
+        height = 700,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
         xaxis = attr(
