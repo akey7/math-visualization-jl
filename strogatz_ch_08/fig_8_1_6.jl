@@ -45,30 +45,6 @@ function find_jacobians(system_of_eqs, fps, ps)
     return jacobians
 end
 
-function classify_jacobian(A::Matrix{Float64})
-    τ = tr(A)
-    Δ = det(A)
-    discriminant = tr(A)^2 - 4*det(A)
-    if Δ < 0.0
-        return "Saddle"
-    else
-        if isapprox(discriminant, 0.0)
-            return "Star, Degenerate"
-        elseif discriminant > 0.0
-            if isapprox(τ, 0.0)
-                return "Neutral Stable"
-            elseif τ < 0.0
-                return "Stable"
-            else
-                return "Unstable"
-            end
-        else
-            return "Spiral"
-        end
-    end
-    return "Unknown"
-end
-
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
@@ -107,12 +83,6 @@ function final_plot(;
     slope_end_xys,
     trajectories,
 )
-    annotations = []
-    for (fp, A) ∈ zip(fps, As)
-        classification = classify_jacobian(A)
-        annotation = attr(x = fp[1], y = fp[2], text = "<b>$classification</b>")
-        push!(annotations, annotation)
-    end
     traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
@@ -182,17 +152,15 @@ function final_plot(;
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
     end
-    for (i, (fp, A)) ∈ enumerate(zip(fps, As))
-        classification = classify_jacobian(A)
+    for (i, fp) ∈ enumerate(fps)
         size = 15
         color = "darkorchid"
-        symbol = classification == "Saddle" ? "circle-open" : "circle"
         showlegend = i == 1
         trace_fp = scatter(
             x = [fp[1]],
             y = [fp[2]],
             mode = "markers",
-            marker = attr(color = color, symbol = symbol, size = size),
+            marker = attr(color = color, size = size),
             showlegend = showlegend,
             name = "Fixed Points",
         )
@@ -228,7 +196,6 @@ function final_plot(;
             gridcolor = gridcolor,
             gridwidth = gridwidth,
         ),
-        annotations = annotations,
     )
     return plot(traces, layout)
 end
