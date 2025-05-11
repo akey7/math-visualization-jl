@@ -236,3 +236,26 @@ end
 #####################################################################
 # MAKE THE PLOT                                                     #
 #####################################################################
+
+function fig_8_1_6(μ)
+    # Define parameters of functions
+    ps = [μ]
+
+    # Min, max of calculations
+    min_x, max_x = -1.0, 1.0
+    min_y, max_y = -1.0, 1.0
+
+    # Find fixed points
+    eqs_01(u, p) = SA[p[1]*u[1]-u[1]^3, -u[2]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
+        ps = ps,
+    )
+    println(fps)
+end
+
+display(fig_8_1_6(0.0))
+println("Press enter to exit")
+readline()
