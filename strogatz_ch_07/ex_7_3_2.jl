@@ -295,5 +295,6 @@ function ex_7_3_2(a, b)
 end
 
 display(ex_7_3_2(0.08, 0.6))
+display(ex_7_3_2(0.12, 0.2))
 println("Press enter to exit")
 readline()
