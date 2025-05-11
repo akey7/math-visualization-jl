@@ -87,15 +87,16 @@ end
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
-    for (u0, tspan, p) ∈ zip(u0s, tspans, ps)
-        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, p)
+    for (u0, tspan) ∈ zip(u0s, tspans)
+        trajectory_prob = ODEProblem(trajectory_eqs!, u0, tspan, ps)
         trajectory_sol = solve(trajectory_prob, RK4(), dt = 0.01)
-        push!(trajectories, (trajectory_sol.u, trajectory_sol.t))
+        push!(trajectories, trajectory_sol.u)
     end
     return trajectories
 end
 
 function final_plot(;
+    title,
     fps,
     As,
     contour_xs,
@@ -204,6 +205,7 @@ function final_plot(;
     border_color = "black"
     gridcolor = "lightgray"
     layout = Layout(
+        title = title,
         width = 550,
         height = 500,
         plot_bgcolor = plot_bgcolor,
@@ -239,12 +241,16 @@ function ex_7_3_2(a, b)
     # Define parameters of functions
     ps = [a, b]
 
+    # Min, max of calculations
+    min_x, max_x = 0.0, 3.0
+    min_y, max_y = 0.0, 4.0
+
     # Find fixed points
     eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
     fps = find_fixed_points(
         eqs_01;
-        guess_xs = range(0.0, 3.1, 5),
-        guess_ys = range(0.0, 1.1, 5),
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
         ps = ps,
     )
     println(fps)
@@ -255,8 +261,6 @@ function ex_7_3_2(a, b)
     println(As)
 
     # Find contours to plot nullclines and slope field
-    min_x, max_x = 0.0, 3.0
-    min_y, max_y = 0.0, 1.0
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
     g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[2]-ps[1]*u[2]-u[1]^2*u[2]
     contour_xs = range(min_x, max_x, 100)
@@ -266,18 +270,18 @@ function ex_7_3_2(a, b)
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = u[1]*(1-u[1]^2) + p[1]*u[1]*cos(u[2])
-        du[2] = 1
+        du[1] = -u[1]+p[1]*u[2]+u[1]^2*u[2]
+        du[2] = p[2]-p[1]*u[2]-u[1]^2*u[2]
     end
 
-    u0s = [[-0.444, 0.444]]
-    tspans = [(0.0, 20.0)]
+    u0s = [[0.333, 0.889], [0.667, 2.667], [0.0, 0.222]]
+    tspans = [(0.0, 20.0), (0.0, 20.0), (0.0, 20.0)]
 
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
-        # title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
+        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
         fps = fps,
         As = As,
         contour_xs = contour_xs,
@@ -290,6 +294,7 @@ function ex_7_3_2(a, b)
     )
 end
 
-display(ex_7_3_2(0.02, 0.6))
+display(ex_7_3_2(0.08, 0.6))
+display(ex_7_3_2(0.12, 0.2))
 println("Press enter to exit")
 readline()
