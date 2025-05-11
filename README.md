@@ -1,5 +1,5 @@
-# potential-enigma-jl
-Doing math things, especially numerical methods, in Julia
+# math-visualization-jl
+Doing math and physics things with an emphasis on visualization.
 
 ### Install the Julia environment
 
@@ -42,9 +42,13 @@ using IJulia
 installkernel("Julia", "--project=@.")
 ```
 
+### Compatiable version of WebIO for PlotlyJS
+
+[https://github.com/JuliaGizmos/WebIO.jl/issues/514](https://github.com/JuliaGizmos/WebIO.jl/issues/514)
+
 ### Quarto installation
 
-[This only needs to be done once per machine for each upgrade of Quarto.](https://quarto.org/docs/get-started/)
+[This only needs to be done once per machine for each upgrade of Quarto or Julia.](https://quarto.org/docs/get-started/)
 
 ### FINALLY! Check the Quarto installation
 
@@ -102,3 +106,28 @@ julia --project=.. complicated_2d_pdf.jl
 ```
 
 This will render two images. First is `2d_pdf.png` which is the contour plot of the PDF being sampled from. Second is `2d_pdf_samples.png` which is the histogram of samples drawn by the Metropolis algorithm.
+
+## `cuda_monte_carlo_integration`
+### Note
+This script requires a system with NVIDIA CUDA drivers.
+### Overview of the demo
+This script performs Monte Carlo integration of:
+
+![Image of equations](images/eqn_1_x2_plus_y2.png "Eq. 1: A simple expression to integrate")
+
+The analytical solution is 2/3. The script produces 0.6662.
+### Running the demo
+Use the following commands to execute the demo:
+```
+cd .\cuda_monte_carlo_integration
+julia --project=.. .\x2_plus_y2.jl
+```
+
+## Citations
+
+The code in this repo uses [CUDA.jl](https://cuda.juliagpu.org/v2.2/) for GPU computations. Citations for this software are:
+
+1. Besard, T., Churavy, V., Edelman, A. & Sutter, B. D. Rapid software prototyping for heterogeneous and distributed platforms. Advances in Engineering Software 132, 29–46 (2019).
+
+2. Besard, T., Foket, C. & De Sutter, B. Effective Extensible Programming: Unleashing Julia on GPUs. IEEE Trans. Parallel Distrib. Syst. 30, 827–841 (2019).
+

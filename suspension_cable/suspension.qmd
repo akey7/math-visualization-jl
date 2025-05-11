@@ -1,0 +1,198 @@
+---
+title: "Suspension Cable"
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: false
+---
+
+```{julia}
+#| label: using-things
+#| eval: true
+#| include: false
+
+import Pkg
+Pkg.activate("..")
+using Plots
+using Roots
+```
+
+## Function to solve
+
+This equation models the tension at the bottom of a suspension cable, where the cable is 5 lbs/ft, the bottom middle is 15 ft from a support, and the total cable length is 30 ft. 
+
+$$ 0 = \left({H \over 5} \sinh {5 \over H} 15\right) - 25 $$
+Define this equation into a function:
+
+```{julia}
+#| label: f-H
+#| eval: true
+#| include: true
+
+f0(h) = sinh(75.0/h) - 125.0/h
+```
+
+What should the answer be:
+
+```{julia}
+#| label: ground-truth
+#| eval: true
+#| include: true
+
+f0(40.8)
+```
+
+## Find the zeros numerically
+
+```{julia}
+#| label: find-zero-01
+#| eval: true
+#| include: true
+
+fzeros(f0, 30, 60)
+```
+
+## Generalize
+
+This equation models the tension at the bottom of a suspension cable suspended from two supports.
+
+### Generalized equation
+$$ f(H, s, x, W) = \left[{H \over W} \sinh\left({W \over H} x\right)\right] - s $$
+
+- s: Half the total length of the cable in ft
+- x: Distance of the middle from each of the supports in ft
+- W: Weight of the cable in lbs/ft
+- H: Tension at bottom of cable
+
+What is meant to be solved for is H, and when the correct value of H is provided, this function should approximately return 0. Use a partial function application of the following equation to pass to a solver and find the correct value of H.
+
+```{julia}
+#| label: tension-function
+#| eval: true
+#| include: true
+
+f1(h::Float64; s::Float64, x::Float64, w::Float64) = h/w * sinh(w * x / h) - s
+```
+
+Here is a partial function application meant to be used with a solver for a cable of length s = 25 ft, x = 15 ft, w = 5 lbs/ft.
+
+```{julia}
+#| label: partial-f1-function-application
+#| eval: true
+#| include: true
+
+partial(h) = f1(h; s = 25.0, x = 15.0, w = 5.0)
+```
+
+### Generalized solver execution
+
+```{julia}
+#| label: generalized-solution
+#| eval: true
+#| include: true
+
+fzeros(partial, 30, 60)
+```
+
+## Wrap tension in a unified function
+
+### Unified function
+
+This function will return H for provided s, w, x.
+
+```{julia}
+#| label: wrap-in-single-function
+#| eval: true
+#| include: true
+
+function tension(; s::Float64, x::Float64, w::Float64, guess_lower::Float64, guess_upper::Float64)
+    partial(h) = h/w * sinh(w * x / h) - s
+    fzeros(partial, guess_lower, guess_upper)
+end
+```
+
+### Test unified tension function.
+
+It still should return approximately 40.8.
+
+```{julia}
+#| label: test-single-function
+#| eval: true
+#| include: true
+
+tension(s = 25.0, x = 15.0, w = 5.0, guess_lower = 30.0, guess_upper = 60.0)
+```
+
+## Plot curve of cable
+
+### Equation of the curve
+
+$$ y(x, H, W) = {H \over W} \cosh \left({W \over H} x \right) $$
+
+I will call this function `curve(x, H, W)` in the code.
+
+```{julia}
+#| label: curve-function
+#| eval: true
+#| include: true
+
+function curve(; xs::Vector{Float64}, dist_from_support::Float64, w::Float64, s::Float64, guess_lower::Float64, guess_upper::Float64)
+    ys = zeros(Float64, length(xs))
+    for (i, x) ∈ enumerate(xs)
+        h = tension(x = dist_from_support, w = w, s = s, guess_lower = guess_lower, guess_upper = guess_upper)
+        if length(h) < 1
+            throw(ErrorException("No solutions for tension! s=$s, w=$w, x=$x, guess_lower=$guess_lower, guess_upper=$guess_upper"))
+        end
+        ys[i] = h[1] / w * cosh(w * x / h[1])
+    end
+    ys
+end
+```
+
+### Plot the function
+
+First with poles at wide distance
+
+```{julia}
+#| label: plot-curve-wide
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -18.0, stop = 18.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 18.0, w = 5.0, s = 25.0, guess_lower = 0.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+```
+
+Second with the poles at moderate distance
+
+```{julia}
+#| label: plot-curve-middle
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -15.0, stop = 15.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 15.0, w = 5.0, s = 25.0, guess_lower = 00.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+```
+
+Then with poles at narrow distance
+
+```{julia}
+#| label: plot-curve-narrow
+#| eval: true
+#| include: true
+
+xs = collect(range(start = -10.0, stop = 10.0, length = 100))
+ys = curve(xs = xs, dist_from_support = 10.0, w = 5.0, s = 25.0, guess_lower = 0.0, guess_upper = 100.0)
+
+plot(xs, ys, xlims = (-20.0, 25.0), ylims = (0.0, maximum(ys)*1.1), legend = :none, linewidth = 3.0)
+plot!([minimum(xs), minimum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+plot!([maximum(xs), maximum(xs)], [0.0, maximum(ys)], color = :red, linewidth = 7.0)
+```
