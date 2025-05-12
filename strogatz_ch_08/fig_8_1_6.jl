@@ -4,6 +4,7 @@ using SciMLBase
 using StaticArrays
 using ForwardDiff
 using LinearAlgebra
+using Suppressor
 using PlotlyJS
 
 function find_fixed_points(
@@ -13,36 +14,29 @@ function find_fixed_points(
     ps::Vector{Float64},
 )
     fixed_points = []
-    for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
-        u0 = [guess_x, guess_y]
-        prob = NonlinearProblem(system_of_eqs, u0, ps)
-        sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
-        if SciMLBase.successful_retcode(sol)
-            found = false
-            for fixed_point ∈ fixed_points
-                if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
-                   isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
-                    found = true
-                    break
+    @suppress begin
+        for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+            u0 = [guess_x, guess_y]
+            prob = NonlinearProblem(system_of_eqs, u0, ps)
+            sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
+            if SciMLBase.successful_retcode(sol)
+                found = false
+                for fixed_point ∈ fixed_points
+                    if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                    isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                        found = true
+                        break
+                    end
                 end
+                if !found
+                    push!(fixed_points, sol.u)
+                end
+            # else
+            #     println("$u0 $(sol.retcode)")
             end
-            if !found
-                push!(fixed_points, sol.u)
-            end
-        else
-            println("$u0 $(sol.retcode)")
         end
     end
     return fixed_points
-end
-
-function find_jacobians(system_of_eqs, fps, ps)
-    jacobians = []
-    for fp ∈ fps
-        jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
-        push!(jacobians, jacobian)
-    end
-    return jacobians
 end
 
 function nullcline_contours(f, g, xs, ys)
@@ -74,7 +68,6 @@ end
 function final_plot(;
     title,
     fps,
-    As,
     contour_xs,
     contour_ys,
     contour_f_xy,
@@ -209,7 +202,7 @@ function fig_8_1_6(μ)
     ps = [μ]
 
     # Min, max of calculations
-    min_x, max_x = -1.0, 1.0
+    min_x, max_x = -2.0, 2.0
     min_y, max_y = -1.0, 1.0
 
     # Find fixed points
@@ -220,12 +213,7 @@ function fig_8_1_6(μ)
         guess_ys = range(min_y, max_y, 5),
         ps = ps,
     )
-    println(fps)
-
-    # Find Jacobians
-    eqs_02(u, p) = [p[1]*u[1]-u[1]^3, -u[2]]
-    As = find_jacobians(eqs_02, fps, ps)
-    println(As)
+    # println(fps)
 
     # Find contours to plot nullclines and slope field
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
@@ -241,8 +229,8 @@ function fig_8_1_6(μ)
         du[2] = -u[2]
     end
     u0s = [
-        [-1.0, 0.0],
-        [1.0, 0.0],
+        [-2.0, 0.0],
+        [2.0, 0.0],
         [0.0, -1.0],
         [0.0, 1.0],
         [-0.778, -0.556],
@@ -266,7 +254,6 @@ function fig_8_1_6(μ)
     return final_plot(;
         title = "<b>μ=$(ps[1])</b>",
         fps = fps,
-        As = As,
         contour_xs = contour_xs,
         contour_ys = contour_ys,
         contour_f_xy = contour_f_xy,
