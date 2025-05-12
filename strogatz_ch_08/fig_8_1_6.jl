@@ -29,8 +29,8 @@ function find_fixed_points(
             if !found
                 push!(fixed_points, sol.u)
             end
-        else
-            println("$u0 $(sol.retcode)")
+        # else
+        #     println("$u0 $(sol.retcode)")
         end
     end
     return fixed_points
@@ -210,7 +210,7 @@ function fig_8_1_6(μ)
         guess_ys = range(min_y, max_y, 5),
         ps = ps,
     )
-    println(fps)
+    # println(fps)
 
     # Find contours to plot nullclines and slope field
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
