@@ -36,15 +36,6 @@ function find_fixed_points(
     return fixed_points
 end
 
-function find_jacobians(system_of_eqs, fps, ps)
-    jacobians = []
-    for fp ∈ fps
-        jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
-        push!(jacobians, jacobian)
-    end
-    return jacobians
-end
-
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
@@ -74,7 +65,6 @@ end
 function final_plot(;
     title,
     fps,
-    As,
     contour_xs,
     contour_ys,
     contour_f_xy,
@@ -222,11 +212,6 @@ function fig_8_1_6(μ)
     )
     println(fps)
 
-    # Find Jacobians
-    eqs_02(u, p) = [p[1]*u[1]-u[1]^3, -u[2]]
-    As = find_jacobians(eqs_02, fps, ps)
-    println(As)
-
     # Find contours to plot nullclines and slope field
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
     g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[2]
@@ -266,7 +251,6 @@ function fig_8_1_6(μ)
     return final_plot(;
         title = "<b>μ=$(ps[1])</b>",
         fps = fps,
-        As = As,
         contour_xs = contour_xs,
         contour_ys = contour_ys,
         contour_f_xy = contour_f_xy,
