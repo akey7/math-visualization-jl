@@ -4,6 +4,7 @@ using SciMLBase
 using StaticArrays
 using ForwardDiff
 using LinearAlgebra
+using Suppressor
 using PlotlyJS
 
 function find_fixed_points(
@@ -13,24 +14,26 @@ function find_fixed_points(
     ps::Vector{Float64},
 )
     fixed_points = []
-    for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
-        u0 = [guess_x, guess_y]
-        prob = NonlinearProblem(system_of_eqs, u0, ps)
-        sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
-        if SciMLBase.successful_retcode(sol)
-            found = false
-            for fixed_point ∈ fixed_points
-                if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
-                   isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
-                    found = true
-                    break
+    @suppress begin
+        for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+            u0 = [guess_x, guess_y]
+            prob = NonlinearProblem(system_of_eqs, u0, ps)
+            sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
+            if SciMLBase.successful_retcode(sol)
+                found = false
+                for fixed_point ∈ fixed_points
+                    if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                    isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                        found = true
+                        break
+                    end
                 end
+                if !found
+                    push!(fixed_points, sol.u)
+                end
+            # else
+            #     println("$u0 $(sol.retcode)")
             end
-            if !found
-                push!(fixed_points, sol.u)
-            end
-        # else
-        #     println("$u0 $(sol.retcode)")
         end
     end
     return fixed_points
