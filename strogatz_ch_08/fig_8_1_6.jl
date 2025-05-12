@@ -199,7 +199,7 @@ function fig_8_1_6(μ)
     ps = [μ]
 
     # Min, max of calculations
-    min_x, max_x = -1.0, 1.0
+    min_x, max_x = -2.0, 2.0
     min_y, max_y = -1.0, 1.0
 
     # Find fixed points
@@ -226,8 +226,8 @@ function fig_8_1_6(μ)
         du[2] = -u[2]
     end
     u0s = [
-        [-1.0, 0.0],
-        [1.0, 0.0],
+        [-2.0, 0.0],
+        [2.0, 0.0],
         [0.0, -1.0],
         [0.0, 1.0],
         [-0.778, -0.556],
