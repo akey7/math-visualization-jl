@@ -1,0 +1,14 @@
+---
+title: "Julia: Strogatz Figure 8.1.6"
+author: "Alicia"
+date: "2025-05-14"
+categories: [julia, math]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+engine: julia
+freeze: false
+---
+
