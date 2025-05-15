@@ -19,7 +19,7 @@ The systems of equations in question is:
 $$ \dot x = \mu x - x^3 $$
 $$ \dot y = -y $$
 
-In this post I examine phase portraits of this system with multiple values for mu to show this behvaior.
+In this post I examine phase portraits of this system with multiple values for mu to show this behavior.
 
 But first, I willd define several functions to draw the phase portraits.
 
