@@ -347,7 +347,7 @@ function fig_8_1_6(μ)
         slope_end_xys = end_xys,
         trajectories = trajectories,
     )
-end
+end;
 ```
 
 ## Phase Portratis
