@@ -362,7 +362,7 @@ fig_8_1_6(-1.0)
 ```
 
 ```{julia}
-#| label: figure-01
+#| label: figure-02
 #| include: true
 #| echo: true
 #| eval: true
@@ -371,7 +371,7 @@ fig_8_1_6(0.0)
 ```
 
 ```{julia}
-#| label: figure-01
+#| label: figure-03
 #| include: true
 #| echo: true
 #| eval: true
