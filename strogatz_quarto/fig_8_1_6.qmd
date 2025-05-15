@@ -1,10 +1,55 @@
+---
+title: "Julia: Strogatz Figure 8.1.6"
+author: "Alicia"
+date: "2025-05-15"
+categories: [julia, math]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+engine: julia
+freeze: false
+---
+
+Figure 8.1.6 of Strogatz is an exmaple of a supercritical pitchfork, wherein a bifurcation happens that splits a single fixed point into 3 fixed points depending on the value of a parameter in the system of equations.
+
+The systems of equations in question is:
+
+$$ \dot x = \mu x - x^3 $$
+$$ \dot y = -y $$
+
+In this post I examine phase portraits of this system with multiple values for mu to show this behavior.
+
+But first, I willd define several functions to draw the phase portraits.
+
+## Functions to Build Phase Portraits
+
+### Dependencies
+
+```{julia}
+#| label: using-things
+#| include: true
+#| echo: true
+#| eval: true
+
 using NonlinearSolve
 using DifferentialEquations
 using SciMLBase
 using StaticArrays
 using ForwardDiff
 using LinearAlgebra
+using Suppressor
 using PlotlyJS
+```
+
+### Fixed Point Finder
+
+```{julia}
+#| label: fixed-point-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function find_fixed_points(
     system_of_eqs;
@@ -13,67 +58,54 @@ function find_fixed_points(
     ps::Vector{Float64},
 )
     fixed_points = []
-    for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
-        u0 = [guess_x, guess_y]
-        prob = NonlinearProblem(system_of_eqs, u0, ps)
-        sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
-        if SciMLBase.successful_retcode(sol)
-            found = false
-            for fixed_point ∈ fixed_points
-                if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
-                   isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
-                    found = true
-                    break
+    @suppress begin
+        for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+            u0 = [guess_x, guess_y]
+            prob = NonlinearProblem(system_of_eqs, u0, ps)
+            sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
+            if SciMLBase.successful_retcode(sol)
+                found = false
+                for fixed_point ∈ fixed_points
+                    if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                    isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                        found = true
+                        break
+                    end
                 end
+                if !found
+                    push!(fixed_points, sol.u)
+                end
+            # else
+            #     println("$u0 $(sol.retcode)")
             end
-            if !found
-                push!(fixed_points, sol.u)
-            end
-        else
-            println("$u0 $(sol.retcode)")
         end
     end
     return fixed_points
-end
+end;
+```
 
-# function find_jacobians(system_of_eqs, fps, ps)
-#     jacobians = []
-#     for fp ∈ fps
-#         jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
-#         push!(jacobians, jacobian)
-#     end
-#     return jacobians
-# end
+### Nullcline Contour Function
 
-# function classify_jacobian(A::Matrix{Float64})
-#     τ = tr(A)
-#     Δ = det(A)
-#     discriminant = tr(A)^2 - 4*det(A)
-#     if Δ < 0.0
-#         return "Saddle"
-#     else
-#         if isapprox(discriminant, 0.0)
-#             return "Star, Degenerate"
-#         elseif discriminant > 0.0
-#             if isapprox(τ, 0.0)
-#                 return "Neutral Stable"
-#             elseif τ < 0.0
-#                 return "Stable"
-#             else
-#                 return "Unstable"
-#             end
-#         else
-#             return "Spiral"
-#         end
-#     end
-#     return "Unknown"
-# end
+```{julia}
+#| label: nullcline-contour-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
     return f_xy, g_xy
-end
+end;
+```
+
+### Slope Field Function
+
+```{julia}
+#| label: slope-field-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function slope_field(f, g, xs, ys)
     scaler = 1 / length(xs)
@@ -83,7 +115,16 @@ function slope_field(f, g, xs, ys)
         start_xy ∈ start_xys
     ]
     return start_xys, end_xys
-end
+end;
+```
+
+### Trajectory Calculation Function
+
+```{julia}
+#| label: trajectory-calculation-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
@@ -93,12 +134,20 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
         push!(trajectories, trajectory_sol.u)
     end
     return trajectories
-end
+end;
+```
+
+### Plotting Function
+
+```{julia}
+#| label: plotting-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function final_plot(;
     title,
-    # fps,
-    # As,
+    fps,
     contour_xs,
     contour_ys,
     contour_f_xy,
@@ -107,12 +156,6 @@ function final_plot(;
     slope_end_xys,
     trajectories,
 )
-    # annotations = []
-    # for (fp, A) ∈ zip(fps, As)
-    #     classification = classify_jacobian(A)
-    #     annotation = attr(x = fp[1], y = fp[2], text = "<b>$classification</b>")
-    #     push!(annotations, annotation)
-    # end
     traces::Vector{GenericTrace} = []
     trace_fxy = contour(
         x = contour_xs,
@@ -182,22 +225,20 @@ function final_plot(;
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
     end
-    # for (i, (fp, A)) ∈ enumerate(zip(fps, As))
-    #     classification = classify_jacobian(A)
-    #     size = 15
-    #     color = "darkorchid"
-    #     symbol = classification == "Saddle" ? "circle-open" : "circle"
-    #     showlegend = i == 1
-    #     trace_fp = scatter(
-    #         x = [fp[1]],
-    #         y = [fp[2]],
-    #         mode = "markers",
-    #         marker = attr(color = color, symbol = symbol, size = size),
-    #         showlegend = showlegend,
-    #         name = "Fixed Points",
-    #     )
-    #     push!(traces, trace_fp)
-    # end
+    for (i, fp) ∈ enumerate(fps)
+        size = 15
+        color = "darkorchid"
+        showlegend = i == 1
+        trace_fp = scatter(
+            x = [fp[1]],
+            y = [fp[2]],
+            mode = "markers",
+            marker = attr(color = color, size = size),
+            showlegend = showlegend,
+            name = "Fixed Points",
+        )
+        push!(traces, trace_fp)
+    end
     plot_bgcolor = "white"
     paper_bgcolor = "white"
     border_width = 1
@@ -228,41 +269,40 @@ function final_plot(;
             gridcolor = gridcolor,
             gridwidth = gridwidth,
         ),
-        # annotations = annotations,
     )
     return plot(traces, layout)
-end
+end;
+```
 
-#####################################################################
-# MAKE THE PLOT                                                     #
-#####################################################################
+### Phase Portrait Creation Function
 
-function ex_7_3_2(a, b)
+```{julia}
+#| label: function-for-figure
+#| include: true
+#| echo: true
+#| eval: true
+
+function fig_8_1_6(μ)
     # Define parameters of functions
-    ps = [a, b]
+    ps = [μ]
 
     # Min, max of calculations
-    min_x, max_x = 0.0, 3.0
-    min_y, max_y = 0.0, 4.0
+    min_x, max_x = -2.0, 2.0
+    min_y, max_y = -1.0, 1.0
 
-    # # Find fixed points
-    # eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
-    # fps = find_fixed_points(
-    #     eqs_01;
-    #     guess_xs = range(min_x, max_x, 5),
-    #     guess_ys = range(min_y, max_y, 5),
-    #     ps = ps,
-    # )
+    # Find fixed points
+    eqs_01(u, p) = SA[p[1]*u[1]-u[1]^3, -u[2]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
+        ps = ps,
+    )
     # println(fps)
 
-    # # Find Jacobians
-    # eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
-    # As = find_jacobians(eqs_02, fps, ps)
-    # println(As)
-
     # Find contours to plot nullclines and slope field
-    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
-    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[2]-ps[1]*u[2]-u[1]^2*u[2]
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[2]
     contour_xs = range(min_x, max_x, 100)
     contour_ys = range(min_y, max_y, 100)
     contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
@@ -270,20 +310,35 @@ function ex_7_3_2(a, b)
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = -u[1]+p[1]*u[2]+u[1]^2*u[2]
-        du[2] = p[2]-p[1]*u[2]-u[1]^2*u[2]
+        du[1] = p[1]*u[1]-u[1]^3
+        du[2] = -u[2]
     end
-
-    u0s = [[0.333, 0.889], [0.667, 2.667], [0.0, 0.222]]
-    tspans = [(0.0, 20.0), (0.0, 20.0), (0.0, 20.0)]
-
+    u0s = [
+        [-2.0, 0.0],
+        [2.0, 0.0],
+        [0.0, -1.0],
+        [0.0, 1.0],
+        [-0.778, -0.556],
+        [0.778, -0.556],
+        [-0.778, 0.556],
+        [0.778, 0.556],
+    ]
+    tspans = [
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+    ]
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
     return final_plot(;
-        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
-        # fps = fps,
-        # As = As,
+        title = "<b>μ=$(ps[1])</b>",
+        fps = fps,
         contour_xs = contour_xs,
         contour_ys = contour_ys,
         contour_f_xy = contour_f_xy,
@@ -292,9 +347,34 @@ function ex_7_3_2(a, b)
         slope_end_xys = end_xys,
         trajectories = trajectories,
     )
-end
+end;
+```
 
-display(ex_7_3_2(0.08, 0.6))
-display(ex_7_3_2(0.12, 0.2))
-println("Press enter to exit")
-readline()
+## Phase Portratis
+
+```{julia}
+#| label: figure-01
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_8_1_6(-1.0)
+```
+
+```{julia}
+#| label: figure-02
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_8_1_6(0.0)
+```
+
+```{julia}
+#| label: figure-03
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_8_1_6(1.0)
+```
