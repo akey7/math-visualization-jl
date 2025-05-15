@@ -12,3 +12,22 @@ engine: julia
 freeze: false
 ---
 
+Figure 8.1.6 of Strogatz is an exmaple of a supercritical pitchfork, wherein a bifurcation happens that splits a single fixed point into 3 fixed points depending on the value of a parameter in the system of equations.
+
+The systems of equations in question is:
+
+$$ \dot x = \mu x - x^3 $$
+$$ \dot y = -y $$
+
+In this post I examine phase portraits of this system with multiple values for mu to show this behvaior.
+
+But first, I willd define several functions to draw the phase portraits.
+
+## Functions to Build Phase Portraits
+
+### 
+
+### Fixed Point Finder
+
+```{julia}
+```
