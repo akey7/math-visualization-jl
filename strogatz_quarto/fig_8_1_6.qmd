@@ -1,7 +1,7 @@
 ---
 title: "Julia: Strogatz Figure 8.1.6"
 author: "Alicia"
-date: "2025-05-14"
+date: "2025-05-15"
 categories: [julia, math]
 format:
   html:
@@ -81,7 +81,7 @@ function find_fixed_points(
         end
     end
     return fixed_points
-end
+end;
 ```
 
 ### Nullcline Contour Function
@@ -96,7 +96,7 @@ function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
     return f_xy, g_xy
-end
+end;
 ```
 
 ### Slope Field Function
@@ -115,7 +115,7 @@ function slope_field(f, g, xs, ys)
         start_xy ∈ start_xys
     ]
     return start_xys, end_xys
-end
+end;
 ```
 
 ### Trajectory Calculation Function
@@ -134,7 +134,7 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
         push!(trajectories, trajectory_sol.u)
     end
     return trajectories
-end
+end;
 ```
 
 ### Plotting Function
@@ -271,7 +271,7 @@ function final_plot(;
         ),
     )
     return plot(traces, layout)
-end
+end;
 ```
 
 ### Phase Portrait Creation Function
