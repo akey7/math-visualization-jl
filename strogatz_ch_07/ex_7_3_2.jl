@@ -36,38 +36,38 @@ function find_fixed_points(
     return fixed_points
 end
 
-# function find_jacobians(system_of_eqs, fps, ps)
-#     jacobians = []
-#     for fp ∈ fps
-#         jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
-#         push!(jacobians, jacobian)
-#     end
-#     return jacobians
-# end
+function find_jacobians(system_of_eqs, fps, ps)
+    jacobians = []
+    for fp ∈ fps
+        jacobian = ForwardDiff.jacobian(system_of_eqs, fp, ps)
+        push!(jacobians, jacobian)
+    end
+    return jacobians
+end
 
-# function classify_jacobian(A::Matrix{Float64})
-#     τ = tr(A)
-#     Δ = det(A)
-#     discriminant = tr(A)^2 - 4*det(A)
-#     if Δ < 0.0
-#         return "Saddle"
-#     else
-#         if isapprox(discriminant, 0.0)
-#             return "Star, Degenerate"
-#         elseif discriminant > 0.0
-#             if isapprox(τ, 0.0)
-#                 return "Neutral Stable"
-#             elseif τ < 0.0
-#                 return "Stable"
-#             else
-#                 return "Unstable"
-#             end
-#         else
-#             return "Spiral"
-#         end
-#     end
-#     return "Unknown"
-# end
+function classify_jacobian(A::Matrix{Float64})
+    τ = tr(A)
+    Δ = det(A)
+    discriminant = tr(A)^2 - 4*det(A)
+    if Δ < 0.0
+        return "Saddle"
+    else
+        if isapprox(discriminant, 0.0)
+            return "Star, Degenerate"
+        elseif discriminant > 0.0
+            if isapprox(τ, 0.0)
+                return "Neutral Stable"
+            elseif τ < 0.0
+                return "Stable"
+            else
+                return "Unstable"
+            end
+        else
+            return "Spiral"
+        end
+    end
+    return "Unknown"
+end
 
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
@@ -97,8 +97,8 @@ end
 
 function final_plot(;
     title,
-    # fps,
-    # As,
+    fps,
+    As,
     contour_xs,
     contour_ys,
     contour_f_xy,
@@ -182,22 +182,22 @@ function final_plot(;
         push!(traces, trace_trajectory)
         push!(traces, trace_end)
     end
-    # for (i, (fp, A)) ∈ enumerate(zip(fps, As))
-    #     classification = classify_jacobian(A)
-    #     size = 15
-    #     color = "darkorchid"
-    #     symbol = classification == "Saddle" ? "circle-open" : "circle"
-    #     showlegend = i == 1
-    #     trace_fp = scatter(
-    #         x = [fp[1]],
-    #         y = [fp[2]],
-    #         mode = "markers",
-    #         marker = attr(color = color, symbol = symbol, size = size),
-    #         showlegend = showlegend,
-    #         name = "Fixed Points",
-    #     )
-    #     push!(traces, trace_fp)
-    # end
+    for (i, (fp, A)) ∈ enumerate(zip(fps, As))
+        classification = classify_jacobian(A)
+        size = 15
+        color = "darkorchid"
+        symbol = classification == "Saddle" ? "circle-open" : "circle"
+        showlegend = i == 1
+        trace_fp = scatter(
+            x = [fp[1]],
+            y = [fp[2]],
+            mode = "markers",
+            marker = attr(color = color, symbol = symbol, size = size),
+            showlegend = showlegend,
+            name = "Fixed Points",
+        )
+        push!(traces, trace_fp)
+    end
     plot_bgcolor = "white"
     paper_bgcolor = "white"
     border_width = 1
@@ -245,20 +245,20 @@ function ex_7_3_2(a, b)
     min_x, max_x = 0.0, 3.0
     min_y, max_y = 0.0, 4.0
 
-    # # Find fixed points
-    # eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
-    # fps = find_fixed_points(
-    #     eqs_01;
-    #     guess_xs = range(min_x, max_x, 5),
-    #     guess_ys = range(min_y, max_y, 5),
-    #     ps = ps,
-    # )
-    # println(fps)
+    # Find fixed points
+    eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
+        ps = ps,
+    )
+    println(fps)
 
-    # # Find Jacobians
-    # eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
-    # As = find_jacobians(eqs_02, fps, ps)
-    # println(As)
+    # Find Jacobians
+    eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    As = find_jacobians(eqs_02, fps, ps)
+    println(As)
 
     # Find contours to plot nullclines and slope field
     f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
@@ -282,8 +282,8 @@ function ex_7_3_2(a, b)
     # Create final plot
     return final_plot(;
         title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
-        # fps = fps,
-        # As = As,
+        fps = fps,
+        As = As,
         contour_xs = contour_xs,
         contour_ys = contour_ys,
         contour_f_xy = contour_f_xy,
