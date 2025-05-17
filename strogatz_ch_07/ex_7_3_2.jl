@@ -237,7 +237,7 @@ end
 # MAKE THE PLOT                                                     #
 #####################################################################
 
-function ex_7_3_2(a, b)
+function fig_7_3_8(a, b)
     # Define parameters of functions
     ps = [a, b]
 
@@ -294,7 +294,7 @@ function ex_7_3_2(a, b)
     )
 end
 
-display(ex_7_3_2(0.08, 0.6))
-display(ex_7_3_2(0.12, 0.2))
+display(fig_7_3_8(0.08, 0.6))
+display(fig_7_3_8(0.12, 0.2))
 println("Press enter to exit")
 readline()
