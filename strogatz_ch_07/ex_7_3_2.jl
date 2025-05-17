@@ -245,10 +245,63 @@ function fig_7_3_7(a_vals)
     push!(traces, trace1)
     trace2 = scatter(x = a_vals, y = b2_minus, mode = "lines", name = "b² - branch")
     push!(traces, trace2)
+    annotation_bgcolor = "white"
+    annotation_bordercolor = "black"
+    annotation_font = attr(size = 18)
+    annotation_borderwidth = 1
+    annotations = [
+        attr(
+            x = 0.06,
+            y = 0.5,
+            text = "stable limit cycle",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+        ),
+        attr(
+            x = 0.1,
+            y = 0.0,
+            text = "stable fixed point",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+        ),
+    ]
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
     layout = Layout(
+        width = 550,
+        height = 500,
         title = "Plot of b² = ½(1 - 2a ± √(1 - 8a))",
-        xaxis = attr(title = "a"),
-        yaxis = attr(title = "b²"),
+        annotations = annotations,
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        xaxis = attr(
+            title = "a",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            title = "b²",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
     )
     plot(traces, layout)
 end
@@ -312,6 +365,6 @@ end
 
 display(fig_7_3_8(0.08, 0.6))
 display(fig_7_3_8(0.12, 0.2))
-display(fig_7_3_7(range(0.0, 0.126, 100)))
+display(fig_7_3_7(range(0.0, 0.12537, 200)))
 println("Press enter to exit")
 readline()
