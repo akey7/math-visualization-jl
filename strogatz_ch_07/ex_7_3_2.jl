@@ -286,6 +286,16 @@ function fig_7_3_7(a_vals)
             font = annotation_font,
             showarrow = false,
         ),
+        attr(
+            x = 0.09,
+            y = 0.9,
+            text = "<b>stable fixed point</b>",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+            showarrow = false,
+        ),
     ]
     plot_bgcolor = "white"
     paper_bgcolor = "white"
@@ -294,7 +304,7 @@ function fig_7_3_7(a_vals)
     border_color = "black"
     gridcolor = "lightgray"
     layout = Layout(
-        width = 550,
+        width = 500,
         height = 500,
         annotations = annotations,
         plot_bgcolor = plot_bgcolor,
