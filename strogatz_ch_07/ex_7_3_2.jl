@@ -253,20 +253,22 @@ function fig_7_3_7(a_vals)
         attr(
             x = 0.06,
             y = 0.5,
-            text = "stable limit cycle",
+            text = "<b>stable limit cycle</b>",
             bgcolor = annotation_bgcolor,
             bordercolor = annotation_bordercolor,
             borderwidth = annotation_borderwidth,
             font = annotation_font,
+            showarrow = false,
         ),
         attr(
             x = 0.1,
             y = 0.0,
-            text = "stable fixed point",
+            text = "<b>stable fixed point</b>",
             bgcolor = annotation_bgcolor,
             bordercolor = annotation_bordercolor,
             borderwidth = annotation_borderwidth,
             font = annotation_font,
+            showarrow = false,
         ),
     ]
     plot_bgcolor = "white"
