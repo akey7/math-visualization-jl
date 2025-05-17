@@ -234,8 +234,24 @@ function final_plot(;
 end
 
 #####################################################################
-# MAKE THE PLOT                                                     #
+# MAKE FIGURES 7.3.7 AND 7.3.8                                      #
 #####################################################################
+
+function fig_7_3_7(a_vals)
+    b2_plus = 0.5 .* (1 .- 2 .* a_vals .+ sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
+    b2_minus = 0.5 .* (1 .- 2 .* a_vals .- sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
+    traces::Vector{GenericTrace} = []
+    trace1 = scatter(x = a_vals, y = b2_plus, mode = "lines", name = "b² + branch")
+    push!(traces, trace1)
+    trace2 = scatter(x = a_vals, y = b2_minus, mode = "lines", name = "b² - branch")
+    push!(traces, trace2)
+    layout = Layout(
+        title = "Plot of b² = ½(1 - 2a ± √(1 - 8a))",
+        xaxis = attr(title = "a"),
+        yaxis = attr(title = "b²"),
+    )
+    plot(traces, layout)
+end
 
 function fig_7_3_8(a, b)
     # Define parameters of functions
@@ -296,5 +312,6 @@ end
 
 display(fig_7_3_8(0.08, 0.6))
 display(fig_7_3_8(0.12, 0.2))
+display(fig_7_3_7(range(0.0, 0.126, 100)))
 println("Press enter to exit")
 readline()
