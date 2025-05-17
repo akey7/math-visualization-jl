@@ -241,9 +241,25 @@ function fig_7_3_7(a_vals)
     b2_plus = 0.5 .* (1 .- 2 .* a_vals .+ sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
     b2_minus = 0.5 .* (1 .- 2 .* a_vals .- sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
     traces::Vector{GenericTrace} = []
-    trace1 = scatter(x = a_vals, y = b2_plus, mode = "lines", name = "b² + branch")
+    trace1 = scatter(
+        x = a_vals,
+        y = b2_plus,
+        mode = "lines",
+        name = "b<sup>2</sup> + branch",
+        fill = "none",
+        line = attr(color = "purple"),
+        showlegend = false,
+    )
     push!(traces, trace1)
-    trace2 = scatter(x = a_vals, y = b2_minus, mode = "lines", name = "b² - branch")
+    trace2 = scatter(
+        x = a_vals,
+        y = b2_minus,
+        mode = "lines",
+        name = "b<sup>2</sup> - branch",
+        fill = "tonexty",
+        line = attr(color = "purple"),
+        showlegend = false,
+    )
     push!(traces, trace2)
     annotation_bgcolor = "white"
     annotation_bordercolor = "black"
@@ -261,7 +277,7 @@ function fig_7_3_7(a_vals)
             showarrow = false,
         ),
         attr(
-            x = 0.1,
+            x = 0.09,
             y = 0.0,
             text = "<b>stable fixed point</b>",
             bgcolor = annotation_bgcolor,
@@ -280,7 +296,6 @@ function fig_7_3_7(a_vals)
     layout = Layout(
         width = 550,
         height = 500,
-        title = "Plot of b² = ½(1 - 2a ± √(1 - 8a))",
         annotations = annotations,
         plot_bgcolor = plot_bgcolor,
         paper_bgcolor = paper_bgcolor,
@@ -295,7 +310,7 @@ function fig_7_3_7(a_vals)
             gridwidth = gridwidth,
         ),
         yaxis = attr(
-            title = "b²",
+            title = "b<sup>2</sup>",
             showline = true,
             linewidth = border_width,
             linecolor = border_color,
