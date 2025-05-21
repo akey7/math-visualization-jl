@@ -479,7 +479,7 @@ function fig_7_3_8(a, b)
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
-    return final_plot(;
+    return phase_portrait(;
         title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
         fps = fps,
         As = As,
@@ -505,4 +505,26 @@ First, we can predict what type of fixed point will be on the plot by plotting t
 #| eval: true
 
 fig_7_3_7(range(0.0, 0.12537, 200))
+```
+
+Here is the behavior of the plot at a = 0.08, b = 0.6, in the stable limit cycle region of the parameter plot:
+
+```{julia}
+#| label: plot-fig-7-3-8-a
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_8(0.08, 0.6)
+```
+
+Finally, here is a stable fixed point with parameters a = 0.12, b = 0.2.
+
+```{julia}
+#| label: plot-fig-7-3-8-b
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_8(0.12, 0.2)
 ```
