@@ -322,3 +322,178 @@ function phase_portrait(;
     return plot(traces, layout)
 end;
 ```
+
+### Function to Plot Figure 7.3.7
+
+```{julia}
+#| label: function-for-fig-7-3-7
+#| include: true
+#| echo: true
+#| eval: true
+
+function fig_7_3_7(a_vals)
+    b2_plus = 0.5 .* (1 .- 2 .* a_vals .+ sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
+    b2_minus = 0.5 .* (1 .- 2 .* a_vals .- sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
+    traces::Vector{GenericTrace} = []
+    trace1 = scatter(
+        x = a_vals,
+        y = b2_plus,
+        mode = "lines",
+        name = "b<sup>2</sup> + branch",
+        fill = "none",
+        line = attr(color = "purple"),
+        showlegend = false,
+    )
+    push!(traces, trace1)
+    trace2 = scatter(
+        x = a_vals,
+        y = b2_minus,
+        mode = "lines",
+        name = "b<sup>2</sup> - branch",
+        fill = "tonexty",
+        line = attr(color = "purple"),
+        showlegend = false,
+    )
+    push!(traces, trace2)
+    annotation_bgcolor = "white"
+    annotation_bordercolor = "black"
+    annotation_font = attr(size = 18)
+    annotation_borderwidth = 1
+    annotations = [
+        attr(
+            x = 0.06,
+            y = 0.5,
+            text = "<b>stable limit cycle</b>",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+            showarrow = false,
+        ),
+        attr(
+            x = 0.09,
+            y = 0.0,
+            text = "<b>stable fixed point</b>",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+            showarrow = false,
+        ),
+        attr(
+            x = 0.09,
+            y = 0.9,
+            text = "<b>stable fixed point</b>",
+            bgcolor = annotation_bgcolor,
+            bordercolor = annotation_bordercolor,
+            borderwidth = annotation_borderwidth,
+            font = annotation_font,
+            showarrow = false,
+        ),
+    ]
+    plot_bgcolor = "white"
+    paper_bgcolor = "white"
+    border_width = 1
+    gridwidth = 1
+    border_color = "black"
+    gridcolor = "lightgray"
+    layout = Layout(
+        width = 500,
+        height = 500,
+        annotations = annotations,
+        plot_bgcolor = plot_bgcolor,
+        paper_bgcolor = paper_bgcolor,
+        xaxis = attr(
+            title = "a",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+        yaxis = attr(
+            title = "b<sup>2</sup>",
+            showline = true,
+            linewidth = border_width,
+            linecolor = border_color,
+            mirror = true,
+            showgrid = true,
+            gridcolor = gridcolor,
+            gridwidth = gridwidth,
+        ),
+    )
+    plot(traces, layout)
+end;
+```
+
+### Function to Plot Variations of Figure 7.3.8
+
+```{julia}
+#| label: function-for-fig-7-3-8
+#| include: true
+#| echo: true
+#| eval: true
+
+function fig_7_3_8(a, b)
+    # Define parameters of functions
+    ps = [a, b]
+
+    # Min, max of calculations
+    min_x, max_x = 0.0, 3.0
+    min_y, max_y = 0.0, 4.0
+
+    # Find fixed points
+    eqs_01(u, p) = SA[-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
+        ps = ps,
+    )
+    println(fps)
+
+    # Find Jacobians
+    eqs_02(u, p) = [-u[1]+p[1]*u[2]+u[1]^2*u[2], p[2]-p[1]*u[2]-u[1]^2*u[2]]
+    As = find_jacobians(eqs_02, fps, ps)
+    println(As)
+
+    # Find contours to plot nullclines and slope field
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[1]+ps[1]*u[2]+u[1]^2*u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[2]-ps[1]*u[2]-u[1]^2*u[2]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = -u[1]+p[1]*u[2]+u[1]^2*u[2]
+        du[2] = p[2]-p[1]*u[2]-u[1]^2*u[2]
+    end
+
+    u0s = [[0.333, 0.889], [0.667, 2.667], [0.0, 0.222]]
+    tspans = [(0.0, 20.0), (0.0, 20.0), (0.0, 20.0)]
+
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+
+    # Create final plot
+    return final_plot(;
+        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
+        fps = fps,
+        As = As,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
+end;
+```
+
+## Finally! Display the Figures
+
+
