@@ -1,0 +1,15 @@
+---
+title: "Julia: Strogatz Example 7.3.2"
+author: "Alicia"
+date: "2025-05-21"
+categories: [julia, math]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+engine: julia
+freeze: false
+---
+
+Example 7.3.2 is an example system of oscillations in glycolysis. It demonstrates the Poincaré-Bendixson Theorem and shows that changes in the two parameters of the system cause the formation of either a stable limit cycle or a stable fixed point. Further, the values of these parameters can be analyzed in such a way that predicts the behavior of the system based on where the points fall in parameter space. This post explores this example. 
