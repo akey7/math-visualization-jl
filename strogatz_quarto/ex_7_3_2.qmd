@@ -2,7 +2,7 @@
 title: "Julia: Strogatz Example 7.3.2"
 author: "Alicia"
 date: "2025-05-21"
-categories: [julia, math]
+categories: [julia, math, chemistry]
 format:
   html:
     toc: true
@@ -496,4 +496,13 @@ end;
 
 ## Finally! Display the Figures
 
+First, we can predict what type of fixed point will be on the plot by plotting the a, b parameter space. I will leave the derivation for the book, bu suffice to say that the plot ends up looking like this and the fixed point follows the behavior of where the parameters are in.
 
+```{julia}
+#| label: plot-fig-7-3-7
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_7(range(0.0, 0.12537, 200))
+```
