@@ -14,6 +14,14 @@ freeze: false
 
 Example 7.3.2 is an example system of oscillations in glycolysis. It demonstrates the Poincaré-Bendixson Theorem and shows that changes in the two parameters of the system cause the formation of either a stable limit cycle or a stable fixed point. Further, the values of these parameters can be analyzed in such a way that predicts the behavior of the system based on where the points fall in parameter space. This post explores this example.
 
+The system of equations is:
+
+$$ \dot x = -x + ay + x^2y $$
+
+$$ \dot y = b - ay -x^2y $$
+
+Both *a* and *b* are parameters, and *a, b > 0*.
+
 ## Functions to Build Phase Portraits
 
 ### Dependencies
