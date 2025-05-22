@@ -20,7 +20,7 @@ $$ \dot x = -x + ay + x^2y $$
 
 $$ \dot y = b - ay -x^2y $$
 
-Both *a* and *b* are parameters, and *a, b > 0*.
+Both *a* and *b* are parameters and *a, b > 0*.
 
 ## Functions to Build Phase Portraits
 
