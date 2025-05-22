@@ -1,3 +1,37 @@
+---
+title: "Julia: Strogatz Example 7.3.2"
+author: "Alicia"
+date: "2025-05-21"
+categories: [julia, math, chemistry]
+format:
+  html:
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+engine: julia
+freeze: false
+---
+
+Example 7.3.2 is an example system of oscillations in glycolysis. It demonstrates the Poincaré-Bendixson Theorem and shows that changes in the two parameters of the system cause the formation of either a stable limit cycle or a stable fixed point. Further, the values of these parameters can be analyzed in such a way that predicts the behavior of the system based on where the points fall in parameter space. This post explores this example.
+
+The system of equations is:
+
+$$ \dot x = -x + ay + x^2y $$
+
+$$ \dot y = b - ay -x^2y $$
+
+Both *a* and *b* are parameters and *a, b > 0*.
+
+## Functions to Build Phase Portraits
+
+### Dependencies
+
+```{julia}
+#| label: using-things
+#| include: true
+#| echo: true
+#| eval: true
+
 using NonlinearSolve
 using DifferentialEquations
 using SciMLBase
@@ -5,6 +39,15 @@ using StaticArrays
 using ForwardDiff
 using LinearAlgebra
 using PlotlyJS
+```
+
+### Fixed Point Finder
+
+```{julia}
+#| label: fixed-point-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function find_fixed_points(
     system_of_eqs;
@@ -34,7 +77,16 @@ function find_fixed_points(
         end
     end
     return fixed_points
-end
+end;
+```
+
+### Jacobian Finder
+
+```{julia}
+#| label: find-jacobians-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function find_jacobians(system_of_eqs, fps, ps)
     jacobians = []
@@ -43,7 +95,16 @@ function find_jacobians(system_of_eqs, fps, ps)
         push!(jacobians, jacobian)
     end
     return jacobians
-end
+end;
+```
+
+### Jacobian Classification Function
+
+```{julia}
+#| label: jacobian-classifier-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function classify_jacobian(A::Matrix{Float64})
     τ = tr(A)
@@ -67,13 +128,31 @@ function classify_jacobian(A::Matrix{Float64})
         end
     end
     return "Unknown"
-end
+end;
+```
+
+### Nullcline Contour Function
+
+```{julia}
+#| label: nullcline-contour-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
     return f_xy, g_xy
-end
+end;
+```
+
+### Slope Field Function
+
+```{julia}
+#| label: slope-field-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function slope_field(f, g, xs, ys)
     scaler = 1 / length(xs)
@@ -83,7 +162,16 @@ function slope_field(f, g, xs, ys)
         start_xy ∈ start_xys
     ]
     return start_xys, end_xys
-end
+end;
+```
+
+### Trajectory Calculation Function
+
+```{julia}
+#| label: trajectory-calculation-function
+#| include: true
+#| echo: true
+#| eval: true
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
@@ -93,9 +181,18 @@ function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
         push!(trajectories, trajectory_sol.u)
     end
     return trajectories
-end
+end;
+```
 
-function final_plot(;
+### Phase Portrait Plotting Function
+
+```{julia}
+#| label: phase-portrait-function
+#| include: true
+#| echo: true
+#| eval: true
+
+function phase_portrait(;
     title,
     fps,
     As,
@@ -231,11 +328,16 @@ function final_plot(;
         # annotations = annotations,
     )
     return plot(traces, layout)
-end
+end;
+```
 
-#####################################################################
-# MAKE FIGURES 7.3.7 AND 7.3.8                                      #
-#####################################################################
+### Function to Plot Figure 7.3.7
+
+```{julia}
+#| label: function-for-fig-7-3-7
+#| include: true
+#| echo: true
+#| eval: true
 
 function fig_7_3_7(a_vals)
     b2_plus = 0.5 .* (1 .- 2 .* a_vals .+ sqrt.(max.(0.0, 1 .- 8 .* a_vals)))
@@ -331,7 +433,16 @@ function fig_7_3_7(a_vals)
         ),
     )
     plot(traces, layout)
-end
+end;
+```
+
+### Function to Plot Variations of Figure 7.3.8
+
+```{julia}
+#| label: function-for-fig-7-3-8
+#| include: true
+#| echo: true
+#| eval: true
 
 function fig_7_3_8(a, b)
     # Define parameters of functions
@@ -376,7 +487,7 @@ function fig_7_3_8(a, b)
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
 
     # Create final plot
-    return final_plot(;
+    return phase_portrait(;
         title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
         fps = fps,
         As = As,
@@ -388,10 +499,40 @@ function fig_7_3_8(a, b)
         slope_end_xys = end_xys,
         trajectories = trajectories,
     )
-end
+end;
+```
 
-display(fig_7_3_8(0.08, 0.6))
-display(fig_7_3_8(0.12, 0.2))
-display(fig_7_3_7(range(0.0, 0.12537, 200)))
-println("Press enter to exit")
-readline()
+## Finally! Display the Figures
+
+First, we can predict what type of fixed point will be on the plot by plotting the a, b parameter space. I will leave the derivation for the book, bu suffice to say that the plot ends up looking like this and the fixed point follows the behavior of where the parameters are in.
+
+```{julia}
+#| label: plot-fig-7-3-7
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_7(range(0.0, 0.12537, 200))
+```
+
+Here is the behavior of the plot at a = 0.08, b = 0.6, in the stable limit cycle region of the parameter plot:
+
+```{julia}
+#| label: plot-fig-7-3-8-a
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_8(0.08, 0.6)
+```
+
+Finally, here is a stable fixed point with parameters a = 0.12, b = 0.2.
+
+```{julia}
+#| label: plot-fig-7-3-8-b
+#| include: true
+#| echo: true
+#| eval: true
+
+fig_7_3_8(0.12, 0.2)
+```
