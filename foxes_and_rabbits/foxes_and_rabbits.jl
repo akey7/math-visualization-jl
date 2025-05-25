@@ -6,6 +6,10 @@ using DifferentialEquations
 
 gr()
 
+######################################################################
+# MODELING / ODE FUNCTION                                            #
+######################################################################
+
 function calc_trajectories(
     initital_fox_pop,
     initial_rabbit_pop,
@@ -20,11 +24,22 @@ function calc_trajectories(
     end
     u0 = [initial_rabbit_pop, initital_fox_pop]
     tspan = (0.0, 1000.0)
+    dt = 1.0
     ps = [rabbit_pop_growth_rate, rabbit_eaten_rate, fox_pop_depletion_rate, fox_birth_rate]
     prob = ODEProblem(eqs!, u0, tspan, ps)
-    sol = solve(prob, RK4(), dt = 1.0)
-    return (sol.t, sol.u)
+    sol = solve(
+        prob,
+        RK4(),
+        dt = dt,
+        adaptive = false,
+        save_everystep = true,
+    )
+    return sol
 end
+
+######################################################################
+# CONNECT WITH INTERFACE BUILDER FILE                                #
+######################################################################
 
 b_filename = joinpath("foxes_and_rabbits", "foxes_and_rabbits_ui.glade")
 b = GtkBuilder(filename = b_filename)
@@ -44,6 +59,26 @@ canvas_phase_portrait = GtkCanvas()
 push!(frame_timeseries, canvas_timeseries)
 push!(frame_phase_portrait, canvas_phase_portrait)
 
+######################################################################
+# PLOTTING FUNCTIONS                                                 #
+######################################################################
+
+function plot_timeseries(sol)
+    ts = sol.t 
+    rabbits = sol[1, :]
+    foxes = sol[2, :]
+    labels = ["Rabbits" "Foxes"]
+    plt = plot(ts, [rabbits, foxes], labels = labels)
+    buf = IOBuffer()
+    Plots.png(plt, buf)
+    seekstart(buf)
+    return Cairo.read_from_png(buf)
+end
+
+######################################################################
+# EVENT HANDLERS                                                     #
+######################################################################
+
 @guarded function button_update_clicked(widget, others...)
     initital_fox_pop = GAccessor.value(scale_initial_fox_pop)
     initial_rabbit_pop = GAccessor.value(scale_initial_rabbit_pop)
@@ -51,7 +86,7 @@ push!(frame_phase_portrait, canvas_phase_portrait)
     rabbit_eaten_rate = GAccessor.value(scale_rabbit_eaten_rate)
     fox_pop_depletion_rate = GAccessor.value(scale_fox_pop_depletion_rate)
     fox_birth_rate = GAccessor.value(scale_fox_birth_rate)
-    x, y = calc_trajectories(
+    sol = calc_trajectories(
         initital_fox_pop,
         initial_rabbit_pop,
         rabbit_pop_growth_rate,
@@ -59,6 +94,10 @@ push!(frame_phase_portrait, canvas_phase_portrait)
         fox_pop_depletion_rate,
         fox_birth_rate,
     )
+    timeseries_img = plot_timeseries(sol)
+    timerseries_ctx = getgc(canvas_timeseries)
+    set_source_surface(timerseries_ctx, timeseries_img)
+    paint(timerseries_ctx)
 end
 
 signal_connect(button_update_clicked, button_update, "clicked")
