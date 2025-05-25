@@ -23,6 +23,12 @@ canvas_phase_portrait = GtkCanvas()
 push!(frame_timeseries, canvas_timeseries)
 push!(frame_phase_portrait, canvas_phase_portrait)
 
+@guarded function button_update_clicked(widget, others...)
+    println("Clicked!")
+end
+
+signal_connect(button_update_clicked, button_update, "clicked")
+
 showall(win)
 # button_update_clicked(button_update)  # Get the initial default values from UI
 if !isinteractive()
