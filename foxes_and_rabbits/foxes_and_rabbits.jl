@@ -120,7 +120,7 @@ end
 signal_connect(button_update_clicked, button_update, "clicked")
 
 showall(win)
-# button_update_clicked(button_update)  # Get the initial default values from UI
+button_update_clicked(button_update)  # Get the initial default values from UI and plot
 if !isinteractive()
     c = Condition()
     signal_connect(win, :destroy) do widget
