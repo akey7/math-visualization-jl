@@ -46,6 +46,12 @@ scale_rabbit_pop_growth_rate = b["scale_rabbit_pop_growth_rate"]
 scale_rabbit_eaten_rate = b["scale_rabbit_eaten_rate"]
 scale_fox_pop_depletion_rate = b["scale_fox_pop_depletion_rate"]
 scale_fox_birth_rate = b["scale_fox_birth_rate"]
+adjustment_initial_fox_pop = b["adjustment_initial_fox_pop"]
+adjustment_initial_rabbit_pop = b["adjustment_initial_rabbit_pop"]
+adjustment_rabbit_pop_growth_rate = b["adjustment_rabbit_pop_growth_rate"]
+adjustment_rabbit_eaten_rate = b["adjustment_rabbit_eaten_rate"]
+adjustment_fox_pop_depletion_rate = b["adjustment_fox_pop_depletion_rate"]
+adjustment_fox_birth_rate = b["adjustment_fox_birth_rate"]
 frame_timeseries = b["frame_timeseries"]
 frame_phase_portrait = b["frame_phase_portrait"]
 canvas_timeseries = GtkCanvas()
@@ -117,7 +123,17 @@ end
     paint(phase_portrait_ctx)
 end
 
-signal_connect(button_update_clicked, button_update, "clicked")
+@guarded function button_reset_clicked(widget, others...)
+    set_gtk_property!(adjustment_initial_fox_pop, :value, 10.0)
+    set_gtk_property!(adjustment_initial_rabbit_pop, :value, 10.0)
+    set_gtk_property!(adjustment_rabbit_pop_growth_rate, :value, 0.05)
+    set_gtk_property!(adjustment_rabbit_eaten_rate, :value, 0.01)
+    set_gtk_property!(adjustment_fox_pop_depletion_rate, :value, 0.01)
+    set_gtk_property!(adjustment_fox_birth_rate, :value, 0.001)
+end
+
+signal_connect(button_update_clicked, button_update, :clicked)
+signal_connect(button_reset_clicked, button_reset, :clicked)
 
 showall(win)
 button_update_clicked(button_update)  # Get the initial default values from UI and plot
