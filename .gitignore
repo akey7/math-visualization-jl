@@ -46,3 +46,6 @@ output/
 
 # Ignore VSCode specific files
 *.vscode
+
+# Ignore Glade temp files
+*.glade~

@@ -1,9 +1,11 @@
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Gtk = "4c0ca9eb-093a-5379-98c5-f87ac0bbbf44"
 IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
 JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 NonlinearSolve = "8913a72c-1f9b-4ce2-8d82-65094dcecaec"
