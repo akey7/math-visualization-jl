@@ -68,8 +68,14 @@ function plot_timeseries(sol)
     rabbits = sol[1, :]
     foxes = sol[2, :]
     labels = ["Rabbits" "Foxes"]
-    plt =
-        plot(ts, [rabbits, foxes], labels = labels, xlabel = "Time", ylabel = "Population")
+    plt = plot(
+        ts,
+        [rabbits, foxes],
+        lw = 3,
+        labels = labels,
+        xlabel = "Time",
+        ylabel = "Population",
+    )
     buf = IOBuffer()
     Plots.png(plt, buf)
     seekstart(buf)
@@ -85,8 +91,12 @@ function plot_phase_portrait(sol)
         foxes,
         line_z = ts,
         colormap = :plasma,
+        lw = 3,
         xlabel = "Rabbits",
         ylabel = "Foxes",
+        label = "",
+        colorbar = true,
+        colorbar_title = "Time",
     )
     buf = IOBuffer()
     Plots.png(plt, buf)
