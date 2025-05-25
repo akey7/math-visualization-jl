@@ -14,7 +14,16 @@ function calc_trajectories(
     fox_pop_depletion_rate,
     fox_birth_rate,
 )
-
+    function eqs!(du, u, p, t)
+        du[1] = p[1]*u[1] - p[2]*u[1]*u[2]
+        du[2] = -p[3]*u[2] + p[4]*u[1]*u[2]
+    end
+    u0 = [initial_rabbit_pop, initital_fox_pop]
+    tspan = (0.0, 1000.0)
+    ps = [rabbit_pop_growth_rate, rabbit_eaten_rate, fox_pop_depletion_rate, fox_birth_rate]
+    prob = ODEProblem(eqs!, u0, tspan, ps)
+    sol = solve(prob, RK4(), dt = 1.0)
+    return (sol.t, sol.u)
 end
 
 b_filename = joinpath("foxes_and_rabbits", "foxes_and_rabbits_ui.glade")
@@ -42,7 +51,7 @@ push!(frame_phase_portrait, canvas_phase_portrait)
     rabbit_eaten_rate = GAccessor.value(scale_rabbit_eaten_rate)
     fox_pop_depletion_rate = GAccessor.value(scale_fox_pop_depletion_rate)
     fox_birth_rate = GAccessor.value(scale_fox_birth_rate)
-    calc_trajectories(
+    x, y = calc_trajectories(
         initital_fox_pop,
         initial_rabbit_pop,
         rabbit_pop_growth_rate,
