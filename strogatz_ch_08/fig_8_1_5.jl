@@ -14,7 +14,7 @@ function find_fixed_points(
     ps::Vector{Float64},
 )
     fixed_points = []
-    @suppress begin
+    # @suppress begin
         for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
             u0 = [guess_x, guess_y]
             prob = NonlinearProblem(system_of_eqs, u0, ps)
@@ -31,11 +31,11 @@ function find_fixed_points(
                 if !found
                     push!(fixed_points, sol.u)
                 end
-            # else
-            #     println("$u0 $(sol.retcode)")
+            else
+                println(sol.retcode)
             end
         end
-    end
+    # end
     return fixed_points
 end
 
@@ -196,3 +196,26 @@ end
 #####################################################################
 # MAKE THE PLOT                                                     #
 #####################################################################
+
+function fig_8_1_5(a, b)
+    # Define parameters of functions
+    ps = [a, b]
+
+    # Min, max of calculations
+    min_x, max_x = 0.0, 100.0
+    min_y, max_y = 0.0, 100.0
+
+    # Find fixed points
+    eqs_01(u, p) = SA[-p[1]*u[1] + u[2], (u[1]^2/(1+u[1]^2)) - p[2]*u[2]]
+    fps = find_fixed_points(
+        eqs_01;
+        guess_xs = range(min_x, max_x, 10),
+        guess_ys = range(min_y, max_y, 10),
+        ps = ps,
+    )
+    println(fps)
+end
+
+# Draw the figure
+# fig_8_1_5(0.5, 0.5)
+fig_8_1_5(0.5, 0.5)
