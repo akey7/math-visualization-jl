@@ -213,8 +213,58 @@ function fig_8_1_5(a, b)
         guess_ys = range(min_y, max_y, 10),
         ps = ps,
     )
-    println(fps)
+    println("Fixed points: $fps")
+
+    # Find contours to plot nullclines and slope field
+    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -ps[1]*u[1] + u[2]
+    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = (u[1]^2/(1+u[1]^2)) - ps[2]*u[2]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Compute trajectories
+    function trajectory_eqs!(du, u, p, t)
+        du[1] = p[1]*u[1]-u[1]^3
+        du[2] = -u[2]
+    end
+    u0s = [
+        [-2.0, 0.0],
+        [2.0, 0.0],
+        [0.0, -1.0],
+        [0.0, 1.0],
+        [-0.778, -0.556],
+        [0.778, -0.556],
+        [-0.778, 0.556],
+        [0.778, 0.556],
+    ]
+    tspans = [
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+        (0.0, 10.0),
+    ]
+    trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+
+    # Create final plot
+    return final_plot(;
+        title = "<b>a=$(ps[1]), b=$(ps[2])</b>",
+        fps = fps,
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = start_xys,
+        slope_end_xys = end_xys,
+        trajectories = trajectories,
+    )
 end
 
 # Draw the figure
-fig_8_1_5(0.1, 0.5)
+display(fig_8_1_5(0.1, 0.5))
+println("Press enter to exit")
+readline()
