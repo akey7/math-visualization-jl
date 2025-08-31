@@ -202,8 +202,8 @@ function fig_8_1_5(a, b)
     ps = [a, b]
 
     # Min, max of calculations
-    min_x, max_x = 0.0, 100.0
-    min_y, max_y = 0.0, 100.0
+    min_x, max_x = 0.0, 50.0
+    min_y, max_y = 0.0, 50.0
 
     # Find fixed points
     eqs_01(u, p) = SA[-p[1]*u[1] + u[2], (u[1]^2/(1+u[1]^2)) - p[2]*u[2]]
@@ -217,5 +217,4 @@ function fig_8_1_5(a, b)
 end
 
 # Draw the figure
-# fig_8_1_5(0.5, 0.5)
-fig_8_1_5(0.5, 0.5)
+fig_8_1_5(0.1, 0.5)
