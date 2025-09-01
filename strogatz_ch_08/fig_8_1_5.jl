@@ -225,8 +225,8 @@ function fig_8_1_5(a, b)
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = p[1]*u[1]-u[1]^3
-        du[2] = -u[2]
+        du[1] = -p[1]*u[1] + u[2]
+        du[2] = (u[1]^2/(1+u[1]^2)) - p[2]*u[2]
     end
     u0s = [
         [2.0, 0.0],
