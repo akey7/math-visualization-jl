@@ -201,20 +201,16 @@ function fig_8_1_5(a, b)
     # Define parameters of functions
     ps = [a, b]
 
-    # # Min, max of calculations
-    # min_x, max_x = 0.0, 50.0
-    # min_y, max_y = 0.0, 50.0
-
     # Min, max of calculations
-    min_x, max_x = 0.0, 10.0
-    min_y, max_y = 0.0, 10.0
+    min_x, max_x = 0.0, 30.0
+    min_y, max_y = 0.0, 4.0
 
     # Find fixed points
     eqs_01(u, p) = SA[-p[1]*u[1] + u[2], (u[1]^2/(1+u[1]^2)) - p[2]*u[2]]
     fps = find_fixed_points(
         eqs_01;
-        guess_xs = range(min_x, max_x, 10),
-        guess_ys = range(min_y, max_y, 10),
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
         ps = ps,
     )
     println("Fixed points: $fps")
