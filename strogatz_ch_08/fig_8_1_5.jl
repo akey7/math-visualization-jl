@@ -201,9 +201,13 @@ function fig_8_1_5(a, b)
     # Define parameters of functions
     ps = [a, b]
 
+    # # Min, max of calculations
+    # min_x, max_x = 0.0, 50.0
+    # min_y, max_y = 0.0, 50.0
+
     # Min, max of calculations
-    min_x, max_x = 0.0, 50.0
-    min_y, max_y = 0.0, 50.0
+    min_x, max_x = 0.0, 10.0
+    min_y, max_y = 0.0, 10.0
 
     # Find fixed points
     eqs_01(u, p) = SA[-p[1]*u[1] + u[2], (u[1]^2/(1+u[1]^2)) - p[2]*u[2]]
@@ -229,21 +233,11 @@ function fig_8_1_5(a, b)
         du[2] = -u[2]
     end
     u0s = [
-        [-2.0, 0.0],
         [2.0, 0.0],
-        [0.0, -1.0],
         [0.0, 1.0],
-        [-0.778, -0.556],
-        [0.778, -0.556],
-        [-0.778, 0.556],
         [0.778, 0.556],
     ]
     tspans = [
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
         (0.0, 10.0),
         (0.0, 10.0),
         (0.0, 10.0),
