@@ -288,6 +288,11 @@ function fig_8_1_5(a, b)
 end
 
 # Draw the figure
-display(fig_8_1_5(0.1, 0.5))
+fig_01 = fig_8_1_5(0.1, 0.5)
+fig_02 = fig_8_1_5(0.01, 0.5)
+fig_03 = fig_8_1_5(0.1, 2.0)
+display(fig_01)
+display(fig_02)
+display(fig_03)
 println("Press enter to exit")
 readline()
