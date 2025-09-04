@@ -153,7 +153,7 @@ function final_plot(;
             x = [fp[1]],
             y = [fp[2]],
             mode = "markers",
-            marker = attr(color = color, size = size),
+            marker = attr(color = color, size = size, opacity = 0.5),
             showlegend = showlegend,
             name = "Fixed Points",
         )
