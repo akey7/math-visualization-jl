@@ -39,6 +39,21 @@ function find_fixed_points(
     return fixed_points
 end
 
+function nullcline_contours(f, g, xs, ys)
+    f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
+    g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
+    return f_xy, g_xy
+end
+
+function slope_field(f, g, xs, ys)
+    scaler = 1 / length(xs)
+    start_xys = Base.product(xs, ys)
+    end_xys = [
+        (start_xy[1] + f(start_xy)*scaler, start_xy[2] + g(start_xy)*scaler) for
+        start_xy ∈ start_xys
+    ]
+    return start_xys, end_xys
+end
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
@@ -201,13 +216,22 @@ function fig_8_2_3(μ, ω)
         ps = ps,
     )
 
+    # Find contours to plot nullclines
+    f(u) = μ*u[1]-ω*u[2]
+    g(u) = ω*u[1]+μ*u[2]
+    contour_xs = range(min_x, max_x, 100)
+    contour_ys = range(min_y, max_y, 100)
+    contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
+
+    # Find slope field
+    slope_start_xys, slope_end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
         du[1] = p[1]*u[1] - p[2]*u[2]
         du[2] = p[2]*u[1] + p[1]*u[2]
     end
 
-    # Compute trajectories
     u0s, tspans = circle_of_u0s(0.01, 0.0, 2.5)
     println("Computing trajectories...")
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
@@ -217,12 +241,12 @@ function fig_8_2_3(μ, ω)
     return final_plot(;
         title = "<b>μ=$μ, ω=$ω</b>",
         fps = fps,
-        contour_xs = [],
-        contour_ys = [],
-        contour_f_xy = [],
-        contour_g_xy = [],
-        slope_start_xys = [],
-        slope_end_xys = [],
+        contour_xs = contour_xs,
+        contour_ys = contour_ys,
+        contour_f_xy = contour_f_xy,
+        contour_g_xy = contour_g_xy,
+        slope_start_xys = slope_start_xys,
+        slope_end_xys = slope_end_xys,
         trajectories = trajectories,
     )
 end
