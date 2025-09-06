@@ -1,5 +1,44 @@
+using NonlinearSolve
 using DifferentialEquations
+using SciMLBase
+using StaticArrays
+using ForwardDiff
+using LinearAlgebra
+using Suppressor
 using PlotlyJS
+
+function find_fixed_points(
+    system_of_eqs;
+    guess_xs::AbstractRange,
+    guess_ys::AbstractRange,
+    ps::Vector{Float64},
+)
+    fixed_points = []
+    @suppress begin
+        for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+            u0 = [guess_x, guess_y]
+            prob = NonlinearProblem(system_of_eqs, u0, ps)
+            sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
+            if SciMLBase.successful_retcode(sol)
+                found = false
+                for fixed_point ∈ fixed_points
+                    if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                       isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                        found = true
+                        break
+                    end
+                end
+                if !found
+                    push!(fixed_points, sol.u)
+                end
+                # else
+                #     println("$u0 $(sol.retcode)")
+            end
+        end
+    end
+    return fixed_points
+end
+
 
 function calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     trajectories = []
@@ -149,6 +188,19 @@ end
 function fig_8_2_3(μ, ω)
     ps = [μ, ω]
 
+    # Min, max of calculations
+    min_x, max_x = -1.0, 1.0
+    min_y, max_y = -1.0, 1.0
+
+    # Compute fixed points
+    fp_eqs(u, p) = SA[p[1]*u[1]-p[2]*u[2], p[2]*u[1]+p[1]*u[2]]
+    fps = find_fixed_points(
+        fp_eqs,
+        guess_xs = range(min_x, max_x, 5),
+        guess_ys = range(min_y, max_y, 5),
+        ps = ps,
+    )
+
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
         du[1] = p[1]*u[1] - p[2]*u[2]
@@ -164,7 +216,7 @@ function fig_8_2_3(μ, ω)
     # Create final plot
     return final_plot(;
         title = "<b>μ=$μ, ω=$ω</b>",
-        fps = [],
+        fps = fps,
         contour_xs = [],
         contour_ys = [],
         contour_f_xy = [],
