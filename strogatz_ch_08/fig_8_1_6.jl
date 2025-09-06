@@ -23,7 +23,7 @@ function find_fixed_points(
                 found = false
                 for fixed_point ∈ fixed_points
                     if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
-                    isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                       isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
                         found = true
                         break
                     end
@@ -31,8 +31,8 @@ function find_fixed_points(
                 if !found
                     push!(fixed_points, sol.u)
                 end
-            # else
-            #     println("$u0 $(sol.retcode)")
+                # else
+                #     println("$u0 $(sol.retcode)")
             end
         end
     end
