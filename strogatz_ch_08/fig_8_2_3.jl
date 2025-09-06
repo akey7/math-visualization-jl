@@ -139,6 +139,13 @@ function final_plot(;
     return plot(traces, layout)
 end
 
+function circle_of_u0s(r, tspan_min, tspan_max)
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
+    u0s = [[r*cos(θ), r*sin(θ)] for θ ∈ angles]
+    tspans = [(tspan_min, tspan_max) for _ ∈ eachindex(u0s)]
+    return u0s, tspans
+end
+
 function fig_8_2_3(μ, ω)
     ps = [μ, ω]
 
@@ -148,18 +155,8 @@ function fig_8_2_3(μ, ω)
         du[2] = p[2]*u[1] + p[1]*u[2]
     end
 
-    u0s = [
-        [1.0, 0.0],
-        [-1.0, 0.0],
-        [0.0, 1.0],
-        [0.0, -1.0]
-    ]
-    tspans = [
-        (0.0, 1.0),
-        (0.0, 1.0),
-        (0.0, 1.0),
-        (0.0, 1.0),
-    ]
+    # Compute trajectories
+    u0s, tspans = circle_of_u0s(0.1, 0.0, 1.0)
     println("Computing trajectories...")
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     println("Done computing trajectories!")
