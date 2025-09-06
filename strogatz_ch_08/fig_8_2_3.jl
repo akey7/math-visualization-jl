@@ -155,9 +155,10 @@ function fig_8_2_3(μ, ω)
         [0.0, -1.0]
     ]
     tspans = [
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
+        (0.0, 1.0),
+        (0.0, 1.0),
+        (0.0, 1.0),
+        (0.0, 1.0),
     ]
     println("Computing trajectories...")
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
