@@ -224,7 +224,8 @@ function fig_8_2_3(μ, ω)
     contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
 
     # Find slope field
-    slope_start_xys, slope_end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+    slope_start_xys, slope_end_xys =
+        slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
