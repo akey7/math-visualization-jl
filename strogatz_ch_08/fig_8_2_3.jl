@@ -139,20 +139,20 @@ function final_plot(;
     return plot(traces, layout)
 end
 
-function fig_8_2_3(μ, ω, b)
-    ps = [μ, ω, b]
+function fig_8_2_3(μ, ω)
+    ps = [μ, ω]
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = p[1]*u[1] - u[1]^3
-        du[2] = p[2] + p[3]*u[1]^2
+        du[1] = p[1]*u[1] - p[2]*u[2]
+        du[2] = p[2]*u[1] + p[1]*u[2]
     end
 
     u0s = [
         [1.0, 0.0],
         [-1.0, 0.0],
         [0.0, 1.0],
-        [0.1, -1.0]
+        [0.0, -1.0]
     ]
     tspans = [
         (0.0, 10.0),
@@ -165,7 +165,7 @@ function fig_8_2_3(μ, ω, b)
 
     # Create final plot
     return final_plot(;
-        title = "<b>μ=$μ, ω=$ω, b=$b</b>",
+        title = "<b>μ=$μ, ω=$ω</b>",
         fps = [],
         contour_xs = [],
         contour_ys = [],
@@ -177,6 +177,6 @@ function fig_8_2_3(μ, ω, b)
     )
 end
 
-display(fig_8_2_3(1.0, 1.0, 1.0))
+display(fig_8_2_3(1.0, 1.0))
 println("Press enter to exit")
 readline()
