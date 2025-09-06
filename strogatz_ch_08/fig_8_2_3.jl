@@ -208,7 +208,7 @@ function fig_8_2_3(μ, ω)
     end
 
     # Compute trajectories
-    u0s, tspans = circle_of_u0s(0.1, 0.0, 1.0)
+    u0s, tspans = circle_of_u0s(0.01, 0.0, 2.5)
     println("Computing trajectories...")
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
     println("Done computing trajectories!")
