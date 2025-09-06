@@ -204,8 +204,8 @@ function fig_8_2_3(μ, ω)
     ps = [μ, ω]
 
     # Min, max of calculations
-    min_x, max_x = -1.0, 1.0
-    min_y, max_y = -1.0, 1.0
+    min_x, max_x = -0.1, 0.1
+    min_y, max_y = -0.1, 0.1
 
     # Compute fixed points
     fp_eqs(u, p) = SA[p[1]*u[1]-p[2]*u[2], p[2]*u[1]+p[1]*u[2]]
