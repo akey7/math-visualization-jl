@@ -39,6 +39,17 @@ function find_fixed_points(
     return fixed_points
 end
 
+function find_jacobians(fps)
+    jacobians = []
+    for fp ∈ fps
+        jacobian = ForwardDiff.jacobian(fp) do u
+            [-u[1] + u[1]^3, -2*u[2]]
+        end
+        push!(jacobians, jacobian)
+    end
+    jacobians
+end
+
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
@@ -234,9 +245,11 @@ function fig_8_2_3(μ, ω)
     end
 
     u0s, tspans = circle_of_u0s(0.01, 0.0, 2.5)
-    println("Computing trajectories...")
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
-    println("Done computing trajectories!")
+
+    # Find Jacobians
+    As = find_jacobians(fps)
+    println(As)
 
     # Create final plot
     return final_plot(;
@@ -253,11 +266,17 @@ function fig_8_2_3(μ, ω)
 end
 
 #####################################################################
-# DRAW THE PLOTS                                                    #
+# DRAW THE PLOTS AND DISPLAY THEIR JACOBIANS AT THE FIXED POINTS    #
 #####################################################################
 
+println("μ=-1.0, ω=1.0")
 display(fig_8_2_3(-1.0, 1.0))
+
+println("μ=0.0, ω=1.0")
 display(fig_8_2_3(0.0, 1.0))
+
+println("μ=1.0, ω=1.0")
 display(fig_8_2_3(1.0, 1.0))
+
 println("Press enter to exit")
 readline()
