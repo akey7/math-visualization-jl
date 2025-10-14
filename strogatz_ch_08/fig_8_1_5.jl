@@ -15,26 +15,26 @@ function find_fixed_points(
 )
     fixed_points = []
     # @suppress begin
-        for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
-            u0 = [guess_x, guess_y]
-            prob = NonlinearProblem(system_of_eqs, u0, ps)
-            sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
-            if SciMLBase.successful_retcode(sol)
-                found = false
-                for fixed_point ∈ fixed_points
-                    if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
-                    isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
-                        found = true
-                        break
-                    end
+    for (guess_x, guess_y) ∈ Base.product(guess_xs, guess_ys)
+        u0 = [guess_x, guess_y]
+        prob = NonlinearProblem(system_of_eqs, u0, ps)
+        sol = solve(prob, TrustRegion(), maxiters = 1_000_000)
+        if SciMLBase.successful_retcode(sol)
+            found = false
+            for fixed_point ∈ fixed_points
+                if isapprox(fixed_point[1], sol.u[1], atol = 1e-3) &&
+                   isapprox(fixed_point[2], sol.u[2], atol = 1e-3)
+                    found = true
+                    break
                 end
-                if !found
-                    push!(fixed_points, sol.u)
-                end
-            else
-                println(sol.retcode)
             end
+            if !found
+                push!(fixed_points, sol.u)
+            end
+        else
+            println(sol.retcode)
         end
+    end
     # end
     return fixed_points
 end
@@ -206,7 +206,7 @@ function fig_8_1_5(a, b)
     min_y, max_y = 0.0, 4.0
 
     # Find fixed points
-    eqs_01(u, p) = SA[-p[1]*u[1] + u[2], (u[1]^2/(1+u[1]^2)) - p[2]*u[2]]
+    eqs_01(u, p) = SA[-p[1]*u[1]+u[2], (u[1]^2/(1+u[1]^2))-p[2]*u[2]]
     fps = find_fixed_points(
         eqs_01;
         guess_xs = range(min_x, max_x, 5),

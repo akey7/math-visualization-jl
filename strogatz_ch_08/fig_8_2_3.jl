@@ -39,6 +39,17 @@ function find_fixed_points(
     return fixed_points
 end
 
+function find_jacobians(fps)
+    jacobians = []
+    for fp ∈ fps
+        jacobian = ForwardDiff.jacobian(fp) do u
+            [-u[1] + u[1]^3, -2*u[2]]
+        end
+        push!(jacobians, jacobian)
+    end
+    jacobians
+end
+
 function nullcline_contours(f, g, xs, ys)
     f_xy = [f([x, y]) for x ∈ xs, y ∈ ys]
     g_xy = [g([x, y]) for x ∈ xs, y ∈ ys]
@@ -193,79 +204,79 @@ function final_plot(;
     return plot(traces, layout)
 end
 
-#####################################################################
-# MAKE THE PLOT                                                     #
-#####################################################################
+function circle_of_u0s(r, tspan_min, tspan_max)
+    angles = [0.0, π/4, π/2, π, 3π/4, 5π/4, 3π/2, 7π/4]
+    u0s = [[r*cos(θ), r*sin(θ)] for θ ∈ angles]
+    tspans = [(tspan_min, tspan_max) for _ ∈ eachindex(u0s)]
+    return u0s, tspans
+end
 
-function fig_8_1_6(μ)
-    # Define parameters of functions
-    ps = [μ]
+function fig_8_2_3(μ, ω)
+    ps = [μ, ω]
 
     # Min, max of calculations
-    min_x, max_x = -2.0, 2.0
-    min_y, max_y = -1.0, 1.0
+    min_x, max_x = -0.1, 0.1
+    min_y, max_y = -0.1, 0.1
 
-    # Find fixed points
-    eqs_01(u, p) = SA[p[1]*u[1]-u[1]^3, -u[2]]
+    # Compute fixed points
+    fp_eqs(u, p) = SA[p[1]*u[1]-p[2]*u[2], p[2]*u[1]+p[1]*u[2]]
     fps = find_fixed_points(
-        eqs_01;
+        fp_eqs,
         guess_xs = range(min_x, max_x, 5),
         guess_ys = range(min_y, max_y, 5),
         ps = ps,
     )
-    # println(fps)
 
-    # Find contours to plot nullclines and slope field
-    f(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = ps[1]*u[1]-u[1]^3
-    g(u::Union{Vector{Float64},Tuple{Float64,Float64}}) = -u[2]
+    # Find contours to plot nullclines
+    f(u) = μ*u[1]-ω*u[2]
+    g(u) = ω*u[1]+μ*u[2]
     contour_xs = range(min_x, max_x, 100)
     contour_ys = range(min_y, max_y, 100)
     contour_f_xy, contour_g_xy = nullcline_contours(f, g, contour_xs, contour_ys)
-    start_xys, end_xys = slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
+
+    # Find slope field
+    slope_start_xys, slope_end_xys =
+        slope_field(f, g, range(min_x, max_x, 10), range(min_y, max_y, 10))
 
     # Compute trajectories
     function trajectory_eqs!(du, u, p, t)
-        du[1] = p[1]*u[1]-u[1]^3
-        du[2] = -u[2]
+        du[1] = p[1]*u[1] - p[2]*u[2]
+        du[2] = p[2]*u[1] + p[1]*u[2]
     end
-    u0s = [
-        [-2.0, 0.0],
-        [2.0, 0.0],
-        [0.0, -1.0],
-        [0.0, 1.0],
-        [-0.778, -0.556],
-        [0.778, -0.556],
-        [-0.778, 0.556],
-        [0.778, 0.556],
-    ]
-    tspans = [
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-        (0.0, 10.0),
-    ]
+
+    u0s, tspans = circle_of_u0s(0.01, 0.0, 2.5)
     trajectories = calculate_trajectories(trajectory_eqs!, u0s, tspans, ps)
+
+    # Find Jacobians
+    As = find_jacobians(fps)
+    println(As)
 
     # Create final plot
     return final_plot(;
-        title = "<b>μ=$(ps[1])</b>",
+        title = "<b>μ=$μ, ω=$ω</b>",
         fps = fps,
         contour_xs = contour_xs,
         contour_ys = contour_ys,
         contour_f_xy = contour_f_xy,
         contour_g_xy = contour_g_xy,
-        slope_start_xys = start_xys,
-        slope_end_xys = end_xys,
+        slope_start_xys = slope_start_xys,
+        slope_end_xys = slope_end_xys,
         trajectories = trajectories,
     )
 end
 
-display(fig_8_1_6(-1.0))
-display(fig_8_1_6(0.0))
-display(fig_8_1_6(1.0))
+#####################################################################
+# DRAW THE PLOTS AND DISPLAY THEIR JACOBIANS AT THE FIXED POINTS    #
+#####################################################################
+
+println("μ=-1.0, ω=1.0")
+display(fig_8_2_3(-1.0, 1.0))
+
+println("μ=0.0, ω=1.0")
+display(fig_8_2_3(0.0, 1.0))
+
+println("μ=1.0, ω=1.0")
+display(fig_8_2_3(1.0, 1.0))
+
 println("Press enter to exit")
 readline()
