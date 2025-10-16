@@ -1,12 +1,21 @@
 using GLMakie
 
 f = Figure()
-Axis(f[1, 1], limits = (0, 1, 0, 1))
+Axis(
+    f[1, 1],
+    limits = (0, 1, 0, 1),
+    title = "Interactive Scatter Plot",
+    xlabel = "x",
+    ylabel = "y",
+)
 
-rs_h = IntervalSlider(f[2, 1], range = LinRange(0, 1, 1000),
-    startvalues = (0.2, 0.8))
-rs_v = IntervalSlider(f[1, 2], range = LinRange(0, 1, 1000),
-    startvalues = (0.4, 0.9), horizontal = false)
+rs_h = IntervalSlider(f[2, 1], range = LinRange(0, 1, 1000), startvalues = (0.2, 0.8))
+rs_v = IntervalSlider(
+    f[1, 2],
+    range = LinRange(0, 1, 1000),
+    startvalues = (0.4, 0.9),
+    horizontal = false,
+)
 
 labeltext1 = lift(rs_h.interval) do int
     string(round.(int, digits = 2))
@@ -15,8 +24,7 @@ Label(f[3, 1], labeltext1, tellwidth = false)
 labeltext2 = lift(rs_v.interval) do int
     string(round.(int, digits = 2))
 end
-Label(f[1, 3], labeltext2,
-    tellheight = false, rotation = pi/2)
+Label(f[1, 3], labeltext2, tellheight = false, rotation = pi/2)
 
 points = rand(Point2f, 300)
 
